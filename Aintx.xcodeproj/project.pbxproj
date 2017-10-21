@@ -10,6 +10,7 @@
 		AC3BCE4B1F9AD47300644761 /* Aintx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC3BCE411F9AD47300644761 /* Aintx.framework */; };
 		AC3BCE501F9AD47300644761 /* AintxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE4F1F9AD47300644761 /* AintxTests.swift */; };
 		AC3BCE521F9AD47300644761 /* Aintx.h in Headers */ = {isa = PBXBuildFile; fileRef = AC3BCE441F9AD47300644761 /* Aintx.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AC3BCE5C1F9AD49F00644761 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = AC3BCE5B1F9AD49F00644761 /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 		AC3BCE4A1F9AD47300644761 /* AintxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AintxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC3BCE4F1F9AD47300644761 /* AintxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AintxTests.swift; sourceTree = "<group>"; };
 		AC3BCE511F9AD47300644761 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC3BCE5B1F9AD49F00644761 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 				AC3BCE431F9AD47300644761 /* Aintx */,
 				AC3BCE4E1F9AD47300644761 /* AintxTests */,
 				AC3BCE421F9AD47300644761 /* Products */,
+				AC3BCE5B1F9AD49F00644761 /* .gitignore */,
 			);
 			sourceTree = "<group>";
 		};
@@ -179,6 +182,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC3BCE5C1F9AD49F00644761 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
