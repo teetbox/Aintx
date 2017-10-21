@@ -8,9 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		AC3BCE4B1F9AD47300644761 /* Aintx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC3BCE411F9AD47300644761 /* Aintx.framework */; };
-		AC3BCE501F9AD47300644761 /* AintxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE4F1F9AD47300644761 /* AintxTests.swift */; };
 		AC3BCE521F9AD47300644761 /* Aintx.h in Headers */ = {isa = PBXBuildFile; fileRef = AC3BCE441F9AD47300644761 /* Aintx.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AC3BCE5C1F9AD49F00644761 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = AC3BCE5B1F9AD49F00644761 /* .gitignore */; };
+		AC3BCE5F1F9AEF6300644761 /* Aintx.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE5E1F9AEF6300644761 /* Aintx.swift */; };
+		AC3BCE611F9AF1D800644761 /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE601F9AF1D800644761 /* HttpRequest.swift */; };
+		AC3BCE631F9AF20B00644761 /* HttpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE621F9AF20B00644761 /* HttpResponse.swift */; };
+		AC3BCE651F9AF23F00644761 /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE641F9AF23F00644761 /* HttpError.swift */; };
+		AC3BCE671F9AF26300644761 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE661F9AF26300644761 /* SessionManager.swift */; };
+		AC3BCE691F9AF28A00644761 /* URLEncording.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE681F9AF28A00644761 /* URLEncording.swift */; };
+		AC3BCE6C1F9AF3D600644761 /* AintxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE6B1F9AF3D600644761 /* AintxTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -28,9 +34,15 @@
 		AC3BCE441F9AD47300644761 /* Aintx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Aintx.h; sourceTree = "<group>"; };
 		AC3BCE451F9AD47300644761 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC3BCE4A1F9AD47300644761 /* AintxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AintxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AC3BCE4F1F9AD47300644761 /* AintxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AintxTests.swift; sourceTree = "<group>"; };
 		AC3BCE511F9AD47300644761 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC3BCE5B1F9AD49F00644761 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		AC3BCE5E1F9AEF6300644761 /* Aintx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aintx.swift; sourceTree = "<group>"; };
+		AC3BCE601F9AF1D800644761 /* HttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequest.swift; sourceTree = "<group>"; };
+		AC3BCE621F9AF20B00644761 /* HttpResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponse.swift; sourceTree = "<group>"; };
+		AC3BCE641F9AF23F00644761 /* HttpError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpError.swift; sourceTree = "<group>"; };
+		AC3BCE661F9AF26300644761 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		AC3BCE681F9AF28A00644761 /* URLEncording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncording.swift; sourceTree = "<group>"; };
+		AC3BCE6B1F9AF3D600644761 /* AintxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AintxTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +88,7 @@
 			children = (
 				AC3BCE441F9AD47300644761 /* Aintx.h */,
 				AC3BCE451F9AD47300644761 /* Info.plist */,
+				AC3BCE5D1F9AEF3500644761 /* Source */,
 			);
 			path = Aintx;
 			sourceTree = "<group>";
@@ -83,10 +96,31 @@
 		AC3BCE4E1F9AD47300644761 /* AintxTests */ = {
 			isa = PBXGroup;
 			children = (
-				AC3BCE4F1F9AD47300644761 /* AintxTests.swift */,
+				AC3BCE6A1F9AF38300644761 /* APITests */,
 				AC3BCE511F9AD47300644761 /* Info.plist */,
 			);
 			path = AintxTests;
+			sourceTree = "<group>";
+		};
+		AC3BCE5D1F9AEF3500644761 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				AC3BCE5E1F9AEF6300644761 /* Aintx.swift */,
+				AC3BCE601F9AF1D800644761 /* HttpRequest.swift */,
+				AC3BCE621F9AF20B00644761 /* HttpResponse.swift */,
+				AC3BCE641F9AF23F00644761 /* HttpError.swift */,
+				AC3BCE661F9AF26300644761 /* SessionManager.swift */,
+				AC3BCE681F9AF28A00644761 /* URLEncording.swift */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		AC3BCE6A1F9AF38300644761 /* APITests */ = {
+			isa = PBXGroup;
+			children = (
+				AC3BCE6B1F9AF3D600644761 /* AintxTests.swift */,
+			);
+			path = APITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -151,10 +185,12 @@
 				TargetAttributes = {
 					AC3BCE401F9AD47300644761 = {
 						CreatedOnToolsVersion = 9.0.1;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					AC3BCE491F9AD47300644761 = {
 						CreatedOnToolsVersion = 9.0.1;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -200,6 +236,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC3BCE651F9AF23F00644761 /* HttpError.swift in Sources */,
+				AC3BCE631F9AF20B00644761 /* HttpResponse.swift in Sources */,
+				AC3BCE5F1F9AEF6300644761 /* Aintx.swift in Sources */,
+				AC3BCE691F9AF28A00644761 /* URLEncording.swift in Sources */,
+				AC3BCE671F9AF26300644761 /* SessionManager.swift in Sources */,
+				AC3BCE611F9AF1D800644761 /* HttpRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,7 +249,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC3BCE501F9AD47300644761 /* AintxTests.swift in Sources */,
+				AC3BCE6C1F9AF3D600644761 /* AintxTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +380,7 @@
 		AC3BCE561F9AD47300644761 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -350,6 +393,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bizersoft.Aintx;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -358,6 +402,7 @@
 		AC3BCE571F9AD47300644761 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -378,11 +423,14 @@
 		AC3BCE591F9AD47300644761 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = AintxTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bizersoft.AintxTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -391,6 +439,8 @@
 		AC3BCE5A1F9AD47300644761 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = AintxTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
