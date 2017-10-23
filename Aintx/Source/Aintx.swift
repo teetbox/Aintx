@@ -106,6 +106,12 @@ public struct Aintx {
     }
     
     public func go(_ request: HttpRequest, completion: @escaping (HttpResponse) -> Void) {
+        if (request is FakeRequest) {
+            let fakeResponse = HttpResponse(data: nil, response: nil, error: nil)
+            completion(fakeResponse)
+            return
+        }
+        
         request.fire(completion: completion)
     }
     

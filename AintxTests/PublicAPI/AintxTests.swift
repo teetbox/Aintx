@@ -319,11 +319,25 @@ class AintxTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    func testGoWithParameters() {
+        let exp = expectation(description: "exp")
+        
+        aintx.go(fakePath, parameters: ["fake": Data()]) { (response) in
+            XCTAssertEqual(response.path, "/fake/path")
+            XCTAssertEqual(response.parameters?["fake"] as! Data , Data())
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1)
+    }
+    
     func testGoRequest() {
         let fakeRequest = aintx.createHttpRequest(path: fakePath)
         
         aintx.go(fakeRequest) { (response) in
-            
+            XCTAssertNil(response.data)
+            XCTAssertNil(response.response)
+            XCTAssertNil(response.error)
         }
     }
     

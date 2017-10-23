@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC34238D1F9E05F300BFAF8A /* HttpRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC34238C1F9E05F300BFAF8A /* HttpRequestTests.swift */; };
 		AC3BCE4B1F9AD47300644761 /* Aintx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC3BCE411F9AD47300644761 /* Aintx.framework */; };
 		AC3BCE521F9AD47300644761 /* Aintx.h in Headers */ = {isa = PBXBuildFile; fileRef = AC3BCE441F9AD47300644761 /* Aintx.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AC3BCE5C1F9AD49F00644761 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = AC3BCE5B1F9AD49F00644761 /* .gitignore */; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AC34238C1F9E05F300BFAF8A /* HttpRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestTests.swift; sourceTree = "<group>"; };
 		AC3BCE411F9AD47300644761 /* Aintx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Aintx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC3BCE441F9AD47300644761 /* Aintx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Aintx.h; sourceTree = "<group>"; };
 		AC3BCE451F9AD47300644761 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				AC3BCE6B1F9AF3D600644761 /* AintxTests.swift */,
+				AC34238C1F9E05F300BFAF8A /* HttpRequestTests.swift */,
 			);
 			path = PublicAPI;
 			sourceTree = "<group>";
@@ -250,6 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC3BCE6C1F9AF3D600644761 /* AintxTests.swift in Sources */,
+				AC34238D1F9E05F300BFAF8A /* HttpRequestTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
