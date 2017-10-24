@@ -13,14 +13,17 @@ struct SessionManager {
     static func getSession(with config: SessionConfig) -> URLSession {
         _ = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         
+        let session: URLSession
         switch config {
-        case .default:
-            return URLSession.shared
+        case .standard:
+            session = URLSession.shared
         case .ephemeral:
-            return URLSession(configuration: .ephemeral)
+            session = URLSession(configuration: .ephemeral)
         case .background(let identifier):
-            return URLSession(configuration: .background(withIdentifier: identifier))
+            session = URLSession(configuration: .background(withIdentifier: identifier))
         }
+        
+        return session
     }
     
 }

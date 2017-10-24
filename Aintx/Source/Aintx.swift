@@ -9,13 +9,14 @@
 import Foundation
 
 public enum SessionConfig {
-    case `default`
+    case standard
     case ephemeral
     case background(String)
 }
 
 public enum HttpMethod: String {
     case get = "GET"
+    case put = "PUT"
     case post = "POST"
     case delete = "DELETE"
 }
@@ -39,8 +40,9 @@ public typealias Parameters = [String: Any]
 public struct Aintx {
     
     public let base: String
-    public let session: URLSession
     public let config: SessionConfig
+    
+    let session: URLSession
     
     public var httpMethod: HttpMethod = .get
     public var requestType: RequestType = .data
@@ -50,7 +52,7 @@ public struct Aintx {
     public var fakeResponse: HttpResponse?
     
     /* ✅ */
-    public init(base: String, config: SessionConfig = .default) {
+    public init(base: String, config: SessionConfig = .standard) {
         self.base = base
         self.config = config
         self.session = SessionManager.getSession(with: config)
@@ -102,16 +104,6 @@ public struct Aintx {
         }
         
         let request = createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType)
-        request.fire(completion: completion)
-    }
-    
-    public func go(_ request: HttpRequest, completion: @escaping (HttpResponse) -> Void) {
-        if (request is FakeRequest) {
-            let fakeResponse = HttpResponse(data: nil, response: nil, error: nil)
-            completion(fakeResponse)
-            return
-        }
-        
         request.fire(completion: completion)
     }
     
@@ -167,6 +159,17 @@ public struct Aintx {
         }
         
         return httpRequest
+    }
+    
+    /* ✅ */
+    public func go(_ request: HttpRequest, completion: @escaping (HttpResponse) -> Void) {
+        if (request is FakeRequest) {
+            let fakeResponse = HttpResponse(data: nil, response: nil, error: nil)
+            completion(fakeResponse)
+            return
+        }
+        
+        request.fire(completion: completion)
     }
     
 }

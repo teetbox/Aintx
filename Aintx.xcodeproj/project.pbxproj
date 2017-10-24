@@ -17,7 +17,9 @@
 		AC3BCE651F9AF23F00644761 /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE641F9AF23F00644761 /* HttpError.swift */; };
 		AC3BCE671F9AF26300644761 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE661F9AF26300644761 /* SessionManager.swift */; };
 		AC3BCE691F9AF28A00644761 /* URLEncording.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE681F9AF28A00644761 /* URLEncording.swift */; };
-		AC3BCE6C1F9AF3D600644761 /* AintxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE6B1F9AF3D600644761 /* AintxTests.swift */; };
+		AC3BCE6C1F9AF3D600644761 /* AintxPublicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE6B1F9AF3D600644761 /* AintxPublicTests.swift */; };
+		C906DC581F9EAA490096D99C /* HttpbinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C906DC571F9EAA490096D99C /* HttpbinTests.swift */; };
+		C906DC5B1F9EB4FE0096D99C /* AintxInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C906DC5A1F9EB4FE0096D99C /* AintxInternalTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,7 +46,9 @@
 		AC3BCE641F9AF23F00644761 /* HttpError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpError.swift; sourceTree = "<group>"; };
 		AC3BCE661F9AF26300644761 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		AC3BCE681F9AF28A00644761 /* URLEncording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncording.swift; sourceTree = "<group>"; };
-		AC3BCE6B1F9AF3D600644761 /* AintxTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AintxTests.swift; sourceTree = "<group>"; };
+		AC3BCE6B1F9AF3D600644761 /* AintxPublicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AintxPublicTests.swift; sourceTree = "<group>"; };
+		C906DC571F9EAA490096D99C /* HttpbinTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpbinTests.swift; sourceTree = "<group>"; };
+		C906DC5A1F9EB4FE0096D99C /* AintxInternalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AintxInternalTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,7 +102,9 @@
 		AC3BCE4E1F9AD47300644761 /* AintxTests */ = {
 			isa = PBXGroup;
 			children = (
-				AC3BCE6A1F9AF38300644761 /* PublicAPI */,
+				AC3BCE6A1F9AF38300644761 /* Public */,
+				C906DC591F9EAF590096D99C /* Internal */,
+				C906DC561F9EAA130096D99C /* Integration */,
 				AC3BCE511F9AD47300644761 /* Info.plist */,
 			);
 			path = AintxTests;
@@ -117,13 +123,29 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		AC3BCE6A1F9AF38300644761 /* PublicAPI */ = {
+		AC3BCE6A1F9AF38300644761 /* Public */ = {
 			isa = PBXGroup;
 			children = (
-				AC3BCE6B1F9AF3D600644761 /* AintxTests.swift */,
+				AC3BCE6B1F9AF3D600644761 /* AintxPublicTests.swift */,
 				AC34238C1F9E05F300BFAF8A /* HttpRequestTests.swift */,
 			);
-			path = PublicAPI;
+			path = Public;
+			sourceTree = "<group>";
+		};
+		C906DC561F9EAA130096D99C /* Integration */ = {
+			isa = PBXGroup;
+			children = (
+				C906DC571F9EAA490096D99C /* HttpbinTests.swift */,
+			);
+			path = Integration;
+			sourceTree = "<group>";
+		};
+		C906DC591F9EAF590096D99C /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				C906DC5A1F9EB4FE0096D99C /* AintxInternalTests.swift */,
+			);
+			path = Internal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,8 +274,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC3BCE6C1F9AF3D600644761 /* AintxTests.swift in Sources */,
+				AC3BCE6C1F9AF3D600644761 /* AintxPublicTests.swift in Sources */,
+				C906DC581F9EAA490096D99C /* HttpbinTests.swift in Sources */,
 				AC34238D1F9E05F300BFAF8A /* HttpRequestTests.swift in Sources */,
+				C906DC5B1F9EB4FE0096D99C /* AintxInternalTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
