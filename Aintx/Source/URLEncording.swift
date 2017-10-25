@@ -10,8 +10,8 @@ import Foundation
 
 struct URLEncording {
     
-    static func encordQueryString(path: String, queryString: [String: String]?) throws -> String {
-        guard let query = queryString else {
+    static func encordQueryString(path: String, queryDic: [String: String]?) throws -> String {
+        guard let query = queryDic else {
             return path
         }
         
@@ -22,8 +22,8 @@ struct URLEncording {
         return url
     }
     
-    static func encord(urlString: String, method: HttpMethod, parameters: Parameters?) throws -> URL {
-        if let url = composeURL(urlString: urlString, method: method, parameters: parameters) {
+    static func encord(urlString: String, method: HttpMethod, paramDic: Dictionary<String, Any>?) throws -> URL {
+        if let url = composeURL(urlString: urlString, method: method, paramDic: paramDic) {
             return url
         } else {
 //            throw NetworkError.requestError(.invaliedURL(urlString))
@@ -31,8 +31,8 @@ struct URLEncording {
         }
     }
     
-    private static func composeURL(urlString: String, method: HttpMethod, parameters: Parameters?) -> URL? {
-        guard method == .get, let params = parameters else {
+    private static func composeURL(urlString: String, method: HttpMethod, paramDic: Dictionary<String, Any>?) -> URL? {
+        guard method == .get, let params = paramDic else {
 //            return URL(string: URLS.Domain + urlString)
             return nil
         }
@@ -41,7 +41,7 @@ struct URLEncording {
         return URL(string: url)
     }
     
-    private static func queryString(with params: Parameters) -> String {
+    private static func queryString(with params: Dictionary<String, Any>) -> String {
         var queryString = "?"
         
         for (key, value) in params {

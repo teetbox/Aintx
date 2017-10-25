@@ -10,11 +10,32 @@ import Foundation
 
 public protocol HttpRequest {
     var responseType: ResponseType { get set }
-    
     var urlRequest: URLRequest? { get set }
     var error: HttpError? { get set  }
     
-    func fire(completion: @escaping (HttpResponse) -> Void)
+    func go(completion: @escaping (HttpResponse) -> Void)
+    
+    mutating func setAuthorization(_ identifier: String)
+}
+
+extension HttpRequest {
+    
+    public var authToken: String? {
+        get {
+            return urlRequest?.value(forHTTPHeaderField: "Authorization")}
+        set {
+            urlRequest?.setValue(newValue, forHTTPHeaderField: "Authorization")
+        }
+    }
+    
+    public var basicAuth: String? {
+        return nil
+    }
+    
+    public mutating func setAuthorization(_ identifier: String) {
+        urlRequest?.setValue(identifier, forHTTPHeaderField: "Authorization")
+    }
+    
 }
 
 public struct HttpDataRequest: HttpRequest {
@@ -24,13 +45,13 @@ public struct HttpDataRequest: HttpRequest {
     public let session: URLSession
     public var responseType: ResponseType
     
-    public var queryString: Dictionary<String, String>?
-    public var parameters: Dictionary<String, Any>?
+    public var queryDic: Dictionary<String, String>?
+    public var paramDic: Dictionary<String, Any>?
     
     public var urlRequest: URLRequest?
     public var error: HttpError?
     
-    public init(base: String, path: String, responseType: ResponseType = .json, queryString: Dictionary<String, String>?, parameters: Parameters?, session: URLSession) {
+    init(base: String, path: String, responseType: ResponseType = .json, queryDic: Dictionary<String, String>?, paramDic: Dictionary<String, Any>?, session: URLSession) {
         self.base = base
         self.path = path
         self.session = session
@@ -42,7 +63,7 @@ public struct HttpDataRequest: HttpRequest {
         }
         
         do {
-            let _ = try URLEncording.encord(urlString: base + path, method: .get, parameters: nil)
+            let _ = try URLEncording.encord(urlString: base + path, method: .get, paramDic: nil)
         } catch {
             self.error = error as? HttpError
         }
@@ -52,7 +73,7 @@ public struct HttpDataRequest: HttpRequest {
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
     }
     
-    public func fire(completion: @escaping (HttpResponse) -> Void) {
+    public func go(completion: @escaping (HttpResponse) -> Void) {
         guard error == nil else {
             completion(HttpResponse(error: error))
             return
@@ -73,20 +94,20 @@ public struct HttpUploadRequest: HttpRequest {
     public let session: URLSession
     public var responseType: ResponseType
     
-    public var queryString: Dictionary<String, String>?
-    public var parameters: Dictionary<String, Any>?
+    public var queryDic: Dictionary<String, String>?
+    public var paramDic: Dictionary<String, Any>?
     
     public var urlRequest: URLRequest?
     public var error: HttpError?
     
-    public init(base: String, path: String, responseType: ResponseType = .json, queryString: Dictionary<String, String>?, parameters: Parameters?, session: URLSession) {
+    init(base: String, path: String, responseType: ResponseType = .json, queryDic: Dictionary<String, String>?, paramDic: Dictionary<String, Any>?, session: URLSession) {
         self.base = base
         self.path = path
         self.session = session
         self.responseType = responseType
     }
     
-    public func fire(completion: @escaping (HttpResponse) -> Void) {
+    public func go(completion: @escaping (HttpResponse) -> Void) {
         
     }
     
@@ -99,26 +120,39 @@ public struct FakeRequest: HttpRequest {
     public var httpMethod: HttpMethod
     public var requestType: RequestType
     public var responseType: ResponseType
-    public var queryString: Dictionary<String, String>?
-    public var parameters: Dictionary<String, Any>?
+    public var queryDic: Dictionary<String, String>?
+    public var paramDic: Dictionary<String, Any>?
     public var session: URLSession?
     
     public var urlRequest: URLRequest?
     public var error: HttpError?
     
-    public init(base: String, path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, session: URLSession) {
+    init(base: String, path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, session: URLSession) {
         self.base = base
         self.path = path
         self.httpMethod = method
         self.requestType = requestType
         self.responseType = responseType
-        self.queryString = queryString
-        self.parameters = parameters
+        self.queryDic = queryDic
+        self.paramDic = paramDic
         self.session = session
+        
+        guard let url = URL(string: base + path) else {
+            error = HttpError.invalidURL(base + path)
+            return
+        }
+        
+        do {
+            let _ = try URLEncording.encord(urlString: base + path, method: .get, paramDic: nil)
+        } catch {
+            self.error = error as? HttpError
+        }
+        
+        urlRequest = URLRequest(url: url)
     }
     
-    public func fire(completion: @escaping (HttpResponse) -> Void) {
-        
+    public func go(completion: @escaping (HttpResponse) -> Void) {
+        completion(HttpResponse(fakeRequest: self))
     }
     
 }

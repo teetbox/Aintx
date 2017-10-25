@@ -35,8 +35,6 @@ public enum ResponseType {
     case stream
 }
 
-public typealias Parameters = [String: Any]
-
 public struct Aintx {
     
     public let base: String
@@ -61,100 +59,100 @@ public struct Aintx {
     // MARK: - Methods
     
     /* ✅ */
-    public func go(_ path: String, queryString: [String: String]? = nil, parameters: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) {
-        go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters ,completion: completion)
+    public func go(_ path: String, queryDic: [String: String]? = nil, paramDic: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic ,completion: completion)
     }
     
     /* ✅ */
-    public func go(_ path: String, method: HttpMethod, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, completion: @escaping (HttpResponse) -> Void) {
-        go(path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters ,completion: completion)
+    public func go(_ path: String, method: HttpMethod, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: method, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic ,completion: completion)
     }
     
     /* ✅ */
-    public func go(_ path: String, requestType: RequestType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, completion: @escaping (HttpResponse) -> Void) {
-        go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters ,completion: completion)
+    public func go(_ path: String, requestType: RequestType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic ,completion: completion)
     }
     
     /* ✅ */
-    public func go(_ path: String, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, completion: @escaping (HttpResponse) -> Void) {
-        go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters ,completion: completion)
+    public func go(_ path: String, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic ,completion: completion)
     }
     
     /* ✅ */
-    public func go(_ path: String, method: HttpMethod, requestType: RequestType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, completion: @escaping (HttpResponse) -> Void) {
-        go(path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters ,completion: completion)
+    public func go(_ path: String, method: HttpMethod, requestType: RequestType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: method, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic ,completion: completion)
     }
     
     /* ✅ */
-    public func go(_ path: String, method: HttpMethod, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, completion: @escaping (HttpResponse) -> Void) {
-        go(path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters ,completion: completion)
+    public func go(_ path: String, method: HttpMethod, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: method, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic ,completion: completion)
     }
     
     /* ✅ */
-    public func go(_ path: String, requestType: RequestType, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, completion: @escaping (HttpResponse) -> Void) {
-        go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters ,completion: completion)
+    public func go(_ path: String, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic ,completion: completion)
     }
     
     /* ✅ */
-    public func go(_ path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, completion: @escaping (HttpResponse) -> Void) {
-        let httpRequest = createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
+    public func go(_ path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, completion: @escaping (HttpResponse) -> Void) {
+        let httpRequest = createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic)
         if (isFake) {
             let httpResponse = HttpResponse(fakeRequest: httpRequest)
             completion(httpResponse)
             return
         }
-        httpRequest.fire(completion: completion)
+        httpRequest.go(completion: completion)
     }
     
     /* ✅ */
-    public func createHttpRequest(path: String, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) -> HttpRequest {
-        return createHttpRequest(path: path, method: httpMethod, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
+    public func createHttpRequest(path: String, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil) -> HttpRequest {
+        return createHttpRequest(path: path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic)
     }
     
     /* ✅ */
-    public func createHttpRequest(path: String, method: HttpMethod, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) -> HttpRequest {
-        return createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
+    public func createHttpRequest(path: String, method: HttpMethod, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil) -> HttpRequest {
+        return createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic)
     }
     
     /* ✅ */
-    public func createHttpRequest(path: String, requestType: RequestType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) -> HttpRequest {
-        return createHttpRequest(path: path, method: httpMethod, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
+    public func createHttpRequest(path: String, requestType: RequestType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil) -> HttpRequest {
+        return createHttpRequest(path: path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic)
     }
     
     /* ✅ */
-    public func createHttpRequest(path: String, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) -> HttpRequest {
-        return createHttpRequest(path: path, method: httpMethod, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
+    public func createHttpRequest(path: String, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil) -> HttpRequest {
+        return createHttpRequest(path: path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic)
     }
     
     /* ✅ */
-    public func createHttpRequest(path: String, method: HttpMethod, requestType: RequestType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) -> HttpRequest {
-        return createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
+    public func createHttpRequest(path: String, method: HttpMethod, requestType: RequestType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil) -> HttpRequest {
+        return createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic)
     }
     
     /* ✅ */
-    public func createHttpRequest(path: String, method: HttpMethod, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) -> HttpRequest {
-        return createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
+    public func createHttpRequest(path: String, method: HttpMethod, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil) -> HttpRequest {
+        return createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic)
     }
     
     /* ✅ */
-    public func createHttpRequest(path: String, requestType: RequestType, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) -> HttpRequest {
-        return createHttpRequest(path: path, method: httpMethod, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
+    public func createHttpRequest(path: String, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil) -> HttpRequest {
+        return createHttpRequest(path: path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic)
     }
     
     /* ✅ */
-    public func createHttpRequest(path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) -> HttpRequest {
+    public func createHttpRequest(path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil) -> HttpRequest {
         let httpRequest: HttpRequest
         
         if (isFake) {
-            httpRequest = FakeRequest(base: base, path: path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters, session: session)
+            httpRequest = FakeRequest(base: base, path: path, method: method, requestType: requestType, responseType: responseType, queryDic: queryDic, paramDic: paramDic, session: session)
             return httpRequest
         }
         
         switch requestType {
         case .data:
-            httpRequest = HttpDataRequest(base: base, path: path, responseType: responseType, queryString: nil, parameters: nil, session: session)
+            httpRequest = HttpDataRequest(base: base, path: path, responseType: responseType, queryDic: nil, paramDic: nil, session: session)
         default:
-            httpRequest = HttpDataRequest(base: base, path: path, responseType: responseType, queryString: nil, parameters: nil, session: session)
+            httpRequest = HttpDataRequest(base: base, path: path, responseType: responseType, queryDic: nil, paramDic: nil, session: session)
         }
         
         return httpRequest
@@ -168,7 +166,7 @@ public struct Aintx {
             return
         }
         
-        httpRequest.fire(completion: completion)
+        httpRequest.go(completion: completion)
     }
     
 }

@@ -26,7 +26,8 @@ public struct HttpResponse: Response {
         return parseJSON()
     }
     
-    public init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
+    /* ✅ */
+    init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
         self.data = data
         self.urlResponse = response
         self.error = error
@@ -46,11 +47,12 @@ public struct HttpResponse: Response {
 }
 
 extension HttpResponse {
-    
+
+    /* ✅ */
     init(fakeRequest: HttpRequest) {
         self.fakeRequest = fakeRequest as? FakeRequest
     }
-    
+
 }
 
 struct DecodableResponse<T: Decodable>: Response {
