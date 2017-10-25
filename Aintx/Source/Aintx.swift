@@ -97,14 +97,13 @@ public struct Aintx {
     
     /* ✅ */
     public func go(_ path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil, completion: @escaping (HttpResponse) -> Void) {
+        let httpRequest = createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
         if (isFake) {
-            let fakeResponse = HttpResponse(path: path, method: method, requestType: requestType, responseType: responseType, queryString: queryString, parameters: parameters)
-            completion(fakeResponse)
+            let httpResponse = HttpResponse(fakeRequest: httpRequest)
+            completion(httpResponse)
             return
         }
-        
-        let request = createHttpRequest(path: path, method: method, requestType: requestType, responseType: responseType)
-        request.fire(completion: completion)
+        httpRequest.fire(completion: completion)
     }
     
     /* ✅ */
@@ -162,14 +161,14 @@ public struct Aintx {
     }
     
     /* ✅ */
-    public func go(_ request: HttpRequest, completion: @escaping (HttpResponse) -> Void) {
-        if (request is FakeRequest) {
-            let fakeResponse = HttpResponse(data: nil, response: nil, error: nil)
+    public func go(_ httpRequest: HttpRequest, completion: @escaping (HttpResponse) -> Void) {
+        if (httpRequest is FakeRequest) {
+            let fakeResponse = HttpResponse(fakeRequest: httpRequest)
             completion(fakeResponse)
             return
         }
         
-        request.fire(completion: completion)
+        httpRequest.fire(completion: completion)
     }
     
 }

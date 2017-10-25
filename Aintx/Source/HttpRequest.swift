@@ -94,10 +94,10 @@ public struct HttpUploadRequest: HttpRequest {
 
 public struct FakeRequest: HttpRequest {
     
-    public var base: String?
-    public var path: String?
-    public var httpMethod: HttpMethod?
-    public var requestType: RequestType?
+    public var base: String
+    public var path: String
+    public var httpMethod: HttpMethod
+    public var requestType: RequestType
     public var responseType: ResponseType
     public var queryString: Dictionary<String, String>?
     public var parameters: Dictionary<String, Any>?

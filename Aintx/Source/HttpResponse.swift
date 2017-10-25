@@ -10,15 +10,17 @@ import Foundation
 
 protocol Response {
     var data: Data? { get }
-    var response: URLResponse? { get }
+    var urlResponse: URLResponse? { get }
     var error: Error? { get }
 }
 
 public struct HttpResponse: Response {
     
     public var data: Data?
-    public var response: URLResponse?
+    public var urlResponse: URLResponse?
     public var error: Error?
+    
+    public var fakeRequest: FakeRequest?
     
     var json: [String: Any]? {
         return parseJSON()
@@ -26,26 +28,8 @@ public struct HttpResponse: Response {
     
     public init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
         self.data = data
-        self.response = response
+        self.urlResponse = response
         self.error = error
-    }
-    
-    // MARK: Fake Response
-    
-    public var path: String?
-    public var httpMethod: HttpMethod?
-    public var requestType: RequestType?
-    public var responseType: ResponseType?
-    public var queryString: [String: String]?
-    public var parameters: [String: Any]?
-    
-    init(path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryString: Dictionary<String, String>? = nil, parameters: Parameters? = nil) {
-        self.path = path
-        self.httpMethod = method
-        self.requestType = requestType
-        self.responseType = responseType
-        self.queryString = queryString
-        self.parameters = parameters
     }
     
     // MARK: - Methods
@@ -61,17 +45,25 @@ public struct HttpResponse: Response {
     
 }
 
+extension HttpResponse {
+    
+    init(fakeRequest: HttpRequest) {
+        self.fakeRequest = fakeRequest as? FakeRequest
+    }
+    
+}
+
 struct DecodableResponse<T: Decodable>: Response {
     
     let data: Data?
-    let response: URLResponse?
+    let urlResponse: URLResponse?
     let error: Error?
     
     var entity: T?
     
     init(data: Data?, response: URLResponse?, error: Error?) {
         self.data = data
-        self.response = response
+        self.urlResponse = response
         self.error = error
     }
     

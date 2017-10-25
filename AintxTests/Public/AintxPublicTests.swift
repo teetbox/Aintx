@@ -46,137 +46,137 @@ class AintxPublicTests: XCTestCase {
         XCTAssertEqual(aintx.config, .background("#bg-1"))
     }
     
-    func testGoPathWithDefaultSettings() {
+    func testGoPath() {
         aintx.go(fakePath) { response in
-            XCTAssertEqual(response.path, "/fake/path")
-            XCTAssertEqual(response.httpMethod, .get)
-            XCTAssertEqual(response.requestType, .data)
-            XCTAssertEqual(response.responseType, .json)
-            XCTAssertNil(response.queryString)
-            XCTAssertNil(response.parameters)
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .get)
+            XCTAssertEqual(response.fakeRequest!.requestType, .data)
+            XCTAssertEqual(response.fakeRequest!.responseType, .json)
+            XCTAssertNil(response.fakeRequest!.queryString)
+            XCTAssertNil(response.fakeRequest!.parameters)
         }
     }
     
     func testGoPathWithQueryString() {
         aintx.go(fakePath, queryString: ["key": "value"]) { (response) in
-            XCTAssertEqual(response.path, "/fake/path")
-            XCTAssertEqual(response.queryString!, ["key": "value"])
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.queryString!, ["key": "value"])
         }
     }
     
     func testGoPathWithParameters() {
         let parameters = ["key": "value".data(using: .utf8)!]
         aintx.go(fakePath, parameters: parameters) { (response) in
-            XCTAssertEqual(response.path, "/fake/path")
-            XCTAssertEqual(response.parameters!["key"] as! Data, "value".data(using: .utf8)!)
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.parameters!["key"] as! Data, "value".data(using: .utf8)!)
         }
     }
     
     func testGoPathWithHttpMethodPut() {
         aintx.httpMethod = .put
         aintx.go(fakePath) { response in
-            XCTAssertEqual(response.httpMethod, .put)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .put)
         }
         
         aintx.httpMethod = .get
         aintx.go(fakePath, method: .put) { (response) in
-            XCTAssertEqual(response.httpMethod, .put)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .put)
         }
     }
     
     func testGoPathWithHttpMethodPost() {
         aintx.httpMethod = .post
         aintx.go(fakePath) { response in
-            XCTAssertEqual(response.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
         }
         
         aintx.httpMethod = .get
         aintx.go(fakePath, method: .post) { (response) in
-            XCTAssertEqual(response.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
         }
     }
     
     func testGoPathWithHttpMethodDelete() {
         aintx.httpMethod = .delete
         aintx.go(fakePath) { response in
-            XCTAssertEqual(response.httpMethod, .delete)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .delete)
         }
         
         aintx.httpMethod = .get
         aintx.go(fakePath, method: .delete) { (response) in
-            XCTAssertEqual(response.httpMethod, .delete)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .delete)
         }
     }
     
     func testGoPathWithRequestTypeDownload() {
         aintx.requestType = .downLoad
         aintx.go(fakePath) { response in
-            XCTAssertEqual(response.requestType, .downLoad)
+            XCTAssertEqual(response.fakeRequest!.requestType, .downLoad)
         }
         
         aintx.requestType = .data
         aintx.go(fakePath, requestType: .downLoad) { (response) in
-            XCTAssertEqual(response.requestType, .downLoad)
+            XCTAssertEqual(response.fakeRequest!.requestType, .downLoad)
         }
     }
     
     func testGoPathWithRequestTypeUpload() {
         aintx.requestType = .upload
         aintx.go(fakePath) { response in
-            XCTAssertEqual(response.requestType, .upload)
+            XCTAssertEqual(response.fakeRequest!.requestType, .upload)
         }
         
         aintx.requestType = .data
         aintx.go(fakePath, requestType: .downLoad) { (response) in
-            XCTAssertEqual(response.requestType, .downLoad)
+            XCTAssertEqual(response.fakeRequest!.requestType, .downLoad)
         }
     }
     
     func testGoPathWithRequestTypeStream() {
         aintx.requestType = .stream
         aintx.go(fakePath) { response in
-            XCTAssertEqual(response.requestType, .stream)
+            XCTAssertEqual(response.fakeRequest!.requestType, .stream)
         }
         
         aintx.requestType = .data
         aintx.go(fakePath, requestType: .stream) { (response) in
-            XCTAssertEqual(response.requestType, .stream)
+            XCTAssertEqual(response.fakeRequest!.requestType, .stream)
         }
     }
     
     func testGoWithResponseTypeData() {
         aintx.responseType = .data
         aintx.go(fakePath) { (response) in
-            XCTAssertEqual(response.responseType, .data)
+            XCTAssertEqual(response.fakeRequest!.responseType, .data)
         }
         
         aintx.responseType = .json
         aintx.go(fakePath, responseType: .data) { (response) in
-            XCTAssertEqual(response.responseType, .data)
+            XCTAssertEqual(response.fakeRequest!.responseType, .data)
         }
     }
     
     func testGoWithResponseTypeImage() {
         aintx.responseType = .image
         aintx.go(fakePath) { (response) in
-            XCTAssertEqual(response.responseType, .image)
+            XCTAssertEqual(response.fakeRequest!.responseType, .image)
         }
         
         aintx.responseType = .json
         aintx.go(fakePath, responseType: .image) { (response) in
-            XCTAssertEqual(response.responseType, .image)
+            XCTAssertEqual(response.fakeRequest!.responseType, .image)
         }
     }
     
     func testGoWithResponseTypeStream() {
         aintx.responseType = .stream
         aintx.go(fakePath) { (response) in
-            XCTAssertEqual(response.responseType, .stream)
+            XCTAssertEqual(response.fakeRequest!.responseType, .stream)
         }
         
         aintx.responseType = .json
         aintx.go(fakePath, responseType: .stream) { (response) in
-            XCTAssertEqual(response.responseType, .stream)
+            XCTAssertEqual(response.fakeRequest!.responseType, .stream)
         }
     }
     
@@ -184,15 +184,15 @@ class AintxPublicTests: XCTestCase {
         aintx.httpMethod = .post
         aintx.requestType = .upload
         aintx.go(fakePath) { (response) in
-            XCTAssertEqual(response.httpMethod, .post)
-            XCTAssertEqual(response.requestType, .upload)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.requestType, .upload)
         }
         
         aintx.httpMethod = .get
         aintx.responseType = .json
         aintx.go(fakePath, method: .post, requestType: .upload) { (response) in
-            XCTAssertEqual(response.httpMethod, .post)
-            XCTAssertEqual(response.requestType, .upload)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.requestType, .upload)
         }
     }
     
@@ -200,15 +200,15 @@ class AintxPublicTests: XCTestCase {
         aintx.httpMethod = .post
         aintx.responseType = .image
         aintx.go(fakePath) { (response) in
-            XCTAssertEqual(response.httpMethod, .post)
-            XCTAssertEqual(response.responseType, .image)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.responseType, .image)
         }
         
         aintx.httpMethod = .get
         aintx.responseType = .json
         aintx.go(fakePath, method: .post, responseType: .image) { (response) in
-            XCTAssertEqual(response.httpMethod, .post)
-            XCTAssertEqual(response.responseType, .image)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.responseType, .image)
         }
     }
     
@@ -216,15 +216,15 @@ class AintxPublicTests: XCTestCase {
         aintx.requestType = .downLoad
         aintx.responseType = .image
         aintx.go(fakePath) { (response) in
-            XCTAssertEqual(response.requestType, .downLoad)
-            XCTAssertEqual(response.responseType, .image)
+            XCTAssertEqual(response.fakeRequest!.requestType, .downLoad)
+            XCTAssertEqual(response.fakeRequest!.responseType, .image)
         }
         
         aintx.requestType = .data
         aintx.responseType = .json
         aintx.go(fakePath, requestType: .downLoad, responseType: .image) { (response) in
-            XCTAssertEqual(response.requestType, .downLoad)
-            XCTAssertEqual(response.responseType, .image)
+            XCTAssertEqual(response.fakeRequest!.requestType, .downLoad)
+            XCTAssertEqual(response.fakeRequest!.responseType, .image)
         }
     }
     
@@ -233,39 +233,29 @@ class AintxPublicTests: XCTestCase {
         aintx.requestType = .downLoad
         aintx.responseType = .image
         aintx.go(fakePath) { (response) in
-            XCTAssertEqual(response.httpMethod, .post)
-            XCTAssertEqual(response.requestType, .downLoad)
-            XCTAssertEqual(response.responseType, .image)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.requestType, .downLoad)
+            XCTAssertEqual(response.fakeRequest!.responseType, .image)
         }
         
         aintx.httpMethod = .get
         aintx.requestType = .data
         aintx.responseType = .json
         aintx.go(fakePath, method: .put, requestType: .upload, responseType: .data) { (response) in
-            XCTAssertEqual(response.httpMethod, .put)
-            XCTAssertEqual(response.requestType, .upload)
-            XCTAssertEqual(response.responseType, .data)
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .put)
+            XCTAssertEqual(response.fakeRequest!.requestType, .upload)
+            XCTAssertEqual(response.fakeRequest!.responseType, .data)
         }
     }
     
-    func testGoPathWithAll() {
+    func testGoPathWithHttpMethodAndRequestTypeAndResponseTypeAndQueryStringAndParameters() {
         aintx.go(fakePath, method: .post, requestType: .upload, responseType: .data, queryString: ["queryKey": "queryValue"], parameters: ["paramKey": "paramValue"]) { (response) in
-            XCTAssertEqual(response.path, "/fake/path")
-            XCTAssertEqual(response.httpMethod, .post)
-            XCTAssertEqual(response.requestType, .upload)
-            XCTAssertEqual(response.responseType, .data)
-            XCTAssertEqual(response.queryString!, ["queryKey": "queryValue"])
-            XCTAssertEqual(response.parameters!["paramKey"] as! String, "paramValue")
-        }
-    }
-    
-    func testGoRequest() {
-        let fakeRequest = aintx.createHttpRequest(path: fakePath)
-        
-        aintx.go(fakeRequest) { (response) in
-            XCTAssertNil(response.data)
-            XCTAssertNil(response.response)
-            XCTAssertNil(response.error)
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.requestType, .upload)
+            XCTAssertEqual(response.fakeRequest!.responseType, .data)
+            XCTAssertEqual(response.fakeRequest!.queryString!, ["queryKey": "queryValue"])
+            XCTAssertEqual(response.fakeRequest!.parameters!["paramKey"] as! String, "paramValue")
         }
     }
     
@@ -383,6 +373,19 @@ class AintxPublicTests: XCTestCase {
         XCTAssertEqual(fakeRequest.responseType, .data)
         XCTAssertEqual(fakeRequest.queryString!, ["fake": "queryString"])
         XCTAssertEqual(fakeRequest.parameters as! Dictionary, ["fake": "parameters"])
+    }
+    
+    func testGoRequest() {
+        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, requestType: .upload, responseType: .data, queryString: ["queryKey": "queryValue"], parameters: ["paramKey": "paramValue"])
+        
+        aintx.go(fakeRequest) { (response) in
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
+            XCTAssertEqual(response.fakeRequest!.requestType, .upload)
+            XCTAssertEqual(response.fakeRequest!.responseType, .data)
+            XCTAssertEqual(response.fakeRequest!.queryString!, ["queryKey": "queryValue"])
+            XCTAssertEqual(response.fakeRequest!.parameters!["paramKey"] as! String, "paramValue")
+        }
     }
     
 }
