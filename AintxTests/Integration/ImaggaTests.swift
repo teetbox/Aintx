@@ -27,10 +27,11 @@ class ImaggaTests: XCTestCase {
     
     func testGet() {
         let path = "/v1/tagging"
-        let queryDic = ["url": "http://imagga.com/static/images/tagging/wind-farm-538576_640.jpg"]
+        let queryDic = ["url": "https://www.sciencenewsforstudents.org/sites/default/files/2016/12/main/articles/860_main_windpower.png"]
         
         var request = aintx.createHttpRequest(path: path, queryDic: queryDic)
-        request.authToken = Basic_Token
+
+        request.setAuthorization(basicToken: Basic_Token)
         
         aintx.go(request) { (response) in
             XCTAssertNotNil(response.data)

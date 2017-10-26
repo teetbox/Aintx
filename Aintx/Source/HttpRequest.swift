@@ -15,25 +15,29 @@ public protocol HttpRequest {
     
     func go(completion: @escaping (HttpResponse) -> Void)
     
-    mutating func setAuthorization(_ identifier: String)
+    mutating func setAuthorization(username: String, password: String)
+    mutating func setAuthorization(basicToken: String)
 }
 
 extension HttpRequest {
     
-    public var authToken: String? {
-        get {
-            return urlRequest?.value(forHTTPHeaderField: "Authorization")}
-        set {
-            urlRequest?.setValue(newValue, forHTTPHeaderField: "Authorization")
+    public mutating func setAuthorization(username: String, password: String) {
+        let loginString = "\(username):\(password)"
+        let loginData = loginString.data(using: .utf8)!
+        let base64LoginString = loginData.base64EncodedString()
+
+        urlRequest?.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
+    }
+    
+    public mutating func setAuthorization(basicToken: String) {
+        let basic = "Basic "
+        var token = basicToken
+        if token.hasPrefix(basic) {
+            let spaceIndex = token.index(of: " ")!
+            token = String(token[spaceIndex...])
         }
-    }
-    
-    public var basicAuth: String? {
-        return nil
-    }
-    
-    public mutating func setAuthorization(_ identifier: String) {
-        urlRequest?.setValue(identifier, forHTTPHeaderField: "Authorization")
+        
+        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
     }
     
 }
@@ -50,6 +54,8 @@ public struct HttpDataRequest: HttpRequest {
     
     public var urlRequest: URLRequest?
     public var error: HttpError?
+    
+    public var base64LoginString: String?
     
     init(base: String, path: String, responseType: ResponseType = .json, queryDic: Dictionary<String, String>?, paramDic: Dictionary<String, Any>?, session: URLSession) {
         self.base = base
@@ -71,6 +77,7 @@ public struct HttpDataRequest: HttpRequest {
         urlRequest = URLRequest(url: url)
         urlRequest?.httpMethod = "GET"
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
     }
     
     public func go(completion: @escaping (HttpResponse) -> Void) {
@@ -100,6 +107,8 @@ public struct HttpUploadRequest: HttpRequest {
     public var urlRequest: URLRequest?
     public var error: HttpError?
     
+    public var base64LoginString: String?
+    
     init(base: String, path: String, responseType: ResponseType = .json, queryDic: Dictionary<String, String>?, paramDic: Dictionary<String, Any>?, session: URLSession) {
         self.base = base
         self.path = path
@@ -126,6 +135,8 @@ public struct FakeRequest: HttpRequest {
     
     public var urlRequest: URLRequest?
     public var error: HttpError?
+    
+    public var base64LoginString: String?
     
     init(base: String, path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, session: URLSession) {
         self.base = base

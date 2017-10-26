@@ -32,11 +32,21 @@ class HttpRequestPublicTests: XCTestCase {
         }
     }
     
-    func testSetAuthorization() {
-        let token = "access-token"
-        httpRequest.setAuthorization(token)
+    func testSetAuthorizationWithUsernameAndPassword() {
+        httpRequest.setAuthorization(username: "username", password: "password")
         
-        XCTAssertEqual(httpRequest.authToken, token)
+        let loginString = "username:password"
+        let loginData = loginString.data(using: .utf8)!
+        let base64LoginString = loginData.base64EncodedString()
+        
+        XCTAssertEqual(httpRequest.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic \(base64LoginString)")
     }
-
+    
+    func testSetAuthorizationWithBasicToken() {
+        let token = "abc"
+        httpRequest.setAuthorization(basicToken: token)
+        
+        XCTAssertEqual(httpRequest.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic \(token)")
+    }
+    
 }
