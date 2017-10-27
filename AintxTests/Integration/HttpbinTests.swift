@@ -12,13 +12,13 @@ import Aintx
 class HttpbinTests: XCTestCase {
 
     var aintx: Aintx!
-    var asyncExpectation: XCTestExpectation!
+    var async: XCTestExpectation!
     
     override func setUp() {
         super.setUp()
         
         aintx = Aintx(base: "http://httpbin.org")
-        asyncExpectation = expectation(description: "async")
+        async = expectation(description: "async")
     }
     
     func testGet() {
@@ -26,11 +26,19 @@ class HttpbinTests: XCTestCase {
             XCTAssertNil(httpResponse.error)
             XCTAssertNotNil(httpResponse.data)
             
-            self.asyncExpectation.fulfill()
+            self.async.fulfill()
         }
         
-        wait(for: [asyncExpectation], timeout: 5)
+        wait(for: [async], timeout: 5)
     }
+    
+//    func testPost() {
+//        aintx.go("/post", method: .post, params: ["foo": "bar"]) { (response) in
+//            self.async.fulfill()
+//        }
+//        
+//        wait(for: [async], timeout: 5)
+//    }
     
     func testGetWithQueryString() {
         // https://httpbin.org/get?show_env=1
@@ -38,10 +46,10 @@ class HttpbinTests: XCTestCase {
             XCTAssertNil(httpResponse.error)
             XCTAssertNotNil(httpResponse.data)
             
-            self.asyncExpectation.fulfill()
+            self.async.fulfill()
         }
         
-        wait(for: [asyncExpectation], timeout: 5)
+        wait(for: [async], timeout: 5)
     }
     
     func testPost() {
@@ -49,10 +57,10 @@ class HttpbinTests: XCTestCase {
             XCTAssertNil(httpResponse.error)
             XCTAssertNotNil(httpResponse.data)
             
-            self.asyncExpectation.fulfill()
+            self.async.fulfill()
         }
         
-        wait(for: [asyncExpectation], timeout: 5)
+        wait(for: [async], timeout: 5)
     }
     
 }

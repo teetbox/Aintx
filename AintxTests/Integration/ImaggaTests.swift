@@ -12,7 +12,7 @@ import Aintx
 class ImaggaTests: XCTestCase {
     
     var aintx: Aintx!
-    var asyncExpectation: XCTestExpectation!
+    var async: XCTestExpectation!
     
     let API_Key = "acc_f204118321e5ff9"
     let API_Secret = "374a892e7f89aaadcd7c98cc63f208b2"
@@ -22,7 +22,7 @@ class ImaggaTests: XCTestCase {
         super.setUp()
 
         aintx = Aintx(base: "https://api.imagga.com")
-        asyncExpectation = expectation(description: "async")
+        async = expectation(description: "async")
     }
     
     func testGet() {
@@ -37,10 +37,10 @@ class ImaggaTests: XCTestCase {
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
-            self.asyncExpectation.fulfill()
+            self.async.fulfill()
         }
         
-        wait(for: [asyncExpectation], timeout: 30)
+        wait(for: [async], timeout: 30)
     }
     
 }
