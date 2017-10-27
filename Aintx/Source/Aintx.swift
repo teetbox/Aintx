@@ -37,9 +37,8 @@ public enum ResponseType {
 
 public struct Aintx {
     
-    public let base: String
-    public let config: SessionConfig
-    
+    let base: String
+    let config: SessionConfig
     let session: URLSession
     
     public var httpMethod: HttpMethod = .get
@@ -150,9 +149,9 @@ public struct Aintx {
         
         switch requestType {
         case .data:
-            httpRequest = HttpDataRequest(base: base, path: path, responseType: responseType, queryDic: nil, paramDic: nil, session: session)
+            httpRequest = HttpDataRequest(base: base, path: path, method: method, responseType: responseType, queryDic: nil, paramDic: nil, session: session)
         default:
-            httpRequest = HttpDataRequest(base: base, path: path, responseType: responseType, queryDic: nil, paramDic: nil, session: session)
+            httpRequest = HttpDataRequest(base: base, path: path, method: method, responseType: responseType, queryDic: nil, paramDic: nil, session: session)
         }
         
         return httpRequest

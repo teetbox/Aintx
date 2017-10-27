@@ -21,4 +21,8 @@ class PostServerTests: XCTestCase {
         async = expectation(description: "async")
     }
     
+    func testGo() {
+
+    }
+    
 }

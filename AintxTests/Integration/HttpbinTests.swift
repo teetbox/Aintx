@@ -34,8 +34,11 @@ class HttpbinTests: XCTestCase {
     
     func testPostWithParams() {
         aintx.go("/post", method: .post, paramDic: ["foo": "bar"]) { (response) in
+            let httpURLResponse = response.urlResponse as! HTTPURLResponse
+            XCTAssertEqual(httpURLResponse.statusCode, 200)
+            let json = response.json
             
-            XCTAssertNotNil(response.json)
+            XCTAssertNotNil(json)
             self.async.fulfill()
         }
         

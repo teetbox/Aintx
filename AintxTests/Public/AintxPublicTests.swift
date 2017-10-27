@@ -29,21 +29,9 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testInit() {
-        XCTAssertEqual(aintx.base, fakeBase)
-        XCTAssertEqual(aintx.config, .standard)
         XCTAssertEqual(aintx.httpMethod, .get)
         XCTAssertEqual(aintx.requestType, .data)
         XCTAssertEqual(aintx.responseType, .json)
-    }
-    
-    func testInitWithEphemeralSession() {
-        aintx = Aintx(base: fakeBase, config: .ephemeral)
-        XCTAssertEqual(aintx.config, .ephemeral)
-    }
-    
-    func testInitWithBackgroundSession() {
-        aintx = Aintx(base: fakeBase, config: .background("#bg-1"))
-        XCTAssertEqual(aintx.config, .background("#bg-1"))
     }
     
     func testGoPath() {
@@ -261,8 +249,7 @@ class AintxPublicTests: XCTestCase {
     
     func testCreateHttpRequest() {
         let fakeRequest = aintx.createHttpRequest(path: fakePath) as! FakeRequest
-        
-        XCTAssertEqual(fakeRequest.base, aintx.base)
+
         XCTAssertEqual(fakeRequest.path, fakePath)
         XCTAssertEqual(fakeRequest.httpMethod, aintx.httpMethod)
         XCTAssertEqual(fakeRequest.requestType, aintx.requestType)

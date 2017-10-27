@@ -44,7 +44,7 @@ class HttpRequestPublicTests: XCTestCase {
     
     func testSetAuthorizationWithBasicToken() {
         let token = "abc"
-        httpRequest.setAuthorization(basicToken: token)
+        _ = httpRequest.setAuthorization(basicToken: token)
         
         XCTAssertEqual(httpRequest.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic \(token)")
     }

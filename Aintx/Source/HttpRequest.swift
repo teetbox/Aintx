@@ -16,7 +16,7 @@ public protocol HttpRequest {
     func go(completion: @escaping (HttpResponse) -> Void)
     
     mutating func setAuthorization(username: String, password: String)
-    mutating func setAuthorization(basicToken: String)
+    mutating func setAuthorization(basicToken: String) -> Self
 }
 
 extension HttpRequest {
@@ -29,23 +29,13 @@ extension HttpRequest {
         urlRequest?.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
     }
     
-    public mutating func setAuthorization(basicToken: String) {
-        let basic = "Basic "
-        var token = basicToken
-        if token.hasPrefix(basic) {
-            let spaceIndex = token.index(of: " ")!
-            token = String(token[spaceIndex...])
-        }
-        
-        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
-    }
-    
 }
 
 public struct HttpDataRequest: HttpRequest {
     
     public let base: String
     public let path: String
+    public let method: HttpMethod
     public let session: URLSession
     public var responseType: ResponseType
     
@@ -57,9 +47,10 @@ public struct HttpDataRequest: HttpRequest {
     
     public var base64LoginString: String?
     
-    init(base: String, path: String, responseType: ResponseType = .json, queryDic: Dictionary<String, String>?, paramDic: Dictionary<String, Any>?, session: URLSession) {
+    init(base: String, path: String, method: HttpMethod, responseType: ResponseType = .json, queryDic: Dictionary<String, String>?, paramDic: Dictionary<String, Any>?, session: URLSession) {
         self.base = base
         self.path = path
+        self.method = method
         self.session = session
         self.responseType = responseType
         
@@ -75,7 +66,7 @@ public struct HttpDataRequest: HttpRequest {
         }
         
         urlRequest = URLRequest(url: url)
-        urlRequest?.httpMethod = "GET"
+        urlRequest?.httpMethod = method.rawValue
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
         
@@ -83,6 +74,19 @@ public struct HttpDataRequest: HttpRequest {
         let body = try? JSONSerialization.data(withJSONObject: params, options: [])
         
         urlRequest?.httpBody = body
+    }
+    
+    public mutating func setAuthorization(basicToken: String) -> HttpDataRequest {
+        let basic = "Basic "
+        var token = basicToken
+        if token.hasPrefix(basic) {
+            let spaceIndex = token.index(of: " ")!
+            token = String(token[spaceIndex...])
+        }
+        
+        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
+        
+        return self
     }
     
     public func go(completion: @escaping (HttpResponse) -> Void) {
@@ -119,6 +123,18 @@ public struct HttpUploadRequest: HttpRequest {
         self.path = path
         self.session = session
         self.responseType = responseType
+    }
+    
+    public mutating func setAuthorization(basicToken: String) -> HttpUploadRequest {
+        let basic = "Basic "
+        var token = basicToken
+        if token.hasPrefix(basic) {
+            let spaceIndex = token.index(of: " ")!
+            token = String(token[spaceIndex...])
+        }
+        
+        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
+        return self
     }
     
     public func go(completion: @escaping (HttpResponse) -> Void) {
@@ -165,6 +181,18 @@ public struct FakeRequest: HttpRequest {
         }
         
         urlRequest = URLRequest(url: url)
+    }
+    
+    public mutating func setAuthorization(basicToken: String) -> FakeRequest {
+        let basic = "Basic "
+        var token = basicToken
+        if token.hasPrefix(basic) {
+            let spaceIndex = token.index(of: " ")!
+            token = String(token[spaceIndex...])
+        }
+        
+        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
+        return self
     }
     
     public func go(completion: @escaping (HttpResponse) -> Void) {
