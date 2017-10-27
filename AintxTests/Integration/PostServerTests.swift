@@ -22,7 +22,8 @@ class PostServerTests: XCTestCase {
     }
     
     func testGo() {
-
+        async.fulfill()
+        wait(for: [async], timeout: 5)
     }
     
 }

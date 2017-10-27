@@ -31,7 +31,7 @@ class ImaggaTests: XCTestCase {
         
         var request = aintx.createHttpRequest(path: path, queryDic: queryDic)
 
-        request.setAuthorization(basicToken: Basic_Token)
+        _ = request.setAuthorization(basicToken: Basic_Token)
         
         aintx.go(request) { (response) in
             XCTAssertNotNil(response.data)
