@@ -78,6 +78,11 @@ public struct HttpDataRequest: HttpRequest {
         urlRequest?.httpMethod = "GET"
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        guard let params = paramDic else { return }
+        let body = try? JSONSerialization.data(withJSONObject: params, options: [])
+        
+        urlRequest?.httpBody = body
     }
     
     public func go(completion: @escaping (HttpResponse) -> Void) {

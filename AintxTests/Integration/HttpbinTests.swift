@@ -32,13 +32,15 @@ class HttpbinTests: XCTestCase {
         wait(for: [async], timeout: 5)
     }
     
-//    func testPost() {
-//        aintx.go("/post", method: .post, params: ["foo": "bar"]) { (response) in
-//            self.async.fulfill()
-//        }
-//        
-//        wait(for: [async], timeout: 5)
-//    }
+    func testPostWithParams() {
+        aintx.go("/post", method: .post, paramDic: ["foo": "bar"]) { (response) in
+            
+            XCTAssertNotNil(response.json)
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 5)
+    }
     
     func testGetWithQueryString() {
         // https://httpbin.org/get?show_env=1
