@@ -21,7 +21,7 @@ class HttpRequestInternalTests: XCTestCase {
     }
     
     func testInit() {
-        dataRequest = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, queryDic: nil, paramDic: nil, session: URLSession.shared)
+        dataRequest = HttpDataRequest(base: fakeBase, path: fakePath, params: nil, method: .get, session: URLSession.shared)
         
         XCTAssertEqual(dataRequest.base, fakeBase)
         XCTAssertEqual(dataRequest.path, fakePath)

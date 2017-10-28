@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol HttpRequest {
-    var responseType: ResponseType { get set }
+
     var urlRequest: URLRequest? { get set }
     var error: HttpError? { get set  }
     
@@ -37,22 +37,19 @@ public struct HttpDataRequest: HttpRequest {
     public let path: String
     public let method: HttpMethod
     public let session: URLSession
-    public var responseType: ResponseType
-    
-    public var queryDic: Dictionary<String, String>?
-    public var paramDic: Dictionary<String, Any>?
+
+    public var paramDic: [String: Any]?
     
     public var urlRequest: URLRequest?
     public var error: HttpError?
     
     public var base64LoginString: String?
     
-    init(base: String, path: String, method: HttpMethod, responseType: ResponseType = .json, queryDic: Dictionary<String, String>?, paramDic: Dictionary<String, Any>?, session: URLSession) {
+    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
         self.base = base
         self.path = path
         self.method = method
         self.session = session
-        self.responseType = responseType
         
         guard let url = URL(string: base + path) else {
             error = HttpError.invalidURL(base + path)
@@ -99,6 +96,7 @@ public struct HttpDataRequest: HttpRequest {
             let httpResponse = HttpResponse(data: data, response: response, error: error)
             completion(httpResponse)
             }.resume()
+        
     }
     
 }
@@ -108,21 +106,17 @@ public struct HttpUploadRequest: HttpRequest {
     public let base: String
     public let path: String
     public let session: URLSession
-    public var responseType: ResponseType
-    
-    public var queryDic: Dictionary<String, String>?
-    public var paramDic: Dictionary<String, Any>?
+    public var params: [String: Any]?
     
     public var urlRequest: URLRequest?
     public var error: HttpError?
     
     public var base64LoginString: String?
     
-    init(base: String, path: String, responseType: ResponseType = .json, queryDic: Dictionary<String, String>?, paramDic: Dictionary<String, Any>?, session: URLSession) {
+    init(base: String, path: String, params: [String: Any]?, session: URLSession) {
         self.base = base
         self.path = path
         self.session = session
-        self.responseType = responseType
     }
     
     public mutating func setAuthorization(basicToken: String) -> HttpUploadRequest {
@@ -147,11 +141,9 @@ public struct FakeRequest: HttpRequest {
     
     public var base: String
     public var path: String
-    public var httpMethod: HttpMethod
-    public var requestType: RequestType
-    public var responseType: ResponseType
-    public var queryDic: Dictionary<String, String>?
     public var params: [String: Any]?
+    public var method: HttpMethod
+    public var type: TaskType
     public var session: URLSession?
     
     public var urlRequest: URLRequest?
@@ -159,14 +151,12 @@ public struct FakeRequest: HttpRequest {
     
     public var base64LoginString: String?
     
-    init(base: String, path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, params: Dictionary<String, Any>? = nil, session: URLSession) {
+    init(base: String, path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, session: URLSession) {
         self.base = base
         self.path = path
-        self.httpMethod = method
-        self.requestType = requestType
-        self.responseType = responseType
-        self.queryDic = queryDic
         self.params = params
+        self.method = method
+        self.type = type
         self.session = session
         
         guard let url = URL(string: base + path) else {

@@ -22,7 +22,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testGet() {
-        aintx.go("/get") { (httpResponse) in
+        aintx.get("/get") { (httpResponse) in
             XCTAssertNil(httpResponse.error)
             XCTAssertNotNil(httpResponse.data)
             
@@ -33,7 +33,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testPostWithParams() {
-        aintx.go("/post", method: .post, params: ["foo": "bar"]) { (response) in
+        aintx.post("/post", params: ["foo": "bar"]) { (response) in
             let httpURLResponse = response.urlResponse as! HTTPURLResponse
             XCTAssertEqual(httpURLResponse.statusCode, 200)
             let json = response.json
@@ -47,7 +47,7 @@ class HttpbinTests: XCTestCase {
     
     func testGetWithQueryString() {
         // https://httpbin.org/get?show_env=1
-        aintx.go("/get", queryDic: ["show_env": "1"]) { (httpResponse) in
+        aintx.get("/get", params: ["show_env": "1"]) { (httpResponse) in
             XCTAssertNil(httpResponse.error)
             XCTAssertNotNil(httpResponse.data)
             
@@ -58,7 +58,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testPost() {
-        aintx.go("/post", method: .post) { (httpResponse) in
+        aintx.post("/post") { (httpResponse) in
             XCTAssertNil(httpResponse.error)
             XCTAssertNotNil(httpResponse.data)
             

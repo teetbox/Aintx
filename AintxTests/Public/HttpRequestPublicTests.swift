@@ -22,7 +22,7 @@ class HttpRequestPublicTests: XCTestCase {
         
         aintx = Aintx(base: fakeBase)
         aintx.isFake = true
-        httpRequest = aintx.createHttpRequest(path: fakePath)
+        httpRequest = aintx.httpRequest(path: fakePath)
     }
     
     func testGo() {
