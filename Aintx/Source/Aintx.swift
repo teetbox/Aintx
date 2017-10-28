@@ -61,6 +61,18 @@ public struct Aintx {
         go(path, method: .get, requestType: type, params: params, completion: completion)
     }
     
+    public func put(_ path: String, params: [String: Any]? = nil, type: RequestType = .data, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: .put, requestType: type, params: params, completion: completion)
+    }
+    
+    public func post(_ path: String, params: [String: Any]? = nil, type: RequestType = .data, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: .post, requestType: type, params: params, completion: completion)
+    }
+    
+    public func delete(_ path: String, params: [String: Any]? = nil, type: RequestType = .data, completion: @escaping (HttpResponse) -> Void) {
+        go(path, method: .delete, requestType: type, params: params, completion: completion)
+    }
+    
     /* ✅ */
     public func go(_ path: String, queryDic: [String: String]? = nil, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) {
         go(path, method: httpMethod, requestType: requestType, responseType: responseType, queryDic: queryDic, params: params ,completion: completion)
