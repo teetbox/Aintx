@@ -29,7 +29,6 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testInit() {
-        XCTAssertEqual(aintx.httpMethod, .get)
         XCTAssertEqual(aintx.requestType, .data)
         XCTAssertEqual(aintx.responseType, .json)
     }
@@ -41,7 +40,45 @@ class AintxPublicTests: XCTestCase {
             XCTAssertEqual(response.fakeRequest!.requestType, .data)
             XCTAssertEqual(response.fakeRequest!.responseType, .json)
             XCTAssertNil(response.fakeRequest!.queryDic)
-            XCTAssertNil(response.fakeRequest!.paramDic)
+            XCTAssertNil(response.fakeRequest!.params)
+        }
+    }
+    
+    func testGet() {
+        aintx.get(fakePath) { response in
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .get)
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.requestType, .data)
+            XCTAssertNil(response.fakeRequest!.params)
+        }
+    }
+    
+    func testGetWithParams() {
+        aintx.get(fakePath, params: ["key": "value"]) { (response) in
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+        }
+    }
+    
+    func testGetWithRequestType() {
+        aintx.get(fakePath, type: .downLoad) { (response) in
+            XCTAssertEqual(response.fakeRequest!.requestType, .downLoad)
+        }
+        
+        aintx.get(fakePath, type: .stream) { (response) in
+            XCTAssertEqual(response.fakeRequest!.requestType, .stream)
+        }
+        
+        aintx.get(fakePath, type: .upload) { (response) in
+            XCTAssertEqual(response.fakeRequest!.requestType, .upload)
+        }
+    }
+    
+    func testGetWithParamsAndType() {
+        aintx.get(fakePath, params: ["key": "value"], type: .downLoad) { (response) in
+            XCTAssertEqual(response.fakeRequest!.httpMethod, .get)
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.requestType, .downLoad)
         }
     }
     
@@ -54,9 +91,9 @@ class AintxPublicTests: XCTestCase {
     
     func testGoPathWithParameters() {
         let paramDic = ["key": "value".data(using: .utf8)!]
-        aintx.go(fakePath, paramDic: paramDic) { (response) in
+        aintx.go(fakePath, params: paramDic) { (response) in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.paramDic!["key"] as! Data, "value".data(using: .utf8)!)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! Data, "value".data(using: .utf8)!)
         }
     }
     
@@ -237,13 +274,13 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testGoPathWithHttpMethodAndRequestTypeAndResponseTypeAndQueryStringAndParameters() {
-        aintx.go(fakePath, method: .post, requestType: .upload, responseType: .data, queryDic: ["queryKey": "queryValue"], paramDic: ["paramKey": "paramValue"]) { (response) in
+        aintx.go(fakePath, method: .post, requestType: .upload, responseType: .data, queryDic: ["queryKey": "queryValue"], params: ["paramKey": "paramValue"]) { (response) in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
             XCTAssertEqual(response.fakeRequest!.httpMethod, .post)
             XCTAssertEqual(response.fakeRequest!.requestType, .upload)
             XCTAssertEqual(response.fakeRequest!.responseType, .data)
             XCTAssertEqual(response.fakeRequest!.queryDic!, ["queryKey": "queryValue"])
-            XCTAssertEqual(response.fakeRequest!.paramDic!["paramKey"] as! String, "paramValue")
+            XCTAssertEqual(response.fakeRequest!.params!["paramKey"] as! String, "paramValue")
         }
     }
     
@@ -326,44 +363,44 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testCreateHttpRequestWithHttpMethodAndRequestType() {
-        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, requestType: .upload, queryDic: ["fake": "queryDic"], paramDic: ["fake": "paramDic"]) as! FakeRequest
+        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, requestType: .upload, queryDic: ["fake": "queryDic"], params: ["fake": "paramDic"]) as! FakeRequest
         
         XCTAssertEqual(fakeRequest.httpMethod, .post)
         XCTAssertEqual(fakeRequest.requestType, .upload)
         XCTAssertEqual(fakeRequest.queryDic!, ["fake": "queryDic"])
-        XCTAssertEqual(fakeRequest.paramDic as! Dictionary, ["fake": "paramDic"])
+        XCTAssertEqual(fakeRequest.params as! Dictionary, ["fake": "paramDic"])
     }
     
     func testCreateHttpRequestWithHttpMethodAndResponseType() {
-        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, responseType: .data, queryDic: ["fake": "queryDic"], paramDic: ["fake": "paramDic"]) as! FakeRequest
+        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, responseType: .data, queryDic: ["fake": "queryDic"], params: ["fake": "paramDic"]) as! FakeRequest
         
         XCTAssertEqual(fakeRequest.httpMethod, .post)
         XCTAssertEqual(fakeRequest.responseType, .data)
         XCTAssertEqual(fakeRequest.queryDic!, ["fake": "queryDic"])
-        XCTAssertEqual(fakeRequest.paramDic as! Dictionary, ["fake": "paramDic"])
+        XCTAssertEqual(fakeRequest.params as! Dictionary, ["fake": "paramDic"])
     }
     
     func testCreateHttpRequestWithRequestTypeAndResponseType() {
-        let fakeRequest = aintx.createHttpRequest(path: fakePath, requestType: .upload, responseType: .data, queryDic: ["fake": "queryDic"], paramDic: ["fake": "paramDic"]) as! FakeRequest
+        let fakeRequest = aintx.createHttpRequest(path: fakePath, requestType: .upload, responseType: .data, queryDic: ["fake": "queryDic"], params: ["fake": "paramDic"]) as! FakeRequest
         
         XCTAssertEqual(fakeRequest.requestType, .upload)
         XCTAssertEqual(fakeRequest.responseType, .data)
         XCTAssertEqual(fakeRequest.queryDic!, ["fake": "queryDic"])
-        XCTAssertEqual(fakeRequest.paramDic as! Dictionary, ["fake": "paramDic"])
+        XCTAssertEqual(fakeRequest.params as! Dictionary, ["fake": "paramDic"])
     }
     
     func testCreateHttpRequestWithHttpMethodAndRequestTypeAndResponseType() {
-        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, requestType: .upload, responseType: .data, queryDic: ["fake": "queryDic"], paramDic: ["fake": "paramDic"]) as! FakeRequest
+        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, requestType: .upload, responseType: .data, queryDic: ["fake": "queryDic"], params: ["fake": "paramDic"]) as! FakeRequest
         
         XCTAssertEqual(fakeRequest.httpMethod, .post)
         XCTAssertEqual(fakeRequest.requestType, .upload)
         XCTAssertEqual(fakeRequest.responseType, .data)
         XCTAssertEqual(fakeRequest.queryDic!, ["fake": "queryDic"])
-        XCTAssertEqual(fakeRequest.paramDic as! Dictionary, ["fake": "paramDic"])
+        XCTAssertEqual(fakeRequest.params as! Dictionary, ["fake": "paramDic"])
     }
     
     func testGoRequest() {
-        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, requestType: .upload, responseType: .data, queryDic: ["queryKey": "queryValue"], paramDic: ["paramKey": "paramValue"])
+        let fakeRequest = aintx.createHttpRequest(path: fakePath, method: .post, requestType: .upload, responseType: .data, queryDic: ["queryKey": "queryValue"], params: ["paramKey": "paramValue"])
         
         aintx.go(fakeRequest) { (response) in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
@@ -371,7 +408,7 @@ class AintxPublicTests: XCTestCase {
             XCTAssertEqual(response.fakeRequest!.requestType, .upload)
             XCTAssertEqual(response.fakeRequest!.responseType, .data)
             XCTAssertEqual(response.fakeRequest!.queryDic!, ["queryKey": "queryValue"])
-            XCTAssertEqual(response.fakeRequest!.paramDic!["paramKey"] as! String, "paramValue")
+            XCTAssertEqual(response.fakeRequest!.params!["paramKey"] as! String, "paramValue")
         }
     }
     

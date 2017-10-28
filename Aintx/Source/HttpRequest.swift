@@ -151,7 +151,7 @@ public struct FakeRequest: HttpRequest {
     public var requestType: RequestType
     public var responseType: ResponseType
     public var queryDic: Dictionary<String, String>?
-    public var paramDic: Dictionary<String, Any>?
+    public var params: [String: Any]?
     public var session: URLSession?
     
     public var urlRequest: URLRequest?
@@ -159,14 +159,14 @@ public struct FakeRequest: HttpRequest {
     
     public var base64LoginString: String?
     
-    init(base: String, path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, paramDic: Dictionary<String, Any>? = nil, session: URLSession) {
+    init(base: String, path: String, method: HttpMethod, requestType: RequestType, responseType: ResponseType, queryDic: Dictionary<String, String>? = nil, params: Dictionary<String, Any>? = nil, session: URLSession) {
         self.base = base
         self.path = path
         self.httpMethod = method
         self.requestType = requestType
         self.responseType = responseType
         self.queryDic = queryDic
-        self.paramDic = paramDic
+        self.params = params
         self.session = session
         
         guard let url = URL(string: base + path) else {

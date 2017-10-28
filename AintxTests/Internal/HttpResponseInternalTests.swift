@@ -33,7 +33,7 @@ class HttpResponseInternalTests: XCTestCase {
     }
     
     func testInitWithFakeRequest() {
-        let fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .get, requestType: .data, responseType: .json, queryDic: ["queryKey": "queryValue"], paramDic: ["paramKey": "paramValue"], session: SessionManager.getSession(with: .standard))
+        let fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .get, requestType: .data, responseType: .json, queryDic: ["queryKey": "queryValue"], params: ["paramKey": "paramValue"], session: SessionManager.getSession(with: .standard))
         
         httpResponse = HttpResponse(fakeRequest: fakeRequest)
         
@@ -42,7 +42,7 @@ class HttpResponseInternalTests: XCTestCase {
         XCTAssertEqual(httpResponse.fakeRequest!.requestType, .data)
         XCTAssertEqual(httpResponse.fakeRequest!.responseType, .json)
         XCTAssertEqual(httpResponse.fakeRequest!.queryDic!, ["queryKey": "queryValue"])
-        XCTAssertEqual(httpResponse.fakeRequest!.paramDic!["paramKey"] as! String, "paramValue")
+        XCTAssertEqual(httpResponse.fakeRequest!.params!["paramKey"] as! String, "paramValue")
     }
     
 }
