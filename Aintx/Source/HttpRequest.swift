@@ -8,48 +8,58 @@
 
 import Foundation
 
-public protocol HttpRequest {
+public class HttpRequest {
+    
+    public var urlRequest: URLRequest?
 
-    var urlRequest: URLRequest? { get set }
-    var error: HttpError? { get set  }
+    public func go(completion: @escaping (HttpResponse) -> Void) {
+        fatalError("Must be overrided by subclass!")
+    }
     
-    func go(completion: @escaping (HttpResponse) -> Void)
-    
-    mutating func setAuthorization(username: String, password: String)
-    mutating func setAuthorization(basicToken: String) -> Self
 }
 
 extension HttpRequest {
     
-    public mutating func setAuthorization(username: String, password: String) {
+    public func setAuthorization(username: String, password: String) -> Self {
         let loginString = "\(username):\(password)"
         let loginData = loginString.data(using: .utf8)!
         let base64LoginString = loginData.base64EncodedString()
 
         urlRequest?.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
+        return self
+    }
+    
+    public func setAuthorization(basicToken: String) -> Self {
+        let basic = "Basic "
+        var token = basicToken
+        if token.hasPrefix(basic) {
+            let spaceIndex = token.index(of: " ")!
+            token = String(token[spaceIndex...])
+        }
+        
+        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
+        return self
     }
     
 }
 
-public struct HttpDataRequest: HttpRequest {
+class HttpDataRequest: HttpRequest {
     
     public let base: String
     public let path: String
+    public var params: [String: Any]?
     public let method: HttpMethod
     public let session: URLSession
-
-    public var paramDic: [String: Any]?
     
-    public var urlRequest: URLRequest?
     public var error: HttpError?
-    
-    public var base64LoginString: String?
     
     init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
         self.base = base
         self.path = path
         self.method = method
         self.session = session
+        
+        super.init()
         
         guard let url = URL(string: base + path) else {
             error = HttpError.invalidURL(base + path)
@@ -67,26 +77,13 @@ public struct HttpDataRequest: HttpRequest {
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
         
-        guard let params = paramDic else { return }
+        guard let params = params else { return }
         let body = try? JSONSerialization.data(withJSONObject: params, options: [])
         
         urlRequest?.httpBody = body
     }
     
-    public mutating func setAuthorization(basicToken: String) -> HttpDataRequest {
-        let basic = "Basic "
-        var token = basicToken
-        if token.hasPrefix(basic) {
-            let spaceIndex = token.index(of: " ")!
-            token = String(token[spaceIndex...])
-        }
-        
-        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
-        
-        return self
-    }
-    
-    public func go(completion: @escaping (HttpResponse) -> Void) {
+    public override func go(completion: @escaping (HttpResponse) -> Void) {
         guard error == nil else {
             completion(HttpResponse(error: error))
             return
@@ -101,43 +98,7 @@ public struct HttpDataRequest: HttpRequest {
     
 }
 
-public struct HttpUploadRequest: HttpRequest {
-    
-    public let base: String
-    public let path: String
-    public let session: URLSession
-    public var params: [String: Any]?
-    
-    public var urlRequest: URLRequest?
-    public var error: HttpError?
-    
-    public var base64LoginString: String?
-    
-    init(base: String, path: String, params: [String: Any]?, session: URLSession) {
-        self.base = base
-        self.path = path
-        self.session = session
-    }
-    
-    public mutating func setAuthorization(basicToken: String) -> HttpUploadRequest {
-        let basic = "Basic "
-        var token = basicToken
-        if token.hasPrefix(basic) {
-            let spaceIndex = token.index(of: " ")!
-            token = String(token[spaceIndex...])
-        }
-        
-        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
-        return self
-    }
-    
-    public func go(completion: @escaping (HttpResponse) -> Void) {
-        
-    }
-    
-}
-
-public struct FakeRequest: HttpRequest {
+class FakeRequest: HttpRequest {
     
     public var base: String
     public var path: String
@@ -146,10 +107,7 @@ public struct FakeRequest: HttpRequest {
     public var type: TaskType
     public var session: URLSession?
     
-    public var urlRequest: URLRequest?
     public var error: HttpError?
-    
-    public var base64LoginString: String?
     
     init(base: String, path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, session: URLSession) {
         self.base = base
@@ -158,6 +116,8 @@ public struct FakeRequest: HttpRequest {
         self.method = method
         self.type = type
         self.session = session
+        
+        super.init()
         
         guard let url = URL(string: base + path) else {
             error = HttpError.invalidURL(base + path)
@@ -173,20 +133,9 @@ public struct FakeRequest: HttpRequest {
         urlRequest = URLRequest(url: url)
     }
     
-    public mutating func setAuthorization(basicToken: String) -> FakeRequest {
-        let basic = "Basic "
-        var token = basicToken
-        if token.hasPrefix(basic) {
-            let spaceIndex = token.index(of: " ")!
-            token = String(token[spaceIndex...])
-        }
-        
-        urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
-        return self
-    }
-    
-    public func go(completion: @escaping (HttpResponse) -> Void) {
-        completion(HttpResponse(fakeRequest: self))
+    public override func go(completion: @escaping (HttpResponse) -> Void) {
+        let response = HttpResponse(fakeRequest: self)
+        completion(response)
     }
     
 }

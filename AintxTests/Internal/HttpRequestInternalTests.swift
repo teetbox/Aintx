@@ -11,21 +11,37 @@ import XCTest
 
 class HttpRequestInternalTests: XCTestCase {
     
-    var dataRequest: HttpDataRequest!
+    var httpRequest: HttpDataRequest!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
     
     override func setUp() {
         super.setUp()
+        
+        httpRequest = HttpDataRequest(base: fakeBase, path: fakePath, params: nil, method: .get, session: URLSession.shared)
     }
     
     func testInit() {
-        dataRequest = HttpDataRequest(base: fakeBase, path: fakePath, params: nil, method: .get, session: URLSession.shared)
+        XCTAssertEqual(httpRequest.base, fakeBase)
+        XCTAssertEqual(httpRequest.path, fakePath)
+        XCTAssertEqual(httpRequest.method, .get)
+    }
+    
+    func testSetAuthorizationWithUsernameAndPassword() {
+        let loginString = "username:password"
+        let loginData = loginString.data(using: .utf8)!
+        let base64LoginString = loginData.base64EncodedString()
         
-        XCTAssertEqual(dataRequest.base, fakeBase)
-        XCTAssertEqual(dataRequest.path, fakePath)
-        XCTAssertEqual(dataRequest.method, .get)
+        _ = httpRequest.setAuthorization(username: "username", password: "password")
+        
+        XCTAssertEqual(httpRequest.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic \(base64LoginString)")
+    }
+    
+    func testSetAuthorizationWithBasicToken() {
+        _ = httpRequest.setAuthorization(basicToken: "ABC")
+        
+        XCTAssertEqual(httpRequest.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic ABC")
     }
     
 }

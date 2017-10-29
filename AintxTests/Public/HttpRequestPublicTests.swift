@@ -26,27 +26,6 @@ class HttpRequestPublicTests: XCTestCase {
     }
     
     func testGo() {
-        httpRequest.go { (response) in
-            XCTAssertEqual(response.fakeRequest!.base, "http://www.fake.com")
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-        }
-    }
-    
-    func testSetAuthorizationWithUsernameAndPassword() {
-        httpRequest.setAuthorization(username: "username", password: "password")
-        
-        let loginString = "username:password"
-        let loginData = loginString.data(using: .utf8)!
-        let base64LoginString = loginData.base64EncodedString()
-        
-        XCTAssertEqual(httpRequest.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic \(base64LoginString)")
-    }
-    
-    func testSetAuthorizationWithBasicToken() {
-        let token = "abc"
-        _ = httpRequest.setAuthorization(basicToken: token)
-        
-        XCTAssertEqual(httpRequest.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic \(token)")
-    }
+        httpRequest.go { (response) in }    }
     
 }

@@ -14,8 +14,8 @@ class ImaggaTests: XCTestCase {
     var aintx: Aintx!
     var async: XCTestExpectation!
     
-    let API_Key = "acc_f204118321e5ff9"
-    let API_Secret = "374a892e7f89aaadcd7c98cc63f208b2"
+    let User_Key = "acc_f204118321e5ff9"
+    let User_Secret = "374a892e7f89aaadcd7c98cc63f208b2"
     let Basic_Token = "Basic YWNjX2YyMDQxMTgzMjFlNWZmOTozNzRhODkyZTdmODlhYWFkY2Q3Yzk4Y2M2M2YyMDhiMg=="
     
     override func setUp() {
@@ -29,15 +29,14 @@ class ImaggaTests: XCTestCase {
         let path = "/v1/tagging"
         let params = ["url": "https://www.sciencenewsforstudents.org/sites/default/files/2016/12/main/articles/860_main_windpower.png"]
         
-        var request = aintx.httpRequest(path: path, params: params)
-
-        _ = request.setAuthorization(basicToken: Basic_Token)
-        
-        request.go { (response) in
-            XCTAssertNotNil(response.data)
-            XCTAssertNil(response.error)
+        aintx.httpRequest(path: path, params: params)
+            .setAuthorization(username: User_Key, password: User_Secret)
             
-            self.async.fulfill()
+            .go { (response) in
+                XCTAssertNotNil(response.data)
+                XCTAssertNil(response.error)
+                
+                self.async.fulfill()
         }
         
         wait(for: [async], timeout: 30)

@@ -30,178 +30,171 @@ class AintxPublicTests: XCTestCase {
     
     func testGet() {
         aintx.get(fakePath) { response in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .get)
-            XCTAssertEqual(response.fakeRequest!.type, .data)
-            XCTAssertNil(response.fakeRequest!.params)
+            XCTAssertNotNil(response)
         }
     }
     
     func testGetWithParams() {
         aintx.get(fakePath, params: ["key": "value"]) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .get)
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertNotNil(response)
         }
     }
     
-    func testGetWithRequestType() {
+    func testGetWithType() {
         aintx.get(fakePath, type: .downLoad) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .get)
-            XCTAssertEqual(response.fakeRequest!.type, .downLoad)
+            XCTAssertNotNil(response)
         }
         
         aintx.get(fakePath, type: .stream) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .get)
-            XCTAssertEqual(response.fakeRequest!.type, .stream)
+            XCTAssertNotNil(response)
         }
         
         aintx.get(fakePath, type: .upload) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .get)
-            XCTAssertEqual(response.fakeRequest!.type, .upload)
+            XCTAssertNotNil(response)
         }
     }
     
     func testGetWithParamsAndType() {
         aintx.get(fakePath, params: ["key": "value"], type: .downLoad) { (response) in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
-            XCTAssertEqual(response.fakeRequest!.method, .get)
-            XCTAssertEqual(response.fakeRequest!.type, .downLoad)
+            XCTAssertNotNil(response)
         }
     }
     
     func testPut() {
         aintx.put(fakePath) { response in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-            XCTAssertEqual(response.fakeRequest!.type, .data)
-            XCTAssertNil(response.fakeRequest!.params)
+            XCTAssertNotNil(response)
         }
     }
     
     func testPutWithParams() {
         aintx.put(fakePath, params: ["key": "value"]) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertNotNil(response)
         }
     }
     
-    func testPutWithRequestType() {
+    func testPutWithType() {
         aintx.put(fakePath, type: .downLoad) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-            XCTAssertEqual(response.fakeRequest!.type, .downLoad)
+            XCTAssertNotNil(response)
         }
         
         aintx.put(fakePath, type: .stream) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-            XCTAssertEqual(response.fakeRequest!.type, .stream)
+            XCTAssertNotNil(response)
         }
         
         aintx.put(fakePath, type: .upload) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-            XCTAssertEqual(response.fakeRequest!.type, .upload)
+            XCTAssertNotNil(response)
         }
     }
     
     func testPutWithParamsAndType() {
         aintx.put(fakePath, params: ["key": "value"], type: .downLoad) { (response) in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
-            XCTAssertEqual(response.fakeRequest!.type, .downLoad)
+            XCTAssertNotNil(response)
         }
     }
     
     func testPost() {
         aintx.post(fakePath) { response in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .post)
-            XCTAssertEqual(response.fakeRequest!.type, .data)
-            XCTAssertNil(response.fakeRequest!.params)
+            XCTAssertNotNil(response)
         }
     }
     
     func testPostWithParams() {
         aintx.post(fakePath, params: ["key": "value"]) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .post)
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertNotNil(response)
         }
     }
     
-    func testPostWithRequestType() {
+    func testPostWithType() {
         aintx.post(fakePath, type: .downLoad) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .post)
-            XCTAssertEqual(response.fakeRequest!.type, .downLoad)
+            XCTAssertNotNil(response)
         }
         
         aintx.post(fakePath, type: .stream) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .post)
-            XCTAssertEqual(response.fakeRequest!.type, .stream)
+            XCTAssertNotNil(response)
         }
         
         aintx.post(fakePath, type: .upload) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .post)
-            XCTAssertEqual(response.fakeRequest!.type, .upload)
+           XCTAssertNotNil(response)
         }
     }
     
     func testPostWithParamsAndType() {
         aintx.post(fakePath, params: ["key": "value"], type: .downLoad) { (response) in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .post)
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
-            XCTAssertEqual(response.fakeRequest!.type, .downLoad)
+            XCTAssertNotNil(response)
         }
     }
     
     func testDelete() {
         aintx.delete(fakePath) { response in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .delete)
-            XCTAssertEqual(response.fakeRequest!.type, .data)
-            XCTAssertNil(response.fakeRequest!.params)
+            XCTAssertNotNil(response)
         }
     }
     
     func testDeleteWithParams() {
         aintx.delete(fakePath, params: ["key": "value"]) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .delete)
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertNotNil(response)
         }
     }
     
-    func testDeleteWithRequestType() {
+    func testDeleteWithType() {
         aintx.delete(fakePath, type: .downLoad) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .delete)
-            XCTAssertEqual(response.fakeRequest!.type, .downLoad)
+            XCTAssertNotNil(response)
         }
         
         aintx.delete(fakePath, type: .stream) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .delete)
-            XCTAssertEqual(response.fakeRequest!.type, .stream)
+            XCTAssertNotNil(response)
         }
         
         aintx.delete(fakePath, type: .upload) { (response) in
-            XCTAssertEqual(response.fakeRequest!.method, .delete)
-            XCTAssertEqual(response.fakeRequest!.type, .upload)
+            XCTAssertNotNil(response)
         }
     }
     
     func testDeleteWithParamsAndType() {
         aintx.delete(fakePath, params: ["key": "value"], type: .downLoad) { (response) in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .delete)
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
-            XCTAssertEqual(response.fakeRequest!.type, .downLoad)
+            XCTAssertNotNil(response)
         }
     }
     
     func testHttpRequest() {
-        let fakeRequest = aintx.httpRequest(path: fakePath) as! FakeRequest
-
-        XCTAssertEqual(fakeRequest.path, fakePath)
-        XCTAssertEqual(fakeRequest.method, .get)
-        XCTAssertEqual(fakeRequest.type, .data)
+        aintx.httpRequest(path: fakePath).go { (response) in
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testHttpRequestWithParams() {
+        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"])
+        XCTAssertNotNil(request)
+    }
+    
+    func testHttpRequestWithMethod() {
+        let request = aintx.httpRequest(path: fakePath, method: .put)
+        XCTAssertNotNil(request)
+    }
+    
+    func testHttpRequestWithType() {
+        let request = aintx.httpRequest(path: fakePath, type: .data)
+        XCTAssertNotNil(request)
+    }
+    
+    func testHttpRequestWithParamsAndMethod() {
+        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"], method: .get)
+        XCTAssertNotNil(request)
+    }
+    
+    func testHttpRequestWithParamsAndType() {
+        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"], type: .data)
+        XCTAssertNotNil(request)
+    }
+    
+    func testHttpRequestWithMethodAndType() {
+        let request = aintx.httpRequest(path: fakePath, method: .delete, type: .data)
+        XCTAssertNotNil(request)
+    }
+    
+    func testHttpRequestWithParamsAndMethodAndType() {
+        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"], method: .post, type: .upload)
+        XCTAssertNotNil(request)
     }
     
 }

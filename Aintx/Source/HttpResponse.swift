@@ -20,7 +20,7 @@ public struct HttpResponse: Response {
     public var urlResponse: URLResponse?
     public var error: Error?
     
-    public var fakeRequest: FakeRequest?
+    var fakeRequest: FakeRequest?
     
     public var json: [String: Any]? {
         return parseJSON()
