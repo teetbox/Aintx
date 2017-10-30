@@ -30,9 +30,9 @@ public enum TaskType {
 
 public struct Aintx {
     
-    private let base: String
-    private let config: SessionConfig
-    private let session: URLSession
+    let base: String
+    let config: SessionConfig
+    let session: URLSession
     
     public var isFake = false
     public var fakeResponse: HttpResponse?
@@ -69,7 +69,7 @@ public struct Aintx {
     private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, completion: @escaping (HttpResponse) -> Void) {
         let request = httpRequest(path: path, params: params, method: method, type: type)
         if (isFake) {
-            let response = HttpResponse(fakeRequest: request)
+            let response = fakeResponse ?? HttpResponse(fakeRequest: request)
             completion(response)
             return
         }

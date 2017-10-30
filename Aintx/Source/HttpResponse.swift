@@ -27,7 +27,7 @@ public struct HttpResponse: Response {
     }
     
     /* ✅ */
-    init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
+    public init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
         self.data = data
         self.urlResponse = response
         self.error = error

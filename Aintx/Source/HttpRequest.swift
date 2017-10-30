@@ -89,11 +89,12 @@ class HttpDataRequest: HttpRequest {
             return
         }
         
-        session.dataTask(with: urlRequest!) { (data, response, error) in
+        let dataTask = session.dataTask(with: urlRequest!) { (data, response, error) in
             let httpResponse = HttpResponse(data: data, response: response, error: error)
             completion(httpResponse)
-            }.resume()
+        }
         
+        dataTask.resume()
     }
     
 }
