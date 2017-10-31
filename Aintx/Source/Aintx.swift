@@ -87,9 +87,9 @@ public struct Aintx {
         
         switch type {
         case .data:
-            request = HttpDataRequest(base: base, path: path, params: nil, method: method, session: session)
+            request = DataRequest(base: base, path: path, params: nil, method: method, session: session)
         default:
-            request = HttpDataRequest(base: base, path: path, params: nil, method: method, session: session)
+            request = DataRequest(base: base, path: path, params: nil, method: method, session: session)
         }
         
         return request

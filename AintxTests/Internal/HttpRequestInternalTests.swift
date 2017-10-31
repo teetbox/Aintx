@@ -11,7 +11,8 @@ import XCTest
 
 class HttpRequestInternalTests: XCTestCase {
     
-    var httpRequest: HttpDataRequest!
+    var httpRequest: HttpRequest!
+    var aintx: Aintx!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
@@ -19,13 +20,44 @@ class HttpRequestInternalTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        httpRequest = HttpDataRequest(base: fakeBase, path: fakePath, params: nil, method: .get, session: URLSession.shared)
+        aintx = Aintx(base: fakeBase)
+        aintx.isFake = true
+        httpRequest = aintx.httpRequest(path: fakePath)
     }
     
-    func testInit() {
-        XCTAssertEqual(httpRequest.base, fakeBase)
-        XCTAssertEqual(httpRequest.path, fakePath)
-        XCTAssertEqual(httpRequest.method, .get)
+    func testInitFakeRequest() {
+        let fakeRequest = httpRequest as! FakeRequest
+        XCTAssertEqual(fakeRequest.base, fakeBase)
+        XCTAssertEqual(fakeRequest.path, fakePath)
+        XCTAssertEqual(fakeRequest.method, .get)
+    }
+    
+    func testInitDataRequest() {
+        let dataRequest = DataRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .get, session: URLSession.shared)
+        
+        XCTAssertEqual(dataRequest.base, fakeBase)
+        XCTAssertEqual(dataRequest.path, fakePath)
+        XCTAssertEqual(dataRequest.params!["key"] as! String, "value")
+        XCTAssertEqual(dataRequest.method, .get)
+    }
+    
+    func testInitDownloadRequest() {
+        let downloadRequest = DownloadRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .get, session: URLSession.shared)
+        
+        XCTAssertEqual(downloadRequest.base, fakeBase)
+        XCTAssertEqual(downloadRequest.path, fakePath)
+        XCTAssertEqual(downloadRequest.params!["key"] as! String, "value")
+        XCTAssertEqual(downloadRequest.method, .get)
+    }
+    
+    func testInitUploadRequest() {}
+    
+    func testInitStreamRequest() {}
+    
+    func testGo() {
+        httpRequest.go { response in
+            XCTAssertNotNil(response.fakeRequest)
+        }
     }
     
     func testSetAuthorizationWithUsernameAndPassword() {

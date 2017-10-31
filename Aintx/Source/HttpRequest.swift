@@ -10,7 +10,21 @@ import Foundation
 
 public class HttpRequest {
     
-    public var urlRequest: URLRequest?
+    var urlRequest: URLRequest?
+    
+    let base: String
+    let path: String
+    let params: [String: Any]?
+    let method: HttpMethod
+    let session: URLSession
+    
+    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+        self.base = base
+        self.path = path
+        self.params = params
+        self.method = method
+        self.session = session
+    }
 
     public func go(completion: @escaping (HttpResponse) -> Void) {
         fatalError("Must be overrided by subclass!")
@@ -43,23 +57,12 @@ extension HttpRequest {
     
 }
 
-class HttpDataRequest: HttpRequest {
-    
-    public let base: String
-    public let path: String
-    public var params: [String: Any]?
-    public let method: HttpMethod
-    public let session: URLSession
+class DataRequest: HttpRequest {
     
     public var error: HttpError?
     
-    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
-        self.base = base
-        self.path = path
-        self.method = method
-        self.session = session
-        
-        super.init()
+    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+        super.init(base: base, path: path, params: params, method: method, session: session)
         
         guard let url = URL(string: base + path) else {
             error = HttpError.invalidURL(base + path)
@@ -99,26 +102,28 @@ class HttpDataRequest: HttpRequest {
     
 }
 
-class FakeRequest: HttpRequest {
+class DownloadRequest: HttpRequest {
     
-    public var base: String
-    public var path: String
-    public var params: [String: Any]?
-    public var method: HttpMethod
-    public var type: TaskType
-    public var session: URLSession?
+    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+        super.init(base: base, path: path, params: params, method: method, session: session)
+    }
+    
+    override public func go(completion: @escaping (HttpResponse) -> Void) {
+        
+    }
+    
+}
+
+class FakeRequest: HttpRequest {
+
+    let type: TaskType
     
     public var error: HttpError?
     
-    init(base: String, path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, session: URLSession) {
-        self.base = base
-        self.path = path
-        self.params = params
-        self.method = method
+    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, type: TaskType, session: URLSession) {
         self.type = type
-        self.session = session
-        
-        super.init()
+
+        super.init(base: base, path: path, params: params, method: method, session: session)
         
         guard let url = URL(string: base + path) else {
             error = HttpError.invalidURL(base + path)

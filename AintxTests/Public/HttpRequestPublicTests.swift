@@ -26,6 +26,19 @@ class HttpRequestPublicTests: XCTestCase {
     }
     
     func testGo() {
-        httpRequest.go { (response) in }    }
+        httpRequest.go { response in
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testSetAuthorizationWithUsernameAndPassword() {
+        httpRequest = httpRequest.setAuthorization(username: "username", password: "password")
+        XCTAssertNotNil(httpRequest)
+    }
+    
+    func testSetAuthorizationWithBasicToken() {
+        httpRequest = httpRequest.setAuthorization(basicToken: "Basic ABC")
+        XCTAssertNotNil(httpRequest)
+    }
     
 }
