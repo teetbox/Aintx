@@ -69,12 +69,6 @@ class DataRequest: HttpRequest {
             return
         }
         
-        do {
-            let _ = try URLEncording.encord(urlString: base + path, method: .get, paramDic: nil)
-        } catch {
-            self.error = error as? HttpError
-        }
-        
         urlRequest = URLRequest(url: url)
         urlRequest?.httpMethod = method.rawValue
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -114,6 +108,30 @@ class DownloadRequest: HttpRequest {
     
 }
 
+class UploadRequest: HttpRequest {
+    
+    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+        super.init(base: base, path: path, params: params, method: method, session: session)
+    }
+    
+    override public func go(completion: @escaping (HttpResponse) -> Void) {
+        
+    }
+    
+}
+
+class StreamRequest: HttpRequest {
+    
+    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+        super.init(base: base, path: path, params: params, method: method, session: session)
+    }
+    
+    override public func go(completion: @escaping (HttpResponse) -> Void) {
+        
+    }
+    
+}
+
 class FakeRequest: HttpRequest {
 
     let type: TaskType
@@ -128,12 +146,6 @@ class FakeRequest: HttpRequest {
         guard let url = URL(string: base + path) else {
             error = HttpError.invalidURL(base + path)
             return
-        }
-        
-        do {
-            let _ = try URLEncording.encord(urlString: base + path, method: .get, paramDic: nil)
-        } catch {
-            self.error = error as? HttpError
         }
         
         urlRequest = URLRequest(url: url)

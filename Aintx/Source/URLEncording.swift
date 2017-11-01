@@ -10,30 +10,16 @@ import Foundation
 
 struct URLEncording {
     
-    static func encordQueryString(path: String, queryDic: [String: String]?) throws -> String {
-        guard let query = queryDic else {
-            return path
-        }
-        
-        var url = path + "?"
-        for (key, value) in query {
-            url += "\(key)=\(value)&"
-        }
-        return url
-    }
-    
-    static func encord(urlString: String, method: HttpMethod, paramDic: Dictionary<String, Any>?) throws -> URL {
-        if let url = composeURL(urlString: urlString, method: method, paramDic: paramDic) {
+    static func encord(urlString: String, method: HttpMethod, params: [String: Any]?) throws -> URL {
+        if let url = composeURL(urlString: urlString, method: method, params: params) {
             return url
         } else {
-//            throw NetworkError.requestError(.invaliedURL(urlString))
-            return URL(string: "fakeURL")!
+            throw HttpError.invalidURL(urlString)
         }
     }
     
-    private static func composeURL(urlString: String, method: HttpMethod, paramDic: Dictionary<String, Any>?) -> URL? {
-        guard method == .get, let params = paramDic else {
-//            return URL(string: URLS.Domain + urlString)
+    private static func composeURL(urlString: String, method: HttpMethod, params: [String: Any]?) -> URL? {
+        guard method == .get, let params = params else {
             return nil
         }
         var url = urlString

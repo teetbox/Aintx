@@ -50,9 +50,23 @@ class HttpRequestInternalTests: XCTestCase {
         XCTAssertEqual(downloadRequest.method, .get)
     }
     
-    func testInitUploadRequest() {}
+    func testInitUploadRequest() {
+        let uploadRequest = UploadRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .get, session: URLSession.shared)
+        
+        XCTAssertEqual(uploadRequest.base, fakeBase)
+        XCTAssertEqual(uploadRequest.path, fakePath)
+        XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
+        XCTAssertEqual(uploadRequest.method, .get)
+    }
     
-    func testInitStreamRequest() {}
+    func testInitStreamRequest() {
+        let streamRequest = StreamRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .get, session: URLSession.shared)
+        
+        XCTAssertEqual(streamRequest.base, fakeBase)
+        XCTAssertEqual(streamRequest.path, fakePath)
+        XCTAssertEqual(streamRequest.params!["key"] as! String, "value")
+        XCTAssertEqual(streamRequest.method, .get)
+    }
     
     func testGo() {
         httpRequest.go { response in
