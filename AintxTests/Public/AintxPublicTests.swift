@@ -22,7 +22,7 @@ class AintxPublicTests: XCTestCase {
         aintx = Aintx(base: fakeBase)
         aintx.isFake = true
     }
-    
+
     func testGet() {
         aintx.get(fakePath) { response in
             XCTAssertNotNil(response)
