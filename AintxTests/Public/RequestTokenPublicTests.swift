@@ -15,11 +15,9 @@ class RequestTokenPublicTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        let aintx = Aintx(base: "www.fake.com")
         
-        requestToken = aintx.get("/fake/path") { response in
-            
-        }
+        let aintx = Aintx(base: "www.fake.com")
+        requestToken = aintx.get("/fake/path") { _ in }
     }
 
     func testSuspend() {
