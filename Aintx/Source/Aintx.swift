@@ -47,33 +47,37 @@ public struct Aintx {
     // MARK: - Methods
     
     /* ✅ */
-    public func get(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) {
-        go(path, params: params, method: .get, type: type, completion: completion)
+    @discardableResult
+    public func get(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+        return go(path, params: params, method: .get, type: type, completion: completion)
     }
     
     /* ✅ */
-    public func put(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) {
-        go(path, params: params, method: .put, type: type, completion: completion)
+    @discardableResult
+    public func put(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+        return go(path, params: params, method: .put, type: type, completion: completion)
     }
     
     /* ✅ */
-    public func post(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) {
-        go(path, params: params, method: .post, type: type, completion: completion)
+    @discardableResult
+    public func post(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+        return go(path, params: params, method: .post, type: type, completion: completion)
     }
     
     /* ✅ */
-    public func delete(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) {
-        go(path, params: params, method: .delete, type: type, completion: completion)
+    @discardableResult
+    public func delete(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void)-> RequestToken {
+        return go(path, params: params, method: .delete, type: type, completion: completion)
     }
     
-    private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, completion: @escaping (HttpResponse) -> Void) {
+    private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, completion: @escaping (HttpResponse) -> Void) -> RequestToken {
         let request = httpRequest(path: path, params: params, method: method, type: type)
         if (isFake) {
             let response = fakeResponse ?? HttpResponse(fakeRequest: request)
             completion(response)
-            return
+            return RequestToken(task: URLSessionTask())
         }
-        request.go(completion: completion)
+        return request.go(completion: completion)
     }
     
     /* ✅ */
