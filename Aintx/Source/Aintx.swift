@@ -48,34 +48,34 @@ public struct Aintx {
     
     /* ✅ */
     @discardableResult
-    public func get(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    public func get(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         return go(path, params: params, method: .get, type: type, completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func put(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    public func put(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         return go(path, params: params, method: .put, type: type, completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func post(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    public func post(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         return go(path, params: params, method: .post, type: type, completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func delete(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void)-> RequestToken {
+    public func delete(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void)-> HttpTask {
         return go(path, params: params, method: .delete, type: type, completion: completion)
     }
     
-    private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         let request = httpRequest(path: path, params: params, method: method, type: type)
         if (isFake) {
             let response = fakeResponse ?? HttpResponse(fakeRequest: request)
             completion(response)
-            return RequestToken(task: URLSessionTask())
+            return HttpTask(sessionTask: URLSessionTask())
         }
         return request.go(completion: completion)
     }
@@ -91,9 +91,9 @@ public struct Aintx {
         
         switch type {
         case .data:
-            request = DataRequest(base: base, path: path, params: nil, method: method, session: session)
+            request = DataRequest(base: base, path: path, params: params, method: method, session: session)
         default:
-            request = DataRequest(base: base, path: path, params: nil, method: method, session: session)
+            request = DataRequest(base: base, path: path, params: params, method: method, session: session)
         }
         
         return request

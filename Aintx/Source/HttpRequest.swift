@@ -27,7 +27,7 @@ public class HttpRequest {
     }
 
     @discardableResult
-    public func go(completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         fatalError("Must be overrided by subclass!")
     }
     
@@ -81,10 +81,10 @@ class DataRequest: HttpRequest {
         urlRequest?.httpBody = body
     }
     
-    public override func go(completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard error == nil else {
             completion(HttpResponse(error: error))
-            return RequestToken(task: URLSessionTask())
+            return HttpTask(sessionTask: URLSessionTask())
         }
         
         let dataTask = session.dataTask(with: urlRequest!) { (data, response, error) in
@@ -94,7 +94,7 @@ class DataRequest: HttpRequest {
         
         dataTask.resume()
         
-        return RequestToken(task: dataTask)
+        return HttpTask(sessionTask: dataTask)
     }
     
 }
@@ -105,7 +105,7 @@ class DownloadRequest: HttpRequest {
         super.init(base: base, path: path, params: params, method: method, session: session)
     }
     
-    override public func go(completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         fatalError()
     }
     
@@ -117,7 +117,7 @@ class UploadRequest: HttpRequest {
         super.init(base: base, path: path, params: params, method: method, session: session)
     }
     
-    override public func go(completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         fatalError()
     }
     
@@ -129,7 +129,7 @@ class StreamRequest: HttpRequest {
         super.init(base: base, path: path, params: params, method: method, session: session)
     }
     
-    override public func go(completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         fatalError()
     }
     
@@ -154,11 +154,11 @@ class FakeRequest: HttpRequest {
         urlRequest = URLRequest(url: url)
     }
     
-    public override func go(completion: @escaping (HttpResponse) -> Void) -> RequestToken {
+    public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         let response = HttpResponse(fakeRequest: self)
         completion(response)
         
-        return RequestToken(task: URLSessionTask())
+        return HttpTask(sessionTask: URLSessionTask())
     }
     
 }

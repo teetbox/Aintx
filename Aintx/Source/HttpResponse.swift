@@ -26,6 +26,10 @@ public struct HttpResponse: Response {
         return parseJSON()
     }
     
+    public var jsonArray: [Any]? {
+        return parseJSONArray()
+    }
+    
     /* ✅ */
     public init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
         self.data = data
@@ -40,6 +44,15 @@ public struct HttpResponse: Response {
         
         if let json = try? JSONSerialization.jsonObject(with: data!) as? [String: Any] {
             return json
+        }
+        return nil
+    }
+    
+    private func parseJSONArray() -> [Any]? {
+        guard data != nil else { return nil }
+        
+        if let jsonArray = try? JSONSerialization.jsonObject(with: data!) as? [Any] {
+            return jsonArray
         }
         return nil
     }

@@ -1,5 +1,5 @@
 //
-//  RequestToken.swift
+//  HttpTask.swift
 //  Aintx
 //
 //  Created by Tong Tian on 06/11/2017.
@@ -8,20 +8,20 @@
 
 import Foundation
 
-public struct RequestToken {
+public struct HttpTask {
     
-    let task: URLSessionTask
+    let sessionTask: URLSessionTask
     
     public func suspend() {
-        task.suspend()
+        sessionTask.suspend()
     }
     
     public func resume() {
-        task.resume()
+        sessionTask.resume()
     }
     
     public func cancel() {
-        task.cancel()
+        sessionTask.cancel()
     }
     
 }

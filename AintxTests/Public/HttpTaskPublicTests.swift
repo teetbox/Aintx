@@ -1,5 +1,5 @@
 //
-//  RequestTokenPublicTests.swift
+//  HttpTaskPublicTests.swift
 //  AintxTests
 //
 //  Created by Tong Tian on 06/11/2017.
@@ -9,31 +9,31 @@
 import XCTest
 import Aintx
 
-class RequestTokenPublicTests: XCTestCase {
+class HttpTaskPublicTests: XCTestCase {
     
-    var requestToken: RequestToken!
+    var httpTask: HttpTask!
     
     override func setUp() {
         super.setUp()
         
         let aintx = Aintx(base: "www.fake.com")
-        requestToken = aintx.get("/fake/path") { _ in }
+        httpTask = aintx.get("/fake/path") { _ in }
     }
     
     func testInit() {
-        XCTAssertNotNil(requestToken)
+        XCTAssertNotNil(httpTask)
     }
 
     func testSuspend() {
-        requestToken.suspend()
+        httpTask.suspend()
     }
     
     func testResume() {
-        requestToken.resume()
+        httpTask.resume()
     }
     
     func testCancel() {
-        requestToken.cancel()
+        httpTask.cancel()
     }
     
 }
