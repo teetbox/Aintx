@@ -72,6 +72,9 @@ class HttpRequestInternalTests: XCTestCase {
         httpRequest.go { response in
             XCTAssertNotNil(response.fakeRequest)
         }
+        
+        let token = httpRequest.go { _ in }
+        XCTAssertNotNil(token.task)
     }
     
     func testSetAuthorizationWithUsernameAndPassword() {

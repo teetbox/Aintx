@@ -21,7 +21,7 @@ class RequestTokenInternalTests: XCTestCase {
     }
     
     func testInit() {
-        XCTAssertNotNil(requestToken)
+        XCTAssertEqual(requestToken.task.state, .running)
     }
     
     func testSuspend() {

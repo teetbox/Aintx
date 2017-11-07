@@ -27,6 +27,9 @@ class AintxPublicTests: XCTestCase {
         aintx.get(fakePath) { response in
             XCTAssertNotNil(response)
         }
+        
+        let token = aintx.get(fakePath) { _ in }
+        XCTAssertNotNil(token)
     }
     
     func testGetWithParams() {
@@ -59,6 +62,9 @@ class AintxPublicTests: XCTestCase {
         aintx.put(fakePath) { response in
             XCTAssertNotNil(response)
         }
+        
+        let token = aintx.put(fakePath) { _ in }
+        XCTAssertNotNil(token)
     }
     
     func testPutWithParams() {
@@ -91,6 +97,9 @@ class AintxPublicTests: XCTestCase {
         aintx.post(fakePath) { response in
             XCTAssertNotNil(response)
         }
+        
+        let token = aintx.post(fakePath) { _ in }
+        XCTAssertNotNil(token)
     }
     
     func testPostWithParams() {
@@ -123,6 +132,9 @@ class AintxPublicTests: XCTestCase {
         aintx.delete(fakePath) { response in
             XCTAssertNotNil(response)
         }
+        
+        let token = aintx.delete(fakePath) { _ in }
+        XCTAssertNotNil(token)
     }
     
     func testDeleteWithParams() {

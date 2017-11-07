@@ -19,6 +19,10 @@ class RequestTokenPublicTests: XCTestCase {
         let aintx = Aintx(base: "www.fake.com")
         requestToken = aintx.get("/fake/path") { _ in }
     }
+    
+    func testInit() {
+        XCTAssertNotNil(requestToken)
+    }
 
     func testSuspend() {
         requestToken.suspend()
