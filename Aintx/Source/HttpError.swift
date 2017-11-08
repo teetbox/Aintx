@@ -8,14 +8,25 @@
 
 import Foundation
 
-public enum HttpError: Error {
+enum HttpError: Error {
     
     case invalidURL(String)
     case encordingFailed(EncordingFailedReason)
     
-    public enum EncordingFailedReason {
+    enum EncordingFailedReason {
         case missingParameters(String)
         case invalidParameters(String)
     }
     
+}
+
+extension HttpError: LocalizedError {
+    var localizedDescription: String {
+        switch self {
+        case .invalidURL(let urlString):
+            return "Invalid URL: '\(urlString)'"
+        default:
+            return "Http Error"
+        }
+    }
 }

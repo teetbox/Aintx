@@ -60,13 +60,20 @@ extension HttpRequest {
 
 class DataRequest: HttpRequest {
     
-    public var error: HttpError?
+    var httpError: HttpError?
     
     override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
         super.init(base: base, path: path, params: params, method: method, session: session)
         
         guard let url = URL(string: base + path) else {
-            error = HttpError.invalidURL(base + path)
+            httpError = HttpError.invalidURL(base + path)
+            return
+        }
+        
+        do {
+            _ = try URLEncording.encord(base: base, path: path)
+        } catch {
+            httpError = error as? HttpError
             return
         }
         
@@ -82,8 +89,8 @@ class DataRequest: HttpRequest {
     }
     
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        guard error == nil else {
-            completion(HttpResponse(error: error))
+        guard httpError == nil else {
+            completion(HttpResponse(error: httpError))
             return HttpTask(sessionTask: URLSessionTask())
         }
         

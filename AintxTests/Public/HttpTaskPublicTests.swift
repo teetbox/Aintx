@@ -12,12 +12,14 @@ import Aintx
 class HttpTaskPublicTests: XCTestCase {
     
     var httpTask: HttpTask!
+    let fakeBase = "http://www.fake.com"
+    let fakePath = "/fake/path"
     
     override func setUp() {
         super.setUp()
         
-        let aintx = Aintx(base: "www.fake.com")
-        httpTask = aintx.get("/fake/path") { _ in }
+        let aintx = Aintx(base: fakeBase)
+        httpTask = aintx.get(fakePath) { _ in }
     }
     
     func testInit() {

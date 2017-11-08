@@ -10,6 +10,14 @@ import Foundation
 
 struct URLEncording {
     
+    static func encord(base: String, path: String) throws -> URL {
+        guard let url = URL(string: base + path) else {
+            throw HttpError.invalidURL(base + path)
+        }
+        
+        return url
+    }
+    
     static func encord(urlString: String, method: HttpMethod, params: [String: Any]?) throws -> URL {
         if let url = composeURL(urlString: urlString, method: method, params: params) {
             return url
