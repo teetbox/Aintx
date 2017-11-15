@@ -16,6 +16,7 @@ public enum SessionConfig {
 
 public enum HttpMethod: String {
     case get = "GET"
+    case head = "HEAD"
     case put = "PUT"
     case post = "POST"
     case delete = "DELETE"
