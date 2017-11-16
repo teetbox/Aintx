@@ -163,6 +163,18 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
+    func testUploadWithURL() {
+        aintx.upload(fakePath, fileURL: "/file/path") { response in
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testUploadWithData() {
+        aintx.upload(fakePath, fileData: Data()) { response in
+            XCTAssertNotNil(response)
+        }
+    }
+    
     func testHttpRequest() {
         let request = aintx.httpRequest(path: fakePath)
         XCTAssertNotNil(request)

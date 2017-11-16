@@ -16,9 +16,9 @@ public enum SessionConfig {
 
 public enum HttpMethod: String {
     case get = "GET"
-    case head = "HEAD"
     case put = "PUT"
     case post = "POST"
+    case head = "HEAD"
     case delete = "DELETE"
 }
 
@@ -69,6 +69,18 @@ public struct Aintx {
     @discardableResult
     public func delete(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void)-> HttpTask {
         return go(path, params: params, method: .delete, type: type, completion: completion)
+    }
+    
+    /* ✅ */
+    @discardableResult
+    public func upload(_ path: String, fileURL: String, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return HttpTask(sessionTask: URLSessionTask())
+    }
+    
+    /* ✅ */
+    @discardableResult
+    public func upload(_ path: String, fileData: Data, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return HttpTask(sessionTask: URLSessionTask())
     }
     
     private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
