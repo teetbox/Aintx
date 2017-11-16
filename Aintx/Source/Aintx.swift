@@ -22,13 +22,6 @@ public enum HttpMethod: String {
     case delete = "DELETE"
 }
 
-public enum TaskType {
-    case data
-    case downLoad
-    case upload
-    case stream
-}
-
 public struct Aintx {
     
     let base: String
@@ -49,26 +42,26 @@ public struct Aintx {
     
     /* ✅ */
     @discardableResult
-    public func get(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        return go(path, params: params, method: .get, type: type, completion: completion)
+    public func get(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return go(path, params: params, method: .get, completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func put(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        return go(path, params: params, method: .put, type: type, completion: completion)
+    public func put(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return go(path, params: params, method: .put, completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func post(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        return go(path, params: params, method: .post, type: type, completion: completion)
+    public func post(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return go(path, params: params, method: .post, completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func delete(_ path: String, params: [String: Any]? = nil, type: TaskType = .data, completion: @escaping (HttpResponse) -> Void)-> HttpTask {
-        return go(path, params: params, method: .delete, type: type, completion: completion)
+    public func delete(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void)-> HttpTask {
+        return go(path, params: params, method: .delete, completion: completion)
     }
     
     /* ✅ */
@@ -83,8 +76,13 @@ public struct Aintx {
         return HttpTask(sessionTask: URLSessionTask())
     }
     
-    private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, type: TaskType, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        let request = httpRequest(path: path, params: params, method: method, type: type)
+    @discardableResult
+    public func download(_ path: String, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return HttpTask(sessionTask: URLSessionTask())
+    }
+    
+    private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        let request = httpRequest(path: path, params: params, method: method)
         if (isFake) {
             let response = fakeResponse ?? HttpResponse(fakeRequest: request)
             completion(response)
@@ -94,20 +92,15 @@ public struct Aintx {
     }
     
     /* ✅ */
-    public func httpRequest(path: String, params: [String: Any]? = nil, method: HttpMethod = .get, type: TaskType = .data) -> HttpRequest {
+    public func httpRequest(path: String, params: [String: Any]? = nil, method: HttpMethod = .get) -> HttpRequest {
         let request: HttpRequest
         
         if (isFake) {
-            request = FakeRequest(base: base, path: path, params: params, method: method, type: type, session: session)
+            request = FakeRequest(base: base, path: path, params: params, method: method, session: session)
             return request
         }
         
-        switch type {
-        case .data:
-            request = DataRequest(base: base, path: path, params: params, method: method, session: session)
-        default:
-            request = DataRequest(base: base, path: path, params: params, method: method, session: session)
-        }
+        request = DataRequest(base: base, path: path, params: params, method: method, session: session)
         
         return request
     }

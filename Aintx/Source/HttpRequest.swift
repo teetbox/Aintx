@@ -143,14 +143,10 @@ class StreamRequest: HttpRequest {
 }
 
 class FakeRequest: HttpRequest {
-
-    let type: TaskType
     
     public var error: HttpError?
     
-    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, type: TaskType, session: URLSession) {
-        self.type = type
-
+    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
         super.init(base: base, path: path, params: params, method: method, session: session)
         
         guard let url = URL(string: base + path) else {

@@ -38,26 +38,6 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
-    func testGetWithType() {
-        aintx.get(fakePath, type: .downLoad) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        aintx.get(fakePath, type: .stream) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        aintx.get(fakePath, type: .upload) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
-    func testGetWithParamsAndType() {
-        aintx.get(fakePath, params: ["key": "value"], type: .downLoad) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
     func testPut() {
         aintx.put(fakePath) { response in
             XCTAssertNotNil(response)
@@ -69,26 +49,6 @@ class AintxPublicTests: XCTestCase {
     
     func testPutWithParams() {
         aintx.put(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
-    func testPutWithType() {
-        aintx.put(fakePath, type: .downLoad) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        aintx.put(fakePath, type: .stream) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        aintx.put(fakePath, type: .upload) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
-    func testPutWithParamsAndType() {
-        aintx.put(fakePath, params: ["key": "value"], type: .downLoad) { response in
             XCTAssertNotNil(response)
         }
     }
@@ -108,26 +68,6 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
-    func testPostWithType() {
-        aintx.post(fakePath, type: .downLoad) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        aintx.post(fakePath, type: .stream) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        aintx.post(fakePath, type: .upload) { response in
-           XCTAssertNotNil(response)
-        }
-    }
-    
-    func testPostWithParamsAndType() {
-        aintx.post(fakePath, params: ["key": "value"], type: .downLoad) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
     func testDelete() {
         aintx.delete(fakePath) { response in
             XCTAssertNotNil(response)
@@ -143,26 +83,6 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
-    func testDeleteWithType() {
-        aintx.delete(fakePath, type: .downLoad) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        aintx.delete(fakePath, type: .stream) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        aintx.delete(fakePath, type: .upload) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
-    func testDeleteWithParamsAndType() {
-        aintx.delete(fakePath, params: ["key": "value"], type: .downLoad) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
     func testUploadWithURL() {
         aintx.upload(fakePath, fileURL: "/file/path") { response in
             XCTAssertNotNil(response)
@@ -171,6 +91,12 @@ class AintxPublicTests: XCTestCase {
     
     func testUploadWithData() {
         aintx.upload(fakePath, fileData: Data()) { response in
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testDownload() {
+        aintx.download(fakePath) { response in
             XCTAssertNotNil(response)
         }
     }
@@ -189,29 +115,10 @@ class AintxPublicTests: XCTestCase {
         let request = aintx.httpRequest(path: fakePath, method: .put)
         XCTAssertNotNil(request)
     }
-    
-    func testHttpRequestWithType() {
-        let request = aintx.httpRequest(path: fakePath, type: .data)
-        XCTAssertNotNil(request)
-    }
+
     
     func testHttpRequestWithParamsAndMethod() {
         let request = aintx.httpRequest(path: fakePath, params: ["key": "value"], method: .get)
-        XCTAssertNotNil(request)
-    }
-    
-    func testHttpRequestWithParamsAndType() {
-        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"], type: .data)
-        XCTAssertNotNil(request)
-    }
-    
-    func testHttpRequestWithMethodAndType() {
-        let request = aintx.httpRequest(path: fakePath, method: .delete, type: .data)
-        XCTAssertNotNil(request)
-    }
-    
-    func testHttpRequestWithParamsAndMethodAndType() {
-        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"], method: .post, type: .upload)
         XCTAssertNotNil(request)
     }
     

@@ -22,10 +22,7 @@ class HttpErrorPublicTests: XCTestCase {
     }
     
     func testInvalidURL() {
-        aintx.get("/~!@#$") { response in
-            let error = response.error
-            XCTAssertEqual(error?.localizedDescription, "Invalid URL: '\(self.fakeBase)/~!@#$'")
-        }
+
     }
     
 }
