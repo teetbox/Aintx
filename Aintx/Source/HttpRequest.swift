@@ -11,6 +11,7 @@ import Foundation
 public class HttpRequest {
     
     var urlRequest: URLRequest?
+    var httpError: HttpError?
     
     let base: String
     let path: String
@@ -59,8 +60,6 @@ extension HttpRequest {
 }
 
 class DataRequest: HttpRequest {
-    
-    var httpError: HttpError?
     
     override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
         super.init(base: base, path: path, params: params, method: method, session: session)
@@ -120,8 +119,6 @@ class DownloadRequest: HttpRequest {
 class UploadRequest: HttpRequest {
     
     let type: UploadType
-    
-    var httpError: HttpError?
     
     init(base: String, path: String, type: UploadType, params: [String: Any]?, method: HttpMethod, session: URLSession) {
         self.type = type

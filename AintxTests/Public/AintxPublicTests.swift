@@ -83,24 +83,24 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
-    func testHttpRequest() {
-        let request = aintx.httpRequest(path: fakePath)
+    func testDataRequest() {
+        let request = aintx.dataRequest(path: fakePath)
         XCTAssertNotNil(request)
     }
     
-    func testHttpRequestWithParams() {
-        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"])
+    func testDataRequestWithParams() {
+        let request = aintx.dataRequest(path: fakePath, params: ["key": "value"])
         XCTAssertNotNil(request)
     }
     
-    func testHttpRequestWithMethod() {
-        let request = aintx.httpRequest(path: fakePath, method: .put)
+    func testDataRequestWithMethod() {
+        let request = aintx.dataRequest(path: fakePath, method: .put)
         XCTAssertNotNil(request)
     }
 
     
-    func testHttpRequestWithParamsAndMethod() {
-        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"], method: .get)
+    func testDataRequestWithParamsAndMethod() {
+        let request = aintx.dataRequest(path: fakePath, params: ["key": "value"], method: .get)
         XCTAssertNotNil(request)
     }
     

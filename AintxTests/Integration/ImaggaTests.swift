@@ -29,7 +29,7 @@ class ImaggaTests: XCTestCase {
         let path = "/v1/tagging"
         let params = ["url": "https://www.sciencenewsforstudents.org/sites/default/files/2016/12/main/articles/860_main_windpower.png"]
         
-        aintx.httpRequest(path: path, params: params)
+        aintx.dataRequest(path: path, params: params)
             .setAuthorization(username: User_Key, password: User_Secret)
             
             .go { (response) in

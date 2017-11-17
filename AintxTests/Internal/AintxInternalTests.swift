@@ -130,40 +130,40 @@ class AintxInternalTests: XCTestCase {
         
     }
     
-    func testHttpRequest() {
-        let request = aintx.httpRequest(path: fakePath) as! FakeRequest
+    func testDataRequest() {
+        let request = aintx.dataRequest(path: fakePath) as! FakeRequest
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.method, .get)
         XCTAssertNil(request.params)
     }
     
-    func testHttpRequestWithParams() {
-        let request = aintx.httpRequest(path: fakePath, params: ["key": "value"]) as! FakeRequest
+    func testDataRequestWithParams() {
+        let request = aintx.dataRequest(path: fakePath, params: ["key": "value"]) as! FakeRequest
         XCTAssertEqual(request.params!["key"] as! String, "value")
     }
     
-    func testHttpRequestWithMethod() {
+    func testDataRequestWithMethod() {
         var request: FakeRequest
         
-        request = aintx.httpRequest(path: fakePath, method: .put) as! FakeRequest
+        request = aintx.dataRequest(path: fakePath, method: .put) as! FakeRequest
         XCTAssertEqual(request.method, .put)
 
-        request = aintx.httpRequest(path: fakePath, method: .post) as! FakeRequest
+        request = aintx.dataRequest(path: fakePath, method: .post) as! FakeRequest
         XCTAssertEqual(request.method, .post)
         
-        request = aintx.httpRequest(path: fakePath, method: .delete) as! FakeRequest
+        request = aintx.dataRequest(path: fakePath, method: .delete) as! FakeRequest
         XCTAssertEqual(request.method, .delete)
     }
     
-    func testHttpRequestWithParamsAndMethod() {
+    func testDataRequestWithParamsAndMethod() {
         var request: FakeRequest
         
-        request = aintx.httpRequest(path: fakePath, params: ["key": "value"], method: .put) as! FakeRequest
+        request = aintx.dataRequest(path: fakePath, params: ["key": "value"], method: .put) as! FakeRequest
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.method, .put)
         
-        request = aintx.httpRequest(path: fakePath, params: ["key": "value"], method: .delete) as! FakeRequest
+        request = aintx.dataRequest(path: fakePath, params: ["key": "value"], method: .delete) as! FakeRequest
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.method, .delete)
     }

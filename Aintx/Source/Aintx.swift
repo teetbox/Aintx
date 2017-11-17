@@ -88,7 +88,7 @@ public struct Aintx {
     }
     
     /* ✅ */
-    public func httpRequest(path: String, params: [String: Any]? = nil, method: HttpMethod = .get) -> HttpRequest {
+    public func dataRequest(path: String, params: [String: Any]? = nil, method: HttpMethod = .get) -> HttpRequest {
         let request: HttpRequest
         
         if (isFake) {
@@ -97,6 +97,11 @@ public struct Aintx {
         }
         
         request = DataRequest(base: base, path: path, params: params, method: method, session: session)
+        
+        if case .background(_) = config {
+            request.httpError = HttpError.unsupportedSession(.dataInBackground)
+        }
+        
         return request
     }
     
@@ -113,7 +118,7 @@ public struct Aintx {
     }
     
     private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        let request = httpRequest(path: path, params: params, method: method)
+        let request = dataRequest(path: path, params: params, method: method)
         if (isFake) {
             let response = fakeResponse ?? HttpResponse(fakeRequest: request)
             completion(response)

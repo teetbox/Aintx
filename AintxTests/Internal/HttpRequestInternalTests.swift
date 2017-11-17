@@ -28,7 +28,7 @@ class HttpRequestInternalTests: XCTestCase {
         
         aintx = Aintx(base: fakeBase)
         aintx.isFake = true
-        httpRequest = aintx.httpRequest(path: fakePath)
+        httpRequest = aintx.dataRequest(path: fakePath)
     }
     
     func testInitFakeRequest() {

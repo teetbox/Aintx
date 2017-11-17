@@ -23,6 +23,11 @@ class HttpErrorInternalTests: XCTestCase {
         XCTAssertEqual(error.localizedDescription, "Invalid URL: '~!@#$'")
     }
     
+    func testUnsupportedSession() {
+        error = HttpError.unsupportedSession(.dataInBackground)
+        XCTAssertEqual(error.localizedDescription, "Data tasks are not supported in background session")
+    }
+    
 }
 
 
