@@ -83,24 +83,6 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
-    func testUploadWithURL() {
-        aintx.upload(fakePath, fileURL: "/file/path") { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
-    func testUploadWithData() {
-        aintx.upload(fakePath, fileData: Data()) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
-    func testDownload() {
-        aintx.download(fakePath) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
     func testHttpRequest() {
         let request = aintx.httpRequest(path: fakePath)
         XCTAssertNotNil(request)
@@ -120,6 +102,51 @@ class AintxPublicTests: XCTestCase {
     func testHttpRequestWithParamsAndMethod() {
         let request = aintx.httpRequest(path: fakePath, params: ["key": "value"], method: .get)
         XCTAssertNotNil(request)
+    }
+    
+    func testUploadWithURL() {
+        let fileURL = URL(string: "/file/path")!
+        aintx.upload(fakePath, fileURL: fileURL) { response in
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testUploadWithURLAndParams() {
+        let fileURL = URL(string: "/file/path")!
+        aintx.upload(fakePath, fileURL: fileURL, params: nil) { response in
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testUploadWithData() {
+        aintx.upload(fakePath, fileData: Data()) { response in
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testUploadWithDataAndParams() {
+        aintx.upload(fakePath, fileData: Data(), params: nil) { response in
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testUploadRequest() {
+        let request = aintx.uploadRequest(path: fakePath, type: .data(Data()), params: nil, method: .put)
+        XCTAssertNotNil(request)
+    }
+    
+    func testDownload() {
+        aintx.download(fakePath) { response in
+            XCTFail()
+            XCTAssertNotNil(response)
+        }
+    }
+    
+    func testDownloadWithParams() {
+        aintx.download(fakePath, params: nil) { response in
+            XCTFail()
+            XCTAssertNotNil(response)
+        }
     }
     
     func testFakeResponse() {

@@ -20,6 +20,10 @@ class HttpTaskInternalTests: XCTestCase {
         httpTask = aintx.get("/fake/path") { _ in }
     }
     
+    override func tearDown() {
+        httpTask = nil
+    }
+    
     func testInit() {
         XCTAssertEqual(httpTask.sessionTask.state, .running)
     }

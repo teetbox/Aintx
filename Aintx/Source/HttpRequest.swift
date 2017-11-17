@@ -100,7 +100,6 @@ class DataRequest: HttpRequest {
         }
         
         dataTask.resume()
-        
         return HttpTask(sessionTask: dataTask)
     }
     
@@ -120,12 +119,56 @@ class DownloadRequest: HttpRequest {
 
 class UploadRequest: HttpRequest {
     
-    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+    let type: UploadType
+    
+    var httpError: HttpError?
+    
+    init(base: String, path: String, type: UploadType, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+        self.type = type
         super.init(base: base, path: path, params: params, method: method, session: session)
+        
+        guard let url = URL(string: base + path) else {
+            httpError = HttpError.invalidURL(base + path)
+            return
+        }
+        
+        do {
+            _ = try URLEncording.encord(base: base, path: path)
+        } catch {
+            httpError = error as? HttpError
+            return
+        }
+        
+        urlRequest = URLRequest(url: url)
+        urlRequest?.httpMethod = method.rawValue
+        urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        guard let params = params else { return }
+        let body = try? JSONSerialization.data(withJSONObject: params, options: [])
+        
+        urlRequest?.httpBody = body
     }
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        fatalError()
+        
+        let uploadTask: URLSessionUploadTask
+        
+        switch type {
+        case .data(let fileData):
+            uploadTask = session.uploadTask(with: urlRequest!, from: fileData) { (data, response, error) in
+                let httpResponse = HttpResponse(data: data, response: response, error: error)
+                completion(httpResponse)
+            }
+        case .url(let fileURL):
+            uploadTask = session.uploadTask(with: urlRequest!, fromFile: fileURL) { (data, response, error) in
+                let httpResponse = HttpResponse(data: data, response: response, error: error)
+                completion(httpResponse)
+            }
+        }
+        
+        uploadTask.resume()
+        return HttpTask(sessionTask: uploadTask)
     }
     
 }

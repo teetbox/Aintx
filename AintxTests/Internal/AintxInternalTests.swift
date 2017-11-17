@@ -29,7 +29,6 @@ class AintxInternalTests: XCTestCase {
         aintx.isFake = true
     }
     
-    
     func testInit() {
         XCTAssertEqual(aintx.base, fakeBase)
         XCTAssertEqual(aintx.config, .standard)
@@ -114,6 +113,21 @@ class AintxInternalTests: XCTestCase {
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
             XCTAssertEqual(response.fakeRequest!.method, .delete)
         }
+    }
+    
+    func testUploadWithFileURL() {
+        let fileURL = URL(string: "/file/path")!
+        aintx.upload(fakePath, fileURL: fileURL) { response in
+//            XCTAssertEqual(response.fakeRequest!.fileURL, fileURL)
+        }
+    }
+    
+    func testUploadWithData() {
+
+    }
+    
+    func testDownload() {
+        
     }
     
     func testHttpRequest() {

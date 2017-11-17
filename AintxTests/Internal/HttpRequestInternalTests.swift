@@ -9,6 +9,12 @@
 import XCTest
 @testable import Aintx
 
+extension UploadType: Equatable {
+    public static func ==(lhs: UploadType, rhs: UploadType) -> Bool {
+        return "\(lhs)" == "\(rhs)"
+    }
+}
+
 class HttpRequestInternalTests: XCTestCase {
     
     var httpRequest: HttpRequest!
@@ -51,12 +57,25 @@ class HttpRequestInternalTests: XCTestCase {
     }
     
     func testInitUploadRequest() {
-        let uploadRequest = UploadRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .get, session: URLSession.shared)
+        var type: UploadType = .data(Data())
+        
+        var uploadRequest = UploadRequest(base: fakeBase, path: fakePath, type: type, params: ["key": "value"], method: .put, session: URLSession.shared)
         
         XCTAssertEqual(uploadRequest.base, fakeBase)
         XCTAssertEqual(uploadRequest.path, fakePath)
+        XCTAssertEqual(uploadRequest.type, .data(Data()))
         XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
-        XCTAssertEqual(uploadRequest.method, .get)
+        XCTAssertEqual(uploadRequest.method, .put)
+        
+        type = .url(URL(string: "file/path")!)
+        
+        uploadRequest = UploadRequest(base: fakeBase, path: fakePath, type: type, params: ["key": "value"], method: .post, session: URLSession.shared)
+        
+        XCTAssertEqual(uploadRequest.base, fakeBase)
+        XCTAssertEqual(uploadRequest.path, fakePath)
+        XCTAssertEqual(uploadRequest.type, .url(URL(string: "file/path")!))
+        XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
+        XCTAssertEqual(uploadRequest.method, .post)
     }
     
     func testInitStreamRequest() {
