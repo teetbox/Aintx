@@ -8,13 +8,13 @@
 
 import Foundation
 
-//protocol Response {
-//    var data: Data? { get }
-//    var urlResponse: URLResponse? { get }
-//    var error: Error? { get }
-//}
+protocol Response {
+    var data: Data? { get }
+    var urlResponse: URLResponse? { get }
+    var error: HttpError? { get }
+}
 
-public struct HttpResponse {
+public struct HttpResponse: Response {
     
     public var data: Data?
     public var urlResponse: URLResponse?
@@ -34,13 +34,7 @@ public struct HttpResponse {
     public init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
         self.data = data
         self.urlResponse = response
-        if error != nil {
-            if error is HttpError {
-                self.error = error as? HttpError
-            } else {
-                self.error = HttpError.responseFailed(error!)
-            }
-        }
+        self.error = (error == nil) ? nil : error as? HttpError ?? HttpError.responseFailed(error!)
     }
     
     // MARK: - Methods
@@ -74,18 +68,18 @@ extension HttpResponse {
 
 }
 
-struct DecodableResponse<T: Decodable> {
+struct DecodableResponse<T: Decodable>: Response {
     
     let data: Data?
     let urlResponse: URLResponse?
-    let error: Error?
+    let error: HttpError?
     
     var entity: T?
     
     init(data: Data?, response: URLResponse?, error: Error?) {
         self.data = data
         self.urlResponse = response
-        self.error = error
+        self.error = (error == nil) ? nil : error as? HttpError ?? HttpError.responseFailed(error!)
     }
     
 }
