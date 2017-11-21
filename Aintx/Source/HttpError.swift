@@ -27,6 +27,7 @@ public enum HttpError: Error {
 }
 
 extension HttpError: LocalizedError {
+    
     public var localizedDescription: String {
         switch self {
         case .invalidURL(let urlString):
@@ -39,9 +40,11 @@ extension HttpError: LocalizedError {
             return error.localizedDescription
         }
     }
+    
 }
 
 extension HttpError.EncordingFailedReason: LocalizedError {
+    
     public var localizedDescription: String {
         switch self {
         case .missingParameters(let field):
@@ -50,13 +53,16 @@ extension HttpError.EncordingFailedReason: LocalizedError {
             return "Missing \(field)"
         }
     }
+    
 }
 
 extension HttpError.UnsupportedSessionReason: LocalizedError {
+    
     public var localizedDescription: String {
         switch self {
         case .dataInBackground:
             return "Data tasks are not supported in background session"
         }
     }
+    
 }

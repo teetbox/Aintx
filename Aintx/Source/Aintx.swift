@@ -27,6 +27,8 @@ public enum UploadType {
     case data(Data)
 }
 
+let AINTX_SERVER_TOKEN = "AINTX_SERVER_TOKEN"
+
 public struct Aintx {
     
     let base: String
@@ -131,6 +133,14 @@ public struct Aintx {
         let request = uploadRequest(path: path, type: uploadType, method: .put)
         
         return request.go(completion: completion)
+    }
+    
+    public func saveToken(_ token: String) {
+        UserDefaults.standard.set(token, forKey: AINTX_SERVER_TOKEN)
+    }
+    
+    public func removeToken() {
+        UserDefaults.standard.set(nil, forKey: AINTX_SERVER_TOKEN)
     }
     
 }
