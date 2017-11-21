@@ -8,25 +8,26 @@
 
 import Foundation
 
-enum HttpError: Error {
+public enum HttpError: Error {
     
     case invalidURL(String)
     case encordingFailed(EncordingFailedReason)
     case unsupportedSession(UnsupportedSessionReason)
+    case responseFailed(Error)
     
-    enum EncordingFailedReason {
+    public enum EncordingFailedReason {
         case missingParameters(String)
         case invalidParameters(String)
     }
     
-    enum UnsupportedSessionReason {
+    public enum UnsupportedSessionReason {
         case dataInBackground
     }
     
 }
 
 extension HttpError: LocalizedError {
-    var localizedDescription: String {
+    public var localizedDescription: String {
         switch self {
         case .invalidURL(let urlString):
             return "Invalid URL: '\(urlString)'"
@@ -34,12 +35,14 @@ extension HttpError: LocalizedError {
             return reason.localizedDescription
         case .unsupportedSession(let reason):
             return reason.localizedDescription
+        case .responseFailed(let error):
+            return error.localizedDescription
         }
     }
 }
 
 extension HttpError.EncordingFailedReason: LocalizedError {
-    var localizedDescription: String {
+    public var localizedDescription: String {
         switch self {
         case .missingParameters(let field):
             return "Missing \(field)"
@@ -50,7 +53,7 @@ extension HttpError.EncordingFailedReason: LocalizedError {
 }
 
 extension HttpError.UnsupportedSessionReason: LocalizedError {
-    var localizedDescription: String {
+    public var localizedDescription: String {
         switch self {
         case .dataInBackground:
             return "Data tasks are not supported in background session"

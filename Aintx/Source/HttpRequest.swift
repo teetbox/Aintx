@@ -145,6 +145,7 @@ class UploadRequest: HttpRequest {
         let body = try? JSONSerialization.data(withJSONObject: params, options: [])
         
         urlRequest?.httpBody = body
+        
     }
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {

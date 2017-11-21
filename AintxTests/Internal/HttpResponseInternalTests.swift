@@ -32,6 +32,16 @@ class HttpResponseInternalTests: XCTestCase {
         XCTAssertNil(httpResponse.error)
     }
     
+    func testInitWithError() {
+        let httpError = HttpError.invalidURL("/faka/path")
+        httpResponse = HttpResponse(data: nil, response: nil, error: httpError)
+        
+        XCTAssertNil(httpResponse.data)
+        XCTAssertNil(httpResponse.urlResponse)
+        XCTAssertNotNil(httpResponse.error)
+        XCTAssertEqual(httpResponse.error!.localizedDescription, httpError.localizedDescription)
+    }
+    
     func testInitWithFakeRequest() {
         let fakeRequest = FakeRequest(base: fakeBase, path: fakePath, params: ["paramKey": "paramValue"], method: .get, session: SessionManager.getSession(with: .standard))
         

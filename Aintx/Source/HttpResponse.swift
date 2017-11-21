@@ -8,17 +8,17 @@
 
 import Foundation
 
-protocol Response {
-    var data: Data? { get }
-    var urlResponse: URLResponse? { get }
-    var error: Error? { get }
-}
+//protocol Response {
+//    var data: Data? { get }
+//    var urlResponse: URLResponse? { get }
+//    var error: Error? { get }
+//}
 
-public struct HttpResponse: Response {
+public struct HttpResponse {
     
     public var data: Data?
     public var urlResponse: URLResponse?
-    public var error: Error?
+    public var error: HttpError?
     
     var fakeRequest: FakeRequest?
     
@@ -34,7 +34,13 @@ public struct HttpResponse: Response {
     public init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
         self.data = data
         self.urlResponse = response
-        self.error = error
+        if error != nil {
+            if error is HttpError {
+                self.error = error as? HttpError
+            } else {
+                self.error = HttpError.responseFailed(error!)
+            }
+        }
     }
     
     // MARK: - Methods
@@ -68,7 +74,7 @@ extension HttpResponse {
 
 }
 
-struct DecodableResponse<T: Decodable>: Response {
+struct DecodableResponse<T: Decodable> {
     
     let data: Data?
     let urlResponse: URLResponse?

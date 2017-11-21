@@ -128,10 +128,9 @@ public struct Aintx {
     }
     
     private func go(_ path: String, uploadType: UploadType, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        let request = uploadRequest(path: path, type: uploadType, method: .put)
         
-        
-        
-        return HttpTask(sessionTask: URLSessionTask())
+        return request.go(completion: completion)
     }
     
 }
