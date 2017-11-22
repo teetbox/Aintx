@@ -118,10 +118,11 @@ class DownloadRequest: HttpRequest {
 
 class UploadRequest: HttpRequest {
     
-    let type: UploadType
+    let uploadType: UploadType
     
-    init(base: String, path: String, type: UploadType, params: [String: Any]?, method: HttpMethod, session: URLSession) {
-        self.type = type
+    init(base: String, path: String, uploadType: UploadType, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+        self.uploadType = uploadType
+        
         super.init(base: base, path: path, params: params, method: method, session: session)
         
         guard let url = URL(string: base + path) else {
@@ -152,7 +153,7 @@ class UploadRequest: HttpRequest {
         
         let uploadTask: URLSessionUploadTask
         
-        switch type {
+        switch uploadType {
         case .data(let fileData):
             uploadTask = session.uploadTask(with: urlRequest!, from: fileData) { (data, response, error) in
                 let httpResponse = HttpResponse(data: data, response: response, error: error)
@@ -187,7 +188,11 @@ class FakeRequest: HttpRequest {
     
     public var error: HttpError?
     
-    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+    let uploadType: UploadType?
+    
+    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, uploadType: UploadType? = nil, session: URLSession) {
+        self.uploadType = uploadType
+        
         super.init(base: base, path: path, params: params, method: method, session: session)
         
         guard let url = URL(string: base + path) else {

@@ -15,6 +15,12 @@ extension SessionConfig: Equatable {
     }
 }
 
+extension UploadType: Equatable {
+    public static func ==(lhs: UploadType, rhs: UploadType) -> Bool {
+        return "\(lhs)" == "\(rhs)"
+    }
+}
+
 class AintxInternalTests: XCTestCase {
     
     var aintx: Aintx!
@@ -115,23 +121,9 @@ class AintxInternalTests: XCTestCase {
         }
     }
     
-    func testUploadWithFileURL() {
-        let fileURL = URL(string: "/file/path")!
-        aintx.upload(fakePath, fileURL: fileURL) { response in
-//            XCTAssertEqual(response.fakeRequest!.fileURL, fileURL)
-        }
-    }
-    
-    func testUploadWithData() {
-
-    }
-    
-    func testDownload() {
-        
-    }
-    
     func testDataRequest() {
         let request = aintx.dataRequest(path: fakePath) as! FakeRequest
+        
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.method, .get)
@@ -148,7 +140,7 @@ class AintxInternalTests: XCTestCase {
         
         request = aintx.dataRequest(path: fakePath, method: .put) as! FakeRequest
         XCTAssertEqual(request.method, .put)
-
+        
         request = aintx.dataRequest(path: fakePath, method: .post) as! FakeRequest
         XCTAssertEqual(request.method, .post)
         
@@ -166,6 +158,42 @@ class AintxInternalTests: XCTestCase {
         request = aintx.dataRequest(path: fakePath, params: ["key": "value"], method: .delete) as! FakeRequest
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.method, .delete)
+    }
+    
+    func testUploadWithFileURL() {
+        let fileURL = URL(string: "/file/path")!
+        aintx.upload(fakePath, fileURL: fileURL) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .put)
+            XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.url(fileURL))
+        }
+    }
+    
+    func testUploadWithData() {
+        let fileData = Data()
+        aintx.upload(fakePath, fileData: fileData) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .put)
+            XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.data(fileData))
+        }
+    }
+    
+    func testUploadRequest() {
+        let fileData: UploadType = .data(Data())
+        var request = aintx.uploadRequest(path: fakePath, uploadType: fileData, params: nil, method: .put)
+        
+        XCTAssertEqual(request.base, fakeBase)
+        XCTAssertEqual(request.path, fakePath)
+        XCTAssertEqual(request.method, .put)
+        XCTAssertNil(request.params)
+        XCTAssertEqual((request as! FakeRequest).uploadType, fileData)
+        
+        let fileURL: UploadType = .url(URL(string: "file/path")!)
+        request = aintx.uploadRequest(path: fakePath, uploadType: fileURL, params: nil, method: .put)
+        
+        XCTAssertEqual((request as! FakeRequest).uploadType, fileURL)
+    }
+    
+    func testDownload() {
+        
     }
     
 }

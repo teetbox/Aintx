@@ -131,7 +131,7 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testUploadRequest() {
-        let request = aintx.uploadRequest(path: fakePath, type: .data(Data()), params: nil, method: .put)
+        let request = aintx.uploadRequest(path: fakePath, uploadType: .data(Data()), params: nil, method: .put)
         XCTAssertNotNil(request)
     }
     

@@ -71,22 +71,14 @@ public struct Aintx {
         return go(path, params: params, method: .delete, completion: completion)
     }
     
-    /* ✅ */
-    @discardableResult
-    public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        return go(path, uploadType: .url(fileURL), completion: completion)
-    }
-    
-    /* ✅ */
-    @discardableResult
-    public func upload(_ path: String, fileData: Data, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        return go(path, uploadType: .data(fileData), completion: completion)
-    }
-    
-    /* ✅ */
-    @discardableResult
-    public func download(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        return HttpTask(sessionTask: URLSessionTask())
+    private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        let request = dataRequest(path: path, params: params, method: method)
+        if (isFake) {
+            let response = fakeResponse ?? HttpResponse(fakeRequest: request)
+            completion(response)
+            return HttpTask(sessionTask: URLSessionTask())
+        }
+        return request.go(completion: completion)
     }
     
     /* ✅ */
@@ -107,38 +99,49 @@ public struct Aintx {
         return request
     }
     
-    public func uploadRequest(path: String, type: UploadType, params: [String: Any]? = nil, method: HttpMethod) -> HttpRequest {
-        let request: HttpRequest
-        
-        if (isFake) {
-            request = FakeRequest(base: base, path: path, params: params, method: method, session: session)
-            return request
-        }
-        
-        request = UploadRequest(base: base, path: path, type: type, params: params, method: method, session: session)
-        return request
+    /* ✅ */
+    @discardableResult
+    public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return go(path, uploadType: .url(fileURL), completion: completion)
     }
     
-    private func go(_ path: String, params: [String: Any]? = nil, method: HttpMethod, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        let request = dataRequest(path: path, params: params, method: method)
-        if (isFake) {
-            let response = fakeResponse ?? HttpResponse(fakeRequest: request)
-            completion(response)
-            return HttpTask(sessionTask: URLSessionTask())
-        }
-        return request.go(completion: completion)
+    /* ✅ */
+    @discardableResult
+    public func upload(_ path: String, fileData: Data, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return go(path, uploadType: .data(fileData), completion: completion)
     }
     
     private func go(_ path: String, uploadType: UploadType, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        let request = uploadRequest(path: path, type: uploadType, method: .put)
+        let request = uploadRequest(path: path, uploadType: uploadType, method: .put)
         
         return request.go(completion: completion)
     }
     
+    /* ✅ */
+    public func uploadRequest(path: String, uploadType: UploadType, params: [String: Any]? = nil, method: HttpMethod) -> HttpRequest {
+        let request: HttpRequest
+        
+        if (isFake) {
+            request = FakeRequest(base: base, path: path, params: params, method: method, uploadType: uploadType, session: session)
+            return request
+        }
+        
+        request = UploadRequest(base: base, path: path, uploadType: uploadType, params: params, method: method, session: session)
+        return request
+    }
+    
+    /* ✅ */
+    @discardableResult
+    public func download(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return HttpTask(sessionTask: URLSessionTask())
+    }
+    
+    /* ✅ */
     public func saveToken(_ token: String) {
         UserDefaults.standard.set(token, forKey: AINTX_SERVER_TOKEN)
     }
     
+    /* ✅ */
     public func removeToken() {
         UserDefaults.standard.set(nil, forKey: AINTX_SERVER_TOKEN)
     }
