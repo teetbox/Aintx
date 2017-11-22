@@ -137,22 +137,39 @@ class AintxPublicTests: XCTestCase {
     
     func testDownload() {
         aintx.download(fakePath) { response in
-            XCTFail()
             XCTAssertNotNil(response)
         }
     }
     
     func testDownloadWithParams() {
         aintx.download(fakePath, params: nil) { response in
-            XCTFail()
             XCTAssertNotNil(response)
         }
     }
     
-    func testFakeResponse() {
-        aintx.fakeResponse = HttpResponse(data: "data".data(using: .utf8))
+    func testDownloadRequest() {
+        let request = aintx.downloadRequest(fakePath, params: nil, method: .get)
+        XCTAssertNotNil(request)
+    }
+    
+    func testFakeDataResponse() {
+        let fakeData = "data".data(using: .utf8)
+        aintx.fakeResponse = HttpResponse(data: fakeData)
+        
         aintx.get(fakePath) { response in
-            XCTAssertEqual(response.data, "data".data(using: .utf8))
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        aintx.upload(fakePath, fileData: fakeData!) { response in
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        aintx.upload(fakePath, fileURL: URL(string: "/file/path")!) { response in
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        aintx.download(fakePath) { response in
+            XCTAssertEqual(response.data, fakeData)
         }
     }
     

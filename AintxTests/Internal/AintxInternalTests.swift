@@ -186,14 +186,38 @@ class AintxInternalTests: XCTestCase {
         XCTAssertNil(request.params)
         XCTAssertEqual((request as! FakeRequest).uploadType, fileData)
         
-        let fileURL: UploadType = .url(URL(string: "file/path")!)
+        let fileURL: UploadType = .url(URL(string: "/file/path")!)
         request = aintx.uploadRequest(path: fakePath, uploadType: fileURL, params: nil, method: .put)
         
         XCTAssertEqual((request as! FakeRequest).uploadType, fileURL)
     }
     
     func testDownload() {
-        
+        aintx.download(fakePath) { response in
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+        }
+    }
+    
+    func testDownloadWithParams() {
+        aintx.download(fakePath, params: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+        }
+    }
+    
+    func testDownloadRequest() {
+        let request = aintx.downloadRequest(fakePath, method: .get)
+        XCTAssertEqual(request.base, fakeBase)
+        XCTAssertEqual(request.path, fakePath)
+        XCTAssertNil(request.params)
+    }
+    
+    func testDownloadRequestWithParams() {
+        let request = aintx.downloadRequest(fakePath, params: ["key": "value"], method: .get)
+        XCTAssertEqual(request.base, fakeBase)
+        XCTAssertEqual(request.path, fakePath)
+        XCTAssertEqual(request.params!["key"] as! String, "value")
     }
     
 }

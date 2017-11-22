@@ -61,13 +61,13 @@ class HttpRequestInternalTests: XCTestCase {
         XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
         XCTAssertEqual(uploadRequest.method, .put)
         
-        uploadType = .url(URL(string: "file/path")!)
+        uploadType = .url(URL(string: "/file/path")!)
         
         uploadRequest = UploadRequest(base: fakeBase, path: fakePath, uploadType: uploadType, params: ["key": "value"], method: .post, session: URLSession.shared)
         
         XCTAssertEqual(uploadRequest.base, fakeBase)
         XCTAssertEqual(uploadRequest.path, fakePath)
-        XCTAssertEqual(uploadRequest.uploadType, .url(URL(string: "file/path")!))
+        XCTAssertEqual(uploadRequest.uploadType, .url(URL(string: "/file/path")!))
         XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
         XCTAssertEqual(uploadRequest.method, .post)
     }
@@ -83,13 +83,13 @@ class HttpRequestInternalTests: XCTestCase {
         XCTAssertEqual(fakeRequest.params!["key"] as! String, "value")
         XCTAssertEqual(fakeRequest.method, .put)
         
-        uploadType = .url(URL(string: "file/path")!)
+        uploadType = .url(URL(string: "/file/path")!)
         
         fakeRequest = FakeRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .put, uploadType: uploadType, session: URLSession.shared)
         
         XCTAssertEqual(fakeRequest.base, fakeBase)
         XCTAssertEqual(fakeRequest.path, fakePath)
-        XCTAssertEqual(fakeRequest.uploadType, .url(URL(string: "file/path")!))
+        XCTAssertEqual(fakeRequest.uploadType, .url(URL(string: "/file/path")!))
         XCTAssertEqual(fakeRequest.params!["key"] as! String, "value")
         XCTAssertEqual(fakeRequest.method, .put)
     }

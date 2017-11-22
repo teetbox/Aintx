@@ -204,9 +204,7 @@ class FakeRequest: HttpRequest {
     }
     
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        let response = HttpResponse(fakeRequest: self)
-        completion(response)
-        
+        completion(HttpResponse(fakeRequest: self))
         return HttpTask(sessionTask: URLSessionTask())
     }
     
