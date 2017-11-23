@@ -52,13 +52,16 @@ class JSONPlaceHolderTests: XCTestCase {
     }
     
     func testPost() {
-        let post = Post(userId: 88, id: 88, title: "TTST", body: "Forever")
-        let jsonData = try! JSONEncoder().encode(post)
-        let params = ["body": jsonData]
+//        let post = Post(userId: 88, id: 88, title: "TTST", body: "Forever")
+//        let jsonData = try! JSONEncoder().encode(post)
+        let params: [String : Any] = ["userId": 88, "title": "TTSY", "body": "Forever"]
         
         aintx.post("/posts", params: params) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
+            
+            let jsonData = response.json
+            XCTAssertEqual(jsonData!["id"] as! Int, 101)
             
             self.async.fulfill()
         }
