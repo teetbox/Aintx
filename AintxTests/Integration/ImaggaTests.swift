@@ -31,17 +31,12 @@ class ImaggaTests: XCTestCase {
         
         aintx.dataRequest(path: path, params: params)
             .setAuthorization(username: User_Key, password: User_Secret)
-            
             .go { (response) in
                 XCTAssertNotNil(response.data)
                 XCTAssertNil(response.error)
                 
                 self.async.fulfill()
         }
-        
-        let task = aintx.get("/v1/user") { _ in }
-        
-        task.cancel()
         
         wait(for: [async], timeout: 30)
     }
