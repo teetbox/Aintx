@@ -25,20 +25,14 @@ class HttpRequestInternalTests: XCTestCase {
         httpRequest = aintx.dataRequest(path: fakePath)
     }
     
-    func testInitFakeRequest() {
-        let fakeRequest = httpRequest as! FakeRequest
-        XCTAssertEqual(fakeRequest.base, fakeBase)
-        XCTAssertEqual(fakeRequest.path, fakePath)
-        XCTAssertEqual(fakeRequest.method, .get)
-    }
-    
     func testInitDataRequest() {
-        let dataRequest = DataRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .get, session: URLSession.shared)
+        let dataRequest = DataRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], bodyData: Data(), session: URLSession.shared)
         
         XCTAssertEqual(dataRequest.base, fakeBase)
         XCTAssertEqual(dataRequest.path, fakePath)
-        XCTAssertEqual(dataRequest.params!["key"] as! String, "value")
         XCTAssertEqual(dataRequest.method, .get)
+        XCTAssertEqual(dataRequest.params!["key"] as! String, "value")
+        XCTAssertEqual(dataRequest.bodyData, Data())
     }
     
     func testInitDownloadRequest() {
@@ -46,61 +40,78 @@ class HttpRequestInternalTests: XCTestCase {
         
         XCTAssertEqual(downloadRequest.base, fakeBase)
         XCTAssertEqual(downloadRequest.path, fakePath)
-        XCTAssertEqual(downloadRequest.params!["key"] as! String, "value")
         XCTAssertEqual(downloadRequest.method, .get)
+        XCTAssertEqual(downloadRequest.params!["key"] as! String, "value")
     }
     
     func testInitUploadRequest() {
         var uploadType: UploadType = .data(Data())
         
-        var uploadRequest = UploadRequest(base: fakeBase, path: fakePath, uploadType: uploadType, params: ["key": "value"], method: .put, session: URLSession.shared)
+        var uploadRequest = UploadRequest(base: fakeBase, path: fakePath, method: .put, uploadType: uploadType, params: ["key": "value"], session: URLSession.shared)
         
         XCTAssertEqual(uploadRequest.base, fakeBase)
         XCTAssertEqual(uploadRequest.path, fakePath)
+        XCTAssertEqual(uploadRequest.method, .put)
         XCTAssertEqual(uploadRequest.uploadType, .data(Data()))
         XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
-        XCTAssertEqual(uploadRequest.method, .put)
         
         uploadType = .url(URL(string: "/file/path")!)
         
-        uploadRequest = UploadRequest(base: fakeBase, path: fakePath, uploadType: uploadType, params: ["key": "value"], method: .post, session: URLSession.shared)
+        uploadRequest = UploadRequest(base: fakeBase, path: fakePath, method: .post, uploadType: uploadType, params: ["key": "value"], session: URLSession.shared)
         
         XCTAssertEqual(uploadRequest.base, fakeBase)
         XCTAssertEqual(uploadRequest.path, fakePath)
+        XCTAssertEqual(uploadRequest.method, .post)
         XCTAssertEqual(uploadRequest.uploadType, .url(URL(string: "/file/path")!))
         XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
-        XCTAssertEqual(uploadRequest.method, .post)
+    }
+
+    func testInitFakeRequest() {
+        let fakeRequest = httpRequest as! FakeRequest
+        XCTAssertEqual(fakeRequest.base, fakeBase)
+        XCTAssertEqual(fakeRequest.path, fakePath)
+        XCTAssertEqual(fakeRequest.method, .get)
+    }
+    
+    func testInitFakePostRequest() {
+        let bodyData = "body".data(using: .utf8)
+        let fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .post, bodyData: bodyData, session: URLSession.shared)
+        
+        XCTAssertEqual(fakeRequest.base, fakeBase)
+        XCTAssertEqual(fakeRequest.path, fakePath)
+        XCTAssertEqual(fakeRequest.method, .post)
+        XCTAssertEqual(fakeRequest.bodyData, bodyData)
     }
     
     func testInitFakeUploadRequest() {
         var uploadType: UploadType = .data(Data())
         
-        var fakeRequest = FakeRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .put, uploadType: uploadType, session: URLSession.shared)
+        var fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], uploadType: uploadType, session: URLSession.shared)
         
         XCTAssertEqual(fakeRequest.base, fakeBase)
         XCTAssertEqual(fakeRequest.path, fakePath)
+        XCTAssertEqual(fakeRequest.method, .put)
         XCTAssertEqual(fakeRequest.uploadType, .data(Data()))
         XCTAssertEqual(fakeRequest.params!["key"] as! String, "value")
-        XCTAssertEqual(fakeRequest.method, .put)
         
         uploadType = .url(URL(string: "/file/path")!)
         
-        fakeRequest = FakeRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .put, uploadType: uploadType, session: URLSession.shared)
+        fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], uploadType: uploadType, session: URLSession.shared)
         
         XCTAssertEqual(fakeRequest.base, fakeBase)
         XCTAssertEqual(fakeRequest.path, fakePath)
+        XCTAssertEqual(fakeRequest.method, .put)
         XCTAssertEqual(fakeRequest.uploadType, .url(URL(string: "/file/path")!))
         XCTAssertEqual(fakeRequest.params!["key"] as! String, "value")
-        XCTAssertEqual(fakeRequest.method, .put)
     }
     
     func testInitStreamRequest() {
-        let streamRequest = StreamRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .get, session: URLSession.shared)
+        let streamRequest = StreamRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], session: URLSession.shared)
         
         XCTAssertEqual(streamRequest.base, fakeBase)
         XCTAssertEqual(streamRequest.path, fakePath)
-        XCTAssertEqual(streamRequest.params!["key"] as! String, "value")
         XCTAssertEqual(streamRequest.method, .get)
+        XCTAssertEqual(streamRequest.params!["key"] as! String, "value")
     }
     
     func testGo() {

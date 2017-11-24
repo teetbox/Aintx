@@ -10,21 +10,31 @@ import Foundation
 
 public class HttpRequest {
     
+    var urlString: String?
     var urlRequest: URLRequest?
     var httpError: HttpError?
     
     let base: String
     let path: String
-    let params: [String: Any]?
     let method: HttpMethod
+    let params: [String: Any]?
+    let bodyData: Data?
+//    let headerFields: [String: String]?
     let session: URLSession
     
-    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, bodyData: Data? = nil, session: URLSession) {
         self.base = base
         self.path = path
-        self.params = params
         self.method = method
+        self.params = params
+        self.bodyData = bodyData
         self.session = session
+
+        if case .get = method {
+            urlString = try? URLEncording.composeURLString(base: base, path: path, params: params)
+        } else {
+            urlString = try? URLEncording.composeURLString(base: base, path: path)
+        }
     }
 
     @discardableResult
@@ -61,8 +71,8 @@ extension HttpRequest {
 
 class DataRequest: HttpRequest {
     
-    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
-        super.init(base: base, path: path, params: params, method: method, session: session)
+    override init(base: String, path: String, method: HttpMethod, params: [String: Any]?, bodyData: Data? = nil, session: URLSession) {
+        super.init(base: base, path: path, method: method, params: params, bodyData: bodyData, session: session)
         
         guard let url = URL(string: base + path) else {
             httpError = HttpError.invalidURL(base + path)
@@ -81,10 +91,13 @@ class DataRequest: HttpRequest {
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
         
-        guard let params = params else { return }
-        let body = try? JSONSerialization.data(withJSONObject: params, options: [])
+        if let params = params, method != HttpMethod.get {
+            urlRequest?.httpBody = try? JSONSerialization.data(withJSONObject: params, options: [])
+        }
         
-        urlRequest?.httpBody = body
+        if let bodyData = bodyData {
+            urlRequest?.httpBody = bodyData
+        }
     }
     
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
@@ -106,8 +119,8 @@ class DataRequest: HttpRequest {
 
 class DownloadRequest: HttpRequest {
     
-    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
-        super.init(base: base, path: path, params: params, method: method, session: session)
+    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+        super.init(base: base, path: path, method: method, params: params, session: session)
     }
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
@@ -120,10 +133,9 @@ class UploadRequest: HttpRequest {
     
     let uploadType: UploadType
     
-    init(base: String, path: String, uploadType: UploadType, params: [String: Any]?, method: HttpMethod, session: URLSession) {
+    init(base: String, path: String, method: HttpMethod, uploadType: UploadType, params: [String: Any]?, session: URLSession) {
         self.uploadType = uploadType
-        
-        super.init(base: base, path: path, params: params, method: method, session: session)
+        super.init(base: base, path: path, method: method, params: params, session: session)
         
         guard let url = URL(string: base + path) else {
             httpError = HttpError.invalidURL(base + path)
@@ -174,8 +186,8 @@ class UploadRequest: HttpRequest {
 
 class StreamRequest: HttpRequest {
     
-    override init(base: String, path: String, params: [String: Any]?, method: HttpMethod, session: URLSession) {
-        super.init(base: base, path: path, params: params, method: method, session: session)
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, session: URLSession) {
+        super.init(base: base, path: path, method: method, params: params, session: session)
     }
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
@@ -187,13 +199,12 @@ class StreamRequest: HttpRequest {
 class FakeRequest: HttpRequest {
     
     public var error: HttpError?
-    
+
     let uploadType: UploadType?
     
-    init(base: String, path: String, params: [String: Any]?, method: HttpMethod, uploadType: UploadType? = nil, session: URLSession) {
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]? = nil, bodyData: Data? = nil, uploadType: UploadType? = nil, session: URLSession) {
         self.uploadType = uploadType
-        
-        super.init(base: base, path: path, params: params, method: method, session: session)
+        super.init(base: base, path: path, method: method, params: params, bodyData: bodyData, session: session)
         
         guard let url = URL(string: base + path) else {
             error = HttpError.invalidURL(base + path)

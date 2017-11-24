@@ -56,14 +56,14 @@ class AintxInternalTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let token = aintx.get(fakePath) { _ in }
-        XCTAssertNotNil(token.sessionTask)
+        let task = aintx.get(fakePath) { _ in }
+        XCTAssertNotNil(task.sessionTask)
     }
     
     func testGetWithParams() {
         aintx.get(fakePath, params: ["key": "value"]) { response in
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
             XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
     }
     
@@ -74,14 +74,14 @@ class AintxInternalTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let token = aintx.put(fakePath) { _ in }
-        XCTAssertNotNil(token.sessionTask)
+        let task = aintx.put(fakePath) { _ in }
+        XCTAssertNotNil(task.sessionTask)
     }
     
     func testPutWithParams() {
         aintx.put(fakePath, params: ["key": "value"]) { response in
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
             XCTAssertEqual(response.fakeRequest!.method, .put)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
     }
     
@@ -92,14 +92,21 @@ class AintxInternalTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let token = aintx.post(fakePath) { _ in }
-        XCTAssertNotNil(token.sessionTask)
+        let task = aintx.post(fakePath) { _ in }
+        XCTAssertNotNil(task.sessionTask)
     }
     
     func testPostWithParams() {
         aintx.post(fakePath, params: ["key": "value"]) { response in
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
             XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+        }
+    }
+    
+    func testPostWithBodyData() {
+        let bodyData = "body".data(using: .utf8)
+        aintx.post(fakePath, bodyData: bodyData) { response in
+            XCTAssertEqual(response.fakeRequest!.bodyData, bodyData)
         }
     }
     
@@ -110,14 +117,14 @@ class AintxInternalTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let token = aintx.delete(fakePath) { _ in }
-        XCTAssertNotNil(token.sessionTask)
+        let task = aintx.delete(fakePath) { _ in }
+        XCTAssertNotNil(task.sessionTask)
     }
     
     func testDeleteWithParams() {
         aintx.delete(fakePath, params: ["key": "value"]) { response in
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
             XCTAssertEqual(response.fakeRequest!.method, .delete)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
     }
     
@@ -133,6 +140,12 @@ class AintxInternalTests: XCTestCase {
     func testDataRequestWithParams() {
         let request = aintx.dataRequest(path: fakePath, params: ["key": "value"]) as! FakeRequest
         XCTAssertEqual(request.params!["key"] as! String, "value")
+    }
+    
+    func testDataRequestWithBodyData() {
+        let bodyData = "body".data(using: .utf8)
+        let request = aintx.dataRequest(path: fakePath, method: .post, bodyData: bodyData)
+        XCTAssertEqual(request.bodyData, bodyData)
     }
     
     func testDataRequestWithMethod() {
@@ -151,13 +164,13 @@ class AintxInternalTests: XCTestCase {
     func testDataRequestWithParamsAndMethod() {
         var request: FakeRequest
         
-        request = aintx.dataRequest(path: fakePath, params: ["key": "value"], method: .put) as! FakeRequest
-        XCTAssertEqual(request.params!["key"] as! String, "value")
+        request = aintx.dataRequest(path: fakePath, method: .put, params: ["key": "value"]) as! FakeRequest
         XCTAssertEqual(request.method, .put)
-        
-        request = aintx.dataRequest(path: fakePath, params: ["key": "value"], method: .delete) as! FakeRequest
         XCTAssertEqual(request.params!["key"] as! String, "value")
+        
+        request = aintx.dataRequest(path: fakePath, method: .delete, params: ["key": "value"]) as! FakeRequest
         XCTAssertEqual(request.method, .delete)
+        XCTAssertEqual(request.params!["key"] as! String, "value")
     }
     
     func testUploadWithFileURL() {
@@ -201,8 +214,8 @@ class AintxInternalTests: XCTestCase {
     
     func testDownloadWithParams() {
         aintx.download(fakePath, params: ["key": "value"]) { response in
-            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
             XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
     }
     

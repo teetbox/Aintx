@@ -14,7 +14,7 @@ class JSONPlaceHolderTests: XCTestCase {
     var aintx: Aintx!
     var async: XCTestExpectation!
     
-    struct Post: Codable {
+    struct Article: Codable {
         let userId: Int
         let id: Int
         let title: String
@@ -40,33 +40,90 @@ class JSONPlaceHolderTests: XCTestCase {
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
-            let post = try! JSONDecoder().decode(Post.self, from: response.data!)
-            XCTAssertEqual(post.id, 1)
-            XCTAssertEqual(post.userId, 1)
-            XCTAssertEqual(post.title, "sunt aut facere repellat provident occaecati excepturi optio reprehenderit")
+            let article = try! JSONDecoder().decode(Article.self, from: response.data!)
+            XCTAssertEqual(article.id, 1)
+            XCTAssertEqual(article.userId, 1)
+            XCTAssertEqual(article.title, "sunt aut facere repellat provident occaecati excepturi optio reprehenderit")
             
             self.async.fulfill()
         }
         
-        wait(for: [async], timeout: 5)
+        wait(for: [async], timeout: 10)
+    }
+    
+    func testGet() {
+        aintx.get("/comments?postId=1") { response in
+            XCTAssertNotNil(response.data)
+            XCTAssertNil(response.error)
+            
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
+    }
+    
+    func testGetWithParams() {
+        aintx.get("/comments", params: ["postId": 1]) { response in
+            XCTAssertNotNil(response.data)
+            XCTAssertNil(response.error)
+            
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
     }
     
     func testPost() {
-//        let post = Post(userId: 88, id: 88, title: "TTST", body: "Forever")
-//        let jsonData = try! JSONEncoder().encode(post)
-        let params: [String : Any] = ["userId": 88, "title": "TTSY", "body": "Forever"]
+        let params: [String : Any] = ["userId": 88, "id": 108, "title": "TTSY", "body": "Forever"]
         
         aintx.post("/posts", params: params) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
-            let jsonData = response.json
-            XCTAssertEqual(jsonData!["id"] as! Int, 101)
+            let json = response.json
+            XCTAssertEqual(json!["id"] as! Int, 108)
+            XCTAssertEqual(json!["title"] as! String, "TTSY")
+            XCTAssertEqual(json!["body"] as! String, "Forever")
             
             self.async.fulfill()
         }
         
-        wait(for: [async], timeout: 5)
+        wait(for: [async], timeout: 10)
+    }
+    
+    func testPostWithBodyData() {
+        let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
+        let jsonData = try! JSONEncoder().encode(article)
+
+        aintx.post("/posts", bodyData: jsonData) { response in
+            XCTAssertNotNil(response.data)
+            XCTAssertNil(response.error)
+            let statusCode = (response.urlResponse as! HTTPURLResponse).statusCode
+            let json = response.json
+            XCTAssertEqual(json!["id"] as! Int, 108)
+            print("Status Code: \(statusCode)")
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
+    }
+    
+    func testDataRequestWithBodyData() {
+        let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
+        let jsonData = try! JSONEncoder().encode(article)
+        
+        aintx.dataRequest(path: "/posts", method: .post, bodyData: jsonData)
+            .go { response in
+                XCTAssertNotNil(response.data)
+                XCTAssertNil(response.error)
+                let statusCode = (response.urlResponse as! HTTPURLResponse).statusCode
+                let json = response.json
+                XCTAssertEqual(json!["id"] as! Int, 108)
+                print("Status Code: \(statusCode)")
+                self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
     }
     
 }

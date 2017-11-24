@@ -17,7 +17,7 @@ class HttpbinTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        aintx = Aintx(base: "http://httpbin.org")
+        aintx = Aintx(base: "https://httpbin.org")
         async = expectation(description: "async")
     }
     
@@ -42,30 +42,113 @@ class HttpbinTests: XCTestCase {
             self.async.fulfill()
         }
         
-        wait(for: [async], timeout: 5)
+        wait(for: [async], timeout: 10)
     }
     
     func testGetWithQueryString() {
-        // https://httpbin.org/get?show_env=1
-        aintx.get("/get", params: ["show_env": "1"]) { (httpResponse) in
+        aintx.get("/get", params: ["show_env": 1]) { (httpResponse) in
             XCTAssertNil(httpResponse.error)
             XCTAssertNotNil(httpResponse.data)
             
             self.async.fulfill()
         }
         
-        wait(for: [async], timeout: 5)
+        wait(for: [async], timeout: 10)
+    }
+    
+    func testGetWithQueryString2() {
+        aintx.get("/get?show_env=1") { (httpResponse) in
+            XCTAssertNil(httpResponse.error)
+            XCTAssertNotNil(httpResponse.data)
+            
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
     }
     
     func testPost() {
-        aintx.post("/post") { (httpResponse) in
-            XCTAssertNil(httpResponse.error)
-            XCTAssertNotNil(httpResponse.data)
+        let params: [String : Any] = ["userId": 88, "id": 108, "title": "TTSY", "body": "Forever"]
+        
+        aintx.post("/post", params: params) { response in
+            XCTAssertNotNil(response.data)
+            XCTAssertNil(response.error)
+            
+            guard let json = response.json else {
+                return
+            }
+            print(json["json"] as! Dictionary<String, Any>)
             
             self.async.fulfill()
         }
         
-        wait(for: [async], timeout: 5)
+        wait(for: [async], timeout: 10)
+    }
+    
+    struct Article: Codable {
+        let userId: Int
+        let id: Int
+        let title: String
+        let body: String
+    }
+    
+    func testPostWithBodyData() {
+        let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
+        let jsonData = try! JSONEncoder().encode(article)
+        
+        aintx.post("/post", bodyData: jsonData) { response in
+            XCTAssertNotNil(response.data)
+            XCTAssertNil(response.error)
+            
+            guard let json = response.json else {
+                XCTFail()
+                return
+            }
+            
+            guard let jsonDic = json["json"] as? [String: Any] else {
+                XCTFail()
+                return
+            }
+            
+            XCTAssertEqual(jsonDic["userId"] as! Int, 88)
+            XCTAssertEqual(jsonDic["id"] as! Int, 108)
+            XCTAssertEqual(jsonDic["title"] as! String, "TTSY")
+            XCTAssertEqual(jsonDic["body"] as! String, "Forever")
+            
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
+    }
+    
+    func testDataRequestWithBodyData() {
+        let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
+        let jsonData = try! JSONEncoder().encode(article)
+        
+        aintx.dataRequest(path: "/post", method: .post, bodyData: jsonData)
+            .go { response in
+                XCTAssertNotNil(response.data)
+                XCTAssertNil(response.error)
+                
+                guard let json = response.json else {
+                    XCTFail()
+                    return
+                }
+                
+                guard let jsonDic = json["json"] as? [String: Any] else {
+                    XCTFail()
+                    return
+                }
+                
+                XCTAssertEqual(jsonDic["userId"] as! Int, 88)
+                XCTAssertEqual(jsonDic["id"] as! Int, 108)
+                XCTAssertEqual(jsonDic["title"] as! String, "TTSY")
+                XCTAssertEqual(jsonDic["body"] as! String, "Forever")
+                
+                self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
     }
     
 }

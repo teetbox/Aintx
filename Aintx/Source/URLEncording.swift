@@ -10,6 +10,14 @@ import Foundation
 
 struct URLEncording {
     
+    static func composeURLString(base: String, path: String, params: [String: Any]? = nil) throws -> String {
+        var urlString = base + path
+        if let params = params {
+            urlString += queryString(with: params)
+        }
+        return urlString
+    }
+    
     static func encord(base: String, path: String) throws -> URL {
         guard let url = URL(string: base + path) else {
             throw HttpError.invalidURL(base + path)
@@ -35,7 +43,7 @@ struct URLEncording {
         return URL(string: url)
     }
     
-    private static func queryString(with params: Dictionary<String, Any>) -> String {
+    private static func queryString(with params: [String: Any]) -> String {
         var queryString = "?"
         
         for (key, value) in params {
