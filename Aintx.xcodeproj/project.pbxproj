@@ -28,7 +28,6 @@
 		C906DC581F9EAA490096D99C /* HttpbinTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C906DC571F9EAA490096D99C /* HttpbinTests.swift */; };
 		C906DC5B1F9EB4FE0096D99C /* AintxInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C906DC5A1F9EB4FE0096D99C /* AintxInternalTests.swift */; };
 		C93F5ED31FA2A78700C220B6 /* PostServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93F5ED21FA2A78700C220B6 /* PostServerTests.swift */; };
-		C97689201FA0533200453091 /* ImaggaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C976891F1FA0533200453091 /* ImaggaTests.swift */; };
 		C99888641FC6A2C80074BAFA /* NASATests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99888631FC6A2C80074BAFA /* NASATests.swift */; };
 		C99888661FC6A9EB0074BAFA /* JSONPlaceHolderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99888651FC6A9EB0074BAFA /* JSONPlaceHolderTests.swift */; };
 		C9C9B2E91FA01A150008D432 /* HttpResponseInternalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C9B2E81FA01A150008D432 /* HttpResponseInternalTests.swift */; };
@@ -71,7 +70,6 @@
 		C906DC571F9EAA490096D99C /* HttpbinTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpbinTests.swift; sourceTree = "<group>"; };
 		C906DC5A1F9EB4FE0096D99C /* AintxInternalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AintxInternalTests.swift; sourceTree = "<group>"; };
 		C93F5ED21FA2A78700C220B6 /* PostServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostServerTests.swift; sourceTree = "<group>"; };
-		C976891F1FA0533200453091 /* ImaggaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImaggaTests.swift; sourceTree = "<group>"; };
 		C99888631FC6A2C80074BAFA /* NASATests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NASATests.swift; sourceTree = "<group>"; };
 		C99888651FC6A9EB0074BAFA /* JSONPlaceHolderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONPlaceHolderTests.swift; sourceTree = "<group>"; };
 		C9C9B2E81FA01A150008D432 /* HttpResponseInternalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponseInternalTests.swift; sourceTree = "<group>"; };
@@ -169,7 +167,6 @@
 				C99888631FC6A2C80074BAFA /* NASATests.swift */,
 				C9E1FE661FC54B7A00365357 /* FlickrTests.swift */,
 				AC118E851FB1D5EA007EAA40 /* CountTests.swift */,
-				C976891F1FA0533200453091 /* ImaggaTests.swift */,
 				C906DC571F9EAA490096D99C /* HttpbinTests.swift */,
 				C93F5ED21FA2A78700C220B6 /* PostServerTests.swift */,
 				C99888651FC6A9EB0074BAFA /* JSONPlaceHolderTests.swift */,
@@ -331,7 +328,6 @@
 				AC118E861FB1D5EA007EAA40 /* CountTests.swift in Sources */,
 				C9C9B2E91FA01A150008D432 /* HttpResponseInternalTests.swift in Sources */,
 				AC34238D1F9E05F300BFAF8A /* HttpRequestPublicTests.swift in Sources */,
-				C97689201FA0533200453091 /* ImaggaTests.swift in Sources */,
 				C906DC5B1F9EB4FE0096D99C /* AintxInternalTests.swift in Sources */,
 				ACBDA6791FB27B0500EF9B04 /* HttpErrorPublicTests.swift in Sources */,
 			);

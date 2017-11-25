@@ -10,7 +10,7 @@ import XCTest
 import Aintx
 
 class HttpbinTests: XCTestCase {
-
+    
     var aintx: Aintx!
     var async: XCTestExpectation!
     
@@ -22,9 +22,9 @@ class HttpbinTests: XCTestCase {
     }
     
     func testGet() {
-        aintx.get("/get") { (httpResponse) in
-            XCTAssertNil(httpResponse.error)
-            XCTAssertNotNil(httpResponse.data)
+        aintx.get("/get") { response in
+            XCTAssertNil(response.error)
+            XCTAssertNotNil(response.data)
             
             self.async.fulfill()
         }
@@ -33,7 +33,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testPostWithParams() {
-        aintx.post("/post", params: ["foo": "bar"]) { (response) in
+        aintx.post("/post", params: ["foo": "bar"]) { response in
             let httpURLResponse = response.urlResponse as! HTTPURLResponse
             XCTAssertEqual(httpURLResponse.statusCode, 200)
             let json = response.json
@@ -46,9 +46,13 @@ class HttpbinTests: XCTestCase {
     }
     
     func testGetWithQueryString() {
-        aintx.get("/get", params: ["show_env": 1]) { (httpResponse) in
-            XCTAssertNil(httpResponse.error)
-            XCTAssertNotNil(httpResponse.data)
+        aintx.get("/get", params: ["env": "123"]) { response in
+            XCTAssertNil(response.error)
+            XCTAssertNotNil(response.data)
+            
+            let json = response.json!
+            let args = json["args"] as! [String: String]
+            XCTAssertEqual(args["env"], "123")
             
             self.async.fulfill()
         }
@@ -57,9 +61,13 @@ class HttpbinTests: XCTestCase {
     }
     
     func testGetWithQueryString2() {
-        aintx.get("/get?show_env=1") { (httpResponse) in
-            XCTAssertNil(httpResponse.error)
-            XCTAssertNotNil(httpResponse.data)
+        aintx.get("/get?env=123") { response in
+            XCTAssertNil(response.error)
+            XCTAssertNotNil(response.data)
+            
+            let json = response.json!
+            let args = json["args"] as! [String: String]
+            XCTAssertEqual(args["env"], "123")
             
             self.async.fulfill()
         }
@@ -125,7 +133,8 @@ class HttpbinTests: XCTestCase {
         let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
         let jsonData = try! JSONEncoder().encode(article)
         
-        aintx.dataRequest(path: "/post", method: .post, bodyData: jsonData)
+        aintx
+            .dataRequest(path: "/post", method: .post, bodyData: jsonData)
             .go { response in
                 XCTAssertNotNil(response.data)
                 XCTAssertNil(response.error)

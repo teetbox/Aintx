@@ -98,10 +98,10 @@ class JSONPlaceHolderTests: XCTestCase {
         aintx.post("/posts", bodyData: jsonData) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
-            let statusCode = (response.urlResponse as! HTTPURLResponse).statusCode
+
             let json = response.json
             XCTAssertEqual(json!["id"] as! Int, 108)
-            print("Status Code: \(statusCode)")
+
             self.async.fulfill()
         }
         
@@ -112,15 +112,14 @@ class JSONPlaceHolderTests: XCTestCase {
         let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
         let jsonData = try! JSONEncoder().encode(article)
         
-        aintx.dataRequest(path: "/posts", method: .post, bodyData: jsonData)
-            .go { response in
-                XCTAssertNotNil(response.data)
-                XCTAssertNil(response.error)
-                let statusCode = (response.urlResponse as! HTTPURLResponse).statusCode
-                let json = response.json
-                XCTAssertEqual(json!["id"] as! Int, 108)
-                print("Status Code: \(statusCode)")
-                self.async.fulfill()
+        aintx.dataRequest(path: "/posts", method: .post, bodyData: jsonData).go { response in
+            XCTAssertNotNil(response.data)
+            XCTAssertNil(response.error)
+
+            let json = response.json
+            XCTAssertEqual(json!["id"] as! Int, 108)
+
+            self.async.fulfill()
         }
         
         wait(for: [async], timeout: 10)

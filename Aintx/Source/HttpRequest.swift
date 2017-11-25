@@ -74,15 +74,13 @@ class DataRequest: HttpRequest {
     override init(base: String, path: String, method: HttpMethod, params: [String: Any]?, bodyData: Data? = nil, session: URLSession) {
         super.init(base: base, path: path, method: method, params: params, bodyData: bodyData, session: session)
         
-        guard let url = URL(string: base + path) else {
-            httpError = HttpError.invalidURL(base + path)
+        guard let urlString = urlString else {
+            httpError = HttpError.invalidURL("")
             return
         }
         
-        do {
-            _ = try URLEncording.encord(base: base, path: path)
-        } catch {
-            httpError = error as? HttpError
+        guard let url = URL(string: urlString) else {
+            httpError = HttpError.invalidURL("")
             return
         }
         
