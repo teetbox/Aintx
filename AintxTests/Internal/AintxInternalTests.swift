@@ -67,6 +67,13 @@ class AintxInternalTests: XCTestCase {
         }
     }
     
+    func testGetWithHeaders() {
+        aintx.get(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+    }
+    
     func testPut() {
         aintx.put(fakePath) { response in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
@@ -148,6 +155,11 @@ class AintxInternalTests: XCTestCase {
         XCTAssertEqual(request.bodyData, bodyData)
     }
     
+    func testDataRequestWithHeaders() {
+        let request = aintx.dataRequest(path: fakePath, method: .post, headers: ["key": "value"])
+        XCTAssertEqual(request.headers!["key"], "value")
+    }
+    
     func testDataRequestWithMethod() {
         var request: FakeRequest
         
@@ -189,9 +201,18 @@ class AintxInternalTests: XCTestCase {
         }
     }
     
+    func testUploadWithHeaders() {
+        let fileData = Data()
+        aintx.upload(fakePath, fileData: fileData, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .put)
+            XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.data(fileData))
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+    }
+    
     func testUploadRequest() {
         let fileData: UploadType = .data(Data())
-        var request = aintx.uploadRequest(path: fakePath, uploadType: fileData, params: nil, method: .put)
+        var request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: fileData, params: nil)
         
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
@@ -200,9 +221,21 @@ class AintxInternalTests: XCTestCase {
         XCTAssertEqual((request as! FakeRequest).uploadType, fileData)
         
         let fileURL: UploadType = .url(URL(string: "/file/path")!)
-        request = aintx.uploadRequest(path: fakePath, uploadType: fileURL, params: nil, method: .put)
-        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, params: nil)
         XCTAssertEqual((request as! FakeRequest).uploadType, fileURL)
+    }
+    
+    func testUploadRequestWithHeaders() {
+        let fileURL: UploadType = .url(URL(string: "/file/path")!)
+        let request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, headers: ["key": "value"])
+        XCTAssertEqual(request.headers!["key"], "value")
+    }
+    
+    func testUploadRequestWithParamsAndHeaders() {
+        let fileURL: UploadType = .url(URL(string: "/file/path")!)
+        let request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, params: ["key": "value"], headers: ["key": "value"])
+        XCTAssertEqual(request.params!["key"] as! String, "value")
+        XCTAssertEqual(request.headers!["key"], "value")
     }
     
     func testDownload() {
@@ -219,6 +252,13 @@ class AintxInternalTests: XCTestCase {
         }
     }
     
+    func testDownloadWithHeaders() {
+        aintx.download(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+    }
+    
     func testDownloadRequest() {
         let request = aintx.downloadRequest(fakePath, method: .get)
         XCTAssertEqual(request.base, fakeBase)
@@ -227,10 +267,18 @@ class AintxInternalTests: XCTestCase {
     }
     
     func testDownloadRequestWithParams() {
-        let request = aintx.downloadRequest(fakePath, params: ["key": "value"], method: .get)
+        let request = aintx.downloadRequest(fakePath, method: .get, params: ["key": "value"])
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.params!["key"] as! String, "value")
+    }
+    
+    func testDownloadRequestWithParamsAndHeaders() {
+        let request = aintx.downloadRequest(fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
+        XCTAssertEqual(request.base, fakeBase)
+        XCTAssertEqual(request.path, fakePath)
+        XCTAssertEqual(request.params!["key"] as! String, "value")
+        XCTAssertEqual(request.headers!["key"], "value")
     }
     
 }

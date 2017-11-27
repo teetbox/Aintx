@@ -27,15 +27,21 @@ class AintxPublicTests: XCTestCase {
         aintx.get(fakePath) { response in
             XCTAssertNotNil(response)
         }
-        
-        let task = aintx.get(fakePath) { _ in }
-        XCTAssertNotNil(task)
-    }
-    
-    func testGetWithParams() {
+
         aintx.get(fakePath, params: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
+
+        aintx.get(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.get(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        let task = aintx.get(fakePath) { _ in }
+        XCTAssertNotNil(task)
     }
     
     func testPut() {
@@ -43,14 +49,20 @@ class AintxPublicTests: XCTestCase {
             XCTAssertNotNil(response)
         }
         
-        let task = aintx.put(fakePath) { _ in }
-        XCTAssertNotNil(task)
-    }
-    
-    func testPutWithParams() {
         aintx.put(fakePath, params: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
+
+        aintx.put(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.put(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        let task = aintx.put(fakePath) { _ in }
+        XCTAssertNotNil(task)
     }
     
     func testPost() {
@@ -58,24 +70,44 @@ class AintxPublicTests: XCTestCase {
             XCTAssertNotNil(response)
         }
         
+        aintx.post(fakePath, params: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+
+        aintx.post(fakePath, bodyData: Data()) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.post(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.post(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.post(fakePath, bodyData: Data(), headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
         let task = aintx.post(fakePath) { _ in }
         XCTAssertNotNil(task)
     }
     
-    func testPostWithParams() {
-        aintx.post(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
-    func testPostWithBodyData() {
-        aintx.post(fakePath, bodyData: Data()) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
     func testDelete() {
         aintx.delete(fakePath) { response in
+            XCTAssertNotNil(response)
+        }
+
+        aintx.delete(fakePath, params: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.delete(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.delete(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
@@ -83,61 +115,87 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(task)
     }
     
-    func testDeleteWithParams() {
-        aintx.delete(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
     func testDataRequest() {
-        let request = aintx.dataRequest(path: fakePath)
+        var request = aintx.dataRequest(path: fakePath)
         XCTAssertNotNil(request)
-    }
     
-    func testDataRequestWithParams() {
-        let request = aintx.dataRequest(path: fakePath, params: ["key": "value"])
+        request = aintx.dataRequest(path: fakePath, params: ["key": "value"])
         XCTAssertNotNil(request)
-    }
+        
+        request = aintx.dataRequest(path: fakePath, headers: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        request = aintx.dataRequest(path: fakePath, headers: ["key": "value"], bodyData: Data())
+        XCTAssertNotNil(request)
     
-    func testDataRequestWithMethod() {
-        let request = aintx.dataRequest(path: fakePath, method: .put)
+        request = aintx.dataRequest(path: fakePath, method: .put, params: ["key": "value"], headers: ["key": "value"])
+        XCTAssertNotNil(request)
+    
+        request = aintx.dataRequest(path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], bodyData: Data())
         XCTAssertNotNil(request)
     }
 
-    
-    func testDataRequestWithParamsAndMethod() {
-        let request = aintx.dataRequest(path: fakePath, method: .get, params: ["key": "value"])
-        XCTAssertNotNil(request)
-    }
-    
     func testUploadWithURL() {
         let fileURL = URL(string: "/file/path")!
         aintx.upload(fakePath, fileURL: fileURL) { response in
             XCTAssertNotNil(response)
         }
-    }
-    
-    func testUploadWithURLAndParams() {
-        let fileURL = URL(string: "/file/path")!
+        
         aintx.upload(fakePath, fileURL: fileURL, params: nil) { response in
             XCTAssertNotNil(response)
         }
-    }
+        
+        aintx.upload(fakePath, fileURL: fileURL, headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.upload(fakePath, fileURL: fileURL, params: nil, headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
     
-    func testUploadWithData() {
         aintx.upload(fakePath, fileData: Data()) { response in
             XCTAssertNotNil(response)
         }
-    }
     
-    func testUploadWithDataAndParams() {
         aintx.upload(fakePath, fileData: Data(), params: nil) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.upload(fakePath, fileData: Data(), headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.upload(fakePath, fileData: Data(), params: nil, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
     }
     
     func testUploadRequest() {
-        let request = aintx.uploadRequest(path: fakePath, uploadType: .data(Data()), params: nil, method: .put)
+        var request = aintx.uploadRequest(path: fakePath, uploadType: .data(Data()))
+        XCTAssertNotNil(request)
+        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()))
+        XCTAssertNotNil(request)
+        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), params: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), headers: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), params: ["key": "value"], headers: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .url(URL(string: "/file/path")!))
+        XCTAssertNotNil(request)
+        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .url(URL(string: "/file/path")!), params: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .url(URL(string: "/file/path")!), headers: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .url(URL(string: "/file/path")!), params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
     }
     
@@ -145,16 +203,34 @@ class AintxPublicTests: XCTestCase {
         aintx.download(fakePath) { response in
             XCTAssertNotNil(response)
         }
-    }
-    
-    func testDownloadWithParams() {
-        aintx.download(fakePath, params: nil) { response in
+        
+        aintx.download(fakePath, params: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.download(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        aintx.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
     }
     
     func testDownloadRequest() {
-        let request = aintx.downloadRequest(fakePath, params: nil, method: .get)
+        var request = aintx.downloadRequest(fakePath)
+        XCTAssertNotNil(request)
+        
+        request = aintx.downloadRequest(fakePath, method: .get)
+        XCTAssertNotNil(request)
+        
+        request = aintx.downloadRequest(fakePath, method: .get, params: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        request = aintx.downloadRequest(fakePath, method: .get, headers: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        request = aintx.downloadRequest(fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
     }
     

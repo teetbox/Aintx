@@ -36,7 +36,7 @@ class HttpRequestInternalTests: XCTestCase {
     }
     
     func testInitDownloadRequest() {
-        let downloadRequest = DownloadRequest(base: fakeBase, path: fakePath, params: ["key": "value"], method: .get, session: URLSession.shared)
+        let downloadRequest = DownloadRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], session: URLSession.shared)
         
         XCTAssertEqual(downloadRequest.base, fakeBase)
         XCTAssertEqual(downloadRequest.path, fakePath)

@@ -49,73 +49,73 @@ public struct Aintx {
     
     /* ✅ */
     @discardableResult
-    public func get(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func get(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .get, params: params).go(completion: completion)
+        return dataRequest(path: path, method: .get, params: params, headers: headers).go(completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func put(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func put(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .put, params: params).go(completion: completion)
+        return dataRequest(path: path, method: .put, params: params, headers: headers).go(completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func post(_ path: String, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func post(_ path: String, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .post, params: nil, bodyData: nil).go(completion: completion)
+        return dataRequest(path: path, method: .post, params: nil, headers: headers, bodyData: nil).go(completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func post(_ path: String, params: [String: Any]?, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func post(_ path: String, params: [String: Any]?, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .post, params: params, bodyData: nil).go(completion: completion)
+        return dataRequest(path: path, method: .post, params: params, headers: headers, bodyData: nil).go(completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func post(_ path: String, bodyData: Data?, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func post(_ path: String, bodyData: Data?, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .post, params: nil, bodyData: bodyData).go(completion: completion)
+        return dataRequest(path: path, method: .post, params: nil, headers: headers, bodyData: bodyData).go(completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func delete(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void)-> HttpTask {
+    public func delete(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void)-> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .delete, params: params).go(completion: completion)
+        return dataRequest(path: path, method: .delete, params: params, headers: headers).go(completion: completion)
     }
     
     /* ✅ */
-    public func dataRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, bodyData: Data? = nil) -> HttpRequest {
+    public func dataRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, bodyData: Data? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
-            request = FakeRequest(base: base, path: path, method: method, params: params, bodyData: bodyData, session: session)
+            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, session: session)
             return request
         }
         
-        request = DataRequest(base: base, path: path, method: method, params: params, bodyData: bodyData, session: session)
+        request = DataRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, session: session)
         if case .background(_) = config {
             request.httpError = HttpError.unsupportedSession(.dataInBackground)
         }
@@ -124,56 +124,56 @@ public struct Aintx {
     
     /* ✅ */
     @discardableResult
-    public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
         
-        return uploadRequest(path: path, uploadType: .url(fileURL), params: params, method: .put).go(completion: completion)
+        return uploadRequest(path: path, method: .put, uploadType: .url(fileURL), params: params, headers: headers).go(completion: completion)
     }
     
     /* ✅ */
     @discardableResult
-    public func upload(_ path: String, fileData: Data, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func upload(_ path: String, fileData: Data, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return uploadRequest(path: path, uploadType: .data(fileData), params: params, method: .put).go(completion: completion)
+        return uploadRequest(path: path, method: .put, uploadType: .data(fileData), params: params, headers: headers).go(completion: completion)
     }
     
     /* ✅ */
-    public func uploadRequest(path: String, uploadType: UploadType, params: [String: Any]? = nil, method: HttpMethod) -> HttpRequest {
+    public func uploadRequest(path: String, method: HttpMethod = .put, uploadType: UploadType, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
-            request = FakeRequest(base: base, path: path, method: method, params: params, uploadType: uploadType, session: session)
+            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, uploadType: uploadType, session: session)
             return request
         }
         
-        request = UploadRequest(base: base, path: path, method: method, uploadType: uploadType, params: params, session: session)
+        request = UploadRequest(base: base, path: path, method: method, uploadType: uploadType, params: params, headers: headers, session: session)
         return request
     }
     
     /* ✅ */
     @discardableResult
-    public func download(_ path: String, params: [String: Any]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return downloadRequest(path, params: params, method: .get).go(completion: completion)
+        return downloadRequest(path, method: .get, params: params, headers: headers).go(completion: completion)
     }
     
     /* ✅ */
-    public func downloadRequest(_ path: String, params: [String: Any]? = nil, method: HttpMethod) -> HttpRequest {
+    public func downloadRequest(_ path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
-            request = FakeRequest(base: base, path: path, method: method, params: params, session: session)
+            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, session: session)
             return request
         }
         
-        request = DownloadRequest(base: base, path: path, params: params, method: method, session: session)
+        request = DownloadRequest(base: base, path: path, method: method, params: params, headers: headers, session: session)
         return request
     }
     
