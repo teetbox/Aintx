@@ -47,6 +47,21 @@ class HttpbinTests: XCTestCase {
         wait(for: [async], timeout: 10)
     }
     
+    func testDataRequestWithHeaders() {
+        aintx.dataRequest(path: "/headers", headers: ["Content-Type": "text/html; charset=utf-8"]).go { response in
+            XCTAssertNil(response.error)
+            XCTAssertNotNil(response.data)
+            
+            let headers = response.json!["headers"] as! [String: String]
+            XCTAssertEqual(headers["Host"], "httpbin.org")
+            XCTAssertEqual(headers["Content-Type"], "text/html; charset=utf-8")
+            
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
+    }
+    
     func testPostWithParams() {
         aintx.post("/post", params: ["foo": "bar"]) { response in
             let httpURLResponse = response.urlResponse as! HTTPURLResponse
