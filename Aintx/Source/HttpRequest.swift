@@ -18,16 +18,14 @@ public class HttpRequest {
     let path: String
     let method: HttpMethod
     let params: [String: Any]?
-    let bodyData: Data?
     let headers: [String: String]?
     let session: URLSession
     
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, bodyData: Data? = nil, session: URLSession) {
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, session: URLSession) {
         self.base = base
         self.path = path
         self.method = method
         self.params = params
-        self.bodyData = bodyData
         self.headers = headers
         self.session = session
 
@@ -72,8 +70,11 @@ extension HttpRequest {
 
 class DataRequest: HttpRequest {
     
-    override init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, bodyData: Data? = nil, session: URLSession) {
-        super.init(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, session: session)
+    let bodyData: Data?
+    
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, bodyData: Data? = nil, session: URLSession) {
+        self.bodyData = bodyData
+        super.init(base: base, path: path, method: method, params: params, headers: headers, session: session)
         
         guard let urlString = urlString else {
             httpError = HttpError.invalidURL("")
@@ -122,18 +123,6 @@ class DataRequest: HttpRequest {
     
 }
 
-class DownloadRequest: HttpRequest {
-    
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, session: URLSession) {
-        super.init(base: base, path: path, method: method, params: params, headers: headers, session: session)
-    }
-    
-    override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        fatalError()
-    }
-    
-}
-
 class UploadRequest: HttpRequest {
     
     let uploadType: UploadType
@@ -141,29 +130,6 @@ class UploadRequest: HttpRequest {
     init(base: String, path: String, method: HttpMethod, uploadType: UploadType, params: [String: Any]?, headers: [String: String]? = nil, session: URLSession) {
         self.uploadType = uploadType
         super.init(base: base, path: path, method: method, params: params, headers: headers, session: session)
-        
-        guard let url = URL(string: base + path) else {
-            httpError = HttpError.invalidURL(base + path)
-            return
-        }
-        
-        do {
-            _ = try URLEncording.encord(base: base, path: path)
-        } catch {
-            httpError = error as? HttpError
-            return
-        }
-        
-        urlRequest = URLRequest(url: url)
-        urlRequest?.httpMethod = method.rawValue
-        urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
-        
-        guard let params = params else { return }
-        let body = try? JSONSerialization.data(withJSONObject: params, options: [])
-        
-        urlRequest?.httpBody = body
-        
     }
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
@@ -189,6 +155,18 @@ class UploadRequest: HttpRequest {
     
 }
 
+class DownloadRequest: HttpRequest {
+    
+    override init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, session: URLSession) {
+        super.init(base: base, path: path, method: method, params: params, headers: headers, session: session)
+    }
+    
+    override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        fatalError()
+    }
+    
+}
+
 class StreamRequest: HttpRequest {
     
     init(base: String, path: String, method: HttpMethod, params: [String: Any]?, session: URLSession) {
@@ -205,11 +183,13 @@ class FakeRequest: HttpRequest {
     
     public var error: HttpError?
 
+    let bodyData: Data?
     let uploadType: UploadType?
     
     init(base: String, path: String, method: HttpMethod, params: [String: Any]? = nil, headers: [String: String]? = nil, bodyData: Data? = nil, uploadType: UploadType? = nil, session: URLSession) {
+        self.bodyData = bodyData
         self.uploadType = uploadType
-        super.init(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, session: session)
+        super.init(base: base, path: path, method: method, params: params, headers: headers, session: session)
         
         guard let url = URL(string: base + path) else {
             error = HttpError.invalidURL(base + path)

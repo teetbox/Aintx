@@ -74,7 +74,7 @@ public struct Aintx {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .post, params: nil, headers: headers, bodyData: nil).go(completion: completion)
+        return dataRequest(path: path, method: .post, headers: headers, bodyData: nil).go(completion: completion)
     }
     
     /* ✅ */
@@ -84,7 +84,7 @@ public struct Aintx {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .post, params: params, headers: headers, bodyData: nil).go(completion: completion)
+        return dataRequest(path: path, method: .post, params: params, headers: headers).go(completion: completion)
     }
     
     /* ✅ */
@@ -94,7 +94,7 @@ public struct Aintx {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return dataRequest(path: path, method: .post, params: nil, headers: headers, bodyData: bodyData).go(completion: completion)
+        return dataRequest(path: path, method: .post, headers: headers, bodyData: bodyData).go(completion: completion)
     }
     
     /* ✅ */
@@ -118,6 +118,10 @@ public struct Aintx {
         request = DataRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, session: session)
         if case .background(_) = config {
             request.httpError = HttpError.unsupportedSession(.dataInBackground)
+        }
+        
+        if params != nil && bodyData != nil {
+            request.httpError = HttpError.invalidURL("Params and body")
         }
         return request
     }

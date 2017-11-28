@@ -28,6 +28,11 @@ class HttpErrorInternalTests: XCTestCase {
         XCTAssertEqual(error.localizedDescription, "Data tasks are not supported in background session")
     }
     
+    func testParamsAndBodyDataUsedTogether() {
+//        error = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
+        XCTAssertEqual(error.localizedDescription, "Params and bodyData should not be used together in dataRequest")
+    }
+    
 }
 
 

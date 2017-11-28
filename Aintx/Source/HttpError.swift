@@ -13,6 +13,7 @@ public enum HttpError: Error {
     case invalidURL(String)
     case encordingFailed(EncordingFailedReason)
     case unsupportedSession(UnsupportedSessionReason)
+//    case requestFailed(Error)
     case responseFailed(Error)
     
     public enum EncordingFailedReason {
@@ -22,6 +23,10 @@ public enum HttpError: Error {
     
     public enum UnsupportedSessionReason {
         case dataInBackground
+    }
+    
+    public enum RequestFailedReason {
+        
     }
     
 }

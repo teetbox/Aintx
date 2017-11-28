@@ -151,7 +151,7 @@ class AintxInternalTests: XCTestCase {
     
     func testDataRequestWithBodyData() {
         let bodyData = "body".data(using: .utf8)
-        let request = aintx.dataRequest(path: fakePath, method: .post, bodyData: bodyData)
+        let request = aintx.dataRequest(path: fakePath, method: .post, bodyData: bodyData) as! FakeRequest
         XCTAssertEqual(request.bodyData, bodyData)
     }
     
