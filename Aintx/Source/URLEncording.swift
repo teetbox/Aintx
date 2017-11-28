@@ -20,7 +20,7 @@ struct URLEncording {
     
     static func encord(base: String, path: String) throws -> URL {
         guard let url = URL(string: base + path) else {
-            throw HttpError.invalidURL(base + path)
+            throw HttpError.requestFailed(.invalidURL(base + path))
         }
         
         return url
@@ -30,7 +30,7 @@ struct URLEncording {
         if let url = composeURL(urlString: urlString, method: method, params: params) {
             return url
         } else {
-            throw HttpError.invalidURL(urlString)
+            throw HttpError.requestFailed(.invalidURL(urlString))
         }
     }
     

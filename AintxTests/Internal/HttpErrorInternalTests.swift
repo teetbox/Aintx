@@ -18,18 +18,18 @@ class HttpErrorInternalTests: XCTestCase {
     }
     
     func testInvalidURL() {
-        error = HttpError.invalidURL("~!@#$")
+        error = HttpError.requestFailed(.invalidURL("~!@#$"))
         print(error.localizedDescription)
-        XCTAssertEqual(error.localizedDescription, "Invalid URL: '~!@#$'")
+        XCTAssertEqual(error.localizedDescription, "Invalid URL: ~!@#$")
     }
     
     func testUnsupportedSession() {
-        error = HttpError.unsupportedSession(.dataInBackground)
+        error = HttpError.requestFailed(.dataRequestInBackgroundSession)
         XCTAssertEqual(error.localizedDescription, "Data tasks are not supported in background session")
     }
     
     func testParamsAndBodyDataUsedTogether() {
-//        error = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
+        error = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
         XCTAssertEqual(error.localizedDescription, "Params and bodyData should not be used together in dataRequest")
     }
     

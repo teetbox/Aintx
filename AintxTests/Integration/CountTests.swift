@@ -57,4 +57,17 @@ class CountTests: XCTestCase {
         wait(for: [async], timeout: 5)
     }
     
+    func testLogin() {
+        let params = ["userName": "tiantong", "userPassword": "happytt"]
+        aintx.post("/api/v1/login", params: params) { response in
+            let json = response.json
+            let token = json?["token"] as? String
+            XCTAssertNotNil(token)
+
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 5)
+    }
+    
 }

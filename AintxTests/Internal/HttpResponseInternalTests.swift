@@ -33,7 +33,7 @@ class HttpResponseInternalTests: XCTestCase {
     }
     
     func testInitWithError() {
-        let httpError = HttpError.invalidURL("/faka/path")
+        let httpError = HttpError.requestFailed(.invalidURL("/faka/path"))
         httpResponse = HttpResponse(data: nil, response: nil, error: httpError)
         
         XCTAssertNil(httpResponse.data)

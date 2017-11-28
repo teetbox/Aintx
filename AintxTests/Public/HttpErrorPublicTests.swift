@@ -24,14 +24,14 @@ class HttpErrorPublicTests: XCTestCase {
     func testDataRequestInBackgroundSession() {
         aintx = Aintx(base: fakeBase, config: .background("bg"))
         aintx.get(fakePath) { response in
-            XCTAssertEqual(response.error?.localizedDescription, "Data tasks are not supported in background session.")
+            XCTAssertEqual(response.error?.localizedDescription, "Data tasks are not supported in background session")
         }
     }
     
     func testDataRequestHaveParamsAndBodyData() {
         let request = aintx.dataRequest(path: fakePath, method: .post, params: ["paramKey": "paramValue"], bodyData: Data())
         request.go { response in
-            XCTAssertEqual(response.error?.localizedDescription, "Params and bodyData can not be used together.")
+            XCTAssertEqual(response.error?.localizedDescription, "Params and bodyData should not be used together in dataRequest")
         }
     }
     

@@ -85,4 +85,19 @@ class ReqResTests: XCTestCase {
         wait(for: [async], timeout: 10)
     }
     
+    func testLoginSuccessful() {
+        aintx.post("/api/login", params: ["email": "peter@klaven", "password": "cityslicka"]) { response in
+            let httpURLResponse = response.urlResponse as! HTTPURLResponse
+            XCTAssertEqual(httpURLResponse.statusCode, 200)
+            
+            self.async.fulfill()
+            
+            let jsonDic = response.json!
+            let token = jsonDic["token"] as! String
+            XCTAssertEqual(token, "QpwL5tke4Pnpja7X")
+        }
+
+        wait(for: [async], timeout: 10)
+    }
+    
 }

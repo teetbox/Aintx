@@ -10,23 +10,19 @@ import Foundation
 
 public enum HttpError: Error {
     
-    case invalidURL(String)
+    case requestFailed(RequestFailedReason)
     case encordingFailed(EncordingFailedReason)
-    case unsupportedSession(UnsupportedSessionReason)
-//    case requestFailed(Error)
     case responseFailed(Error)
+    
+    public enum RequestFailedReason {
+        case invalidURL(String)
+        case paramsAndBodyDataUsedTogether
+        case dataRequestInBackgroundSession
+    }
     
     public enum EncordingFailedReason {
         case missingParameters(String)
         case invalidParameters(String)
-    }
-    
-    public enum UnsupportedSessionReason {
-        case dataInBackground
-    }
-    
-    public enum RequestFailedReason {
-        
     }
     
 }
@@ -35,14 +31,27 @@ extension HttpError: LocalizedError {
     
     public var localizedDescription: String {
         switch self {
-        case .invalidURL(let urlString):
-            return "Invalid URL: '\(urlString)'"
-        case .encordingFailed(let reason):
+        case .requestFailed(let reason):
             return reason.localizedDescription
-        case .unsupportedSession(let reason):
+        case .encordingFailed(let reason):
             return reason.localizedDescription
         case .responseFailed(let error):
             return error.localizedDescription
+        }
+    }
+    
+}
+
+extension HttpError.RequestFailedReason: LocalizedError {
+    
+    public var localizedDescription: String {
+        switch self {
+        case .invalidURL(let url):
+            return "Invalid URL: \(url)"
+        case .paramsAndBodyDataUsedTogether:
+            return "Params and bodyData should not be used together in dataRequest"
+        case .dataRequestInBackgroundSession:
+            return "Data tasks are not supported in background session"
         }
     }
     
@@ -56,17 +65,6 @@ extension HttpError.EncordingFailedReason: LocalizedError {
             return "Missing \(field)"
         case .invalidParameters(let field):
             return "Missing \(field)"
-        }
-    }
-    
-}
-
-extension HttpError.UnsupportedSessionReason: LocalizedError {
-    
-    public var localizedDescription: String {
-        switch self {
-        case .dataInBackground:
-            return "Data tasks are not supported in background session"
         }
     }
     

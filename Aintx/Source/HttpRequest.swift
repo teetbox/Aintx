@@ -77,12 +77,12 @@ class DataRequest: HttpRequest {
         super.init(base: base, path: path, method: method, params: params, headers: headers, session: session)
         
         guard let urlString = urlString else {
-            httpError = HttpError.invalidURL("")
+            httpError = HttpError.requestFailed(.invalidURL(""))
             return
         }
         
         guard let url = URL(string: urlString) else {
-            httpError = HttpError.invalidURL("")
+            httpError = HttpError.requestFailed(.invalidURL(""))
             return
         }
         
@@ -192,7 +192,7 @@ class FakeRequest: HttpRequest {
         super.init(base: base, path: path, method: method, params: params, headers: headers, session: session)
         
         guard let url = URL(string: base + path) else {
-            error = HttpError.invalidURL(base + path)
+            error = HttpError.requestFailed(.invalidURL(base + path))
             return
         }
         

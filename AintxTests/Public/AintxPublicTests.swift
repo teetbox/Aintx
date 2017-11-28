@@ -255,16 +255,4 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
-    func testSaveToken() {
-        aintx.saveToken("ABCDEFG")
-        XCTAssertEqual(UserDefaults.standard.string(forKey: "AINTX_SERVER_TOKEN"), "ABCDEFG")
-        UserDefaults.standard.set(nil, forKey: "AINTX_SERVER_TOKEN")
-    }
-    
-    func testRemoveToken() {
-        aintx.saveToken("ABCDEFG")
-        aintx.removeToken()
-        XCTAssertNil(UserDefaults.standard.string(forKey: "AINTX_SERVER_TOKEN"))
-    }
-    
 }

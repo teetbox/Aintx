@@ -27,8 +27,6 @@ public enum UploadType {
     case data(Data)
 }
 
-let AINTX_SERVER_TOKEN = "AINTX_SERVER_TOKEN"
-
 public struct Aintx {
     
     let base: String
@@ -117,11 +115,11 @@ public struct Aintx {
         
         request = DataRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, session: session)
         if case .background(_) = config {
-            request.httpError = HttpError.unsupportedSession(.dataInBackground)
+            request.httpError = HttpError.requestFailed(.dataRequestInBackgroundSession)
         }
         
         if params != nil && bodyData != nil {
-            request.httpError = HttpError.invalidURL("Params and body")
+            request.httpError = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
         }
         return request
     }
@@ -179,16 +177,6 @@ public struct Aintx {
         
         request = DownloadRequest(base: base, path: path, method: method, params: params, headers: headers, session: session)
         return request
-    }
-    
-    /* ✅ */
-    public func saveToken(_ token: String) {
-        UserDefaults.standard.set(token, forKey: AINTX_SERVER_TOKEN)
-    }
-    
-    /* ✅ */
-    public func removeToken() {
-        UserDefaults.standard.set(nil, forKey: AINTX_SERVER_TOKEN)
     }
     
 }
