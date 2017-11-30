@@ -164,11 +164,11 @@ public struct Aintx {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return downloadRequest(path, method: .get, params: params, headers: headers).go(completion: completion)
+        return downloadRequest(path: path, method: .get, params: params, headers: headers).go(completion: completion)
     }
     
     /* ✅ */
-    public func downloadRequest(_ path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpRequest {
+    public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
             request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, session: session)

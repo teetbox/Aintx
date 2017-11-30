@@ -218,19 +218,19 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testDownloadRequest() {
-        var request = aintx.downloadRequest(fakePath)
+        var request = aintx.downloadRequest(path: fakePath)
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(fakePath, method: .get)
+        request = aintx.downloadRequest(path: fakePath, method: .get)
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(fakePath, method: .get, params: ["key": "value"])
+        request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(fakePath, method: .get, headers: ["key": "value"])
+        request = aintx.downloadRequest(path: fakePath, method: .get, headers: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
+        request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
     }
     

@@ -260,21 +260,21 @@ class AintxInternalTests: XCTestCase {
     }
     
     func testDownloadRequest() {
-        let request = aintx.downloadRequest(fakePath, method: .get)
+        let request = aintx.downloadRequest(path: fakePath, method: .get)
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertNil(request.params)
     }
     
     func testDownloadRequestWithParams() {
-        let request = aintx.downloadRequest(fakePath, method: .get, params: ["key": "value"])
+        let request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"])
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.params!["key"] as! String, "value")
     }
     
     func testDownloadRequestWithParamsAndHeaders() {
-        let request = aintx.downloadRequest(fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
+        let request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.params!["key"] as! String, "value")
