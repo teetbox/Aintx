@@ -162,7 +162,25 @@ class DownloadRequest: HttpRequest {
     }
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        fatalError()
+        
+        guard let filePath = urlString else {
+            httpError = HttpError.requestFailed(.invalidURL(""))
+            return HttpTask(sessionTask: URLSessionTask())
+        }
+        
+        guard let fileURL = URL(string: filePath) else {
+            httpError = HttpError.requestFailed(.invalidURL(""))
+            return HttpTask(sessionTask: URLSessionTask())
+        }
+        
+        let downloadTask: URLSessionDownloadTask
+        downloadTask = session.downloadTask(with: fileURL) { (url, urlResponse, error) in
+            let httpResponse = HttpResponse(response: urlResponse, error: error)
+            completion(httpResponse)
+        }
+        
+        downloadTask.resume()
+        return HttpTask(sessionTask: downloadTask)
     }
     
 }
