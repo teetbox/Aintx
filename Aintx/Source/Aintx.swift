@@ -27,6 +27,8 @@ public enum UploadType {
     case data(Data)
 }
 
+public typealias ProgressClosure = (_ bytesWritten: Int64, _ totalBytesWritten: Int64, _ totalBytesExpectedToWrite: Int64) -> Void
+
 public struct Aintx {
     
     let base: String
@@ -159,7 +161,7 @@ public struct Aintx {
     
     /* ✅ */
     @discardableResult
-    public func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())

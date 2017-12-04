@@ -157,7 +157,10 @@ class UploadRequest: HttpRequest {
 
 class DownloadRequest: HttpRequest {
     
-    override init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, session: URLSession) {
+    let progressClosure: ProgressClosure?
+    
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, progress: ProgressClosure? = nil, session: URLSession) {
+        self.progressClosure = progress
         super.init(base: base, path: path, method: method, params: params, headers: headers, session: session)
     }
     

@@ -23,15 +23,19 @@ class DownLoadTests: XCTestCase {
     
     func testDownloadFromDropBox() {
         let filePath = "https://www.dropbox.com/s/r6lr4zlw12ipafm/SpeedTracker_movie.mov?dl=1"
-        let task = aintx.download(filePath) { response in
-            XCTFail()
-            
+        let progress: ProgressClosure = { _, writtenBytes, totalBytes in
+            let percentage = writtenBytes / totalBytes * 100
+            print("Downloading \(percentage)%")
+        }
+        
+        let task = aintx.download(filePath, progress: progress) { response in
             self.async.fulfill()
         }
-        sleep(10)
+        
+        sleep(5)
         task.cancel()
         
-        wait(for: [async], timeout: 100)
+        wait(for: [async], timeout: 10)
     }
     
 }
