@@ -12,9 +12,10 @@ import Aintx
 struct User: Decodable {
     let id: Int
     let userName: String
-    let eMail: String
-    let phone: String
+    let eMail: String?
+    let phone: String?
     let userPassword: String
+    let token: String?
     let createdAt: String
     let updatedAt: String
 }
@@ -32,11 +33,13 @@ class CountTests: XCTestCase {
     }
     
     func testGetUser() {
-        aintx.get("/api/v1/user") { response in
+        let params = ["token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJpYXQiOjE1MTI0NzQ2MDUsImV4cCI6MTUxMjQ3ODIwNX0.3OPpAJoV91lrzprUaoBdpz8z9xQzy6vVb_9gUC2DoRs"]
+        aintx.get("/api/v1/user", params: params) { response in
             XCTAssertNotNil(response.data)
             
             let decoder = JSONDecoder()
-            let _ = try! decoder.decode(Array<User>.self, from: response.data!)
+            let users = try! decoder.decode([User].self, from: response.data!)
+            print(users)
             
             self.async.fulfill()
         }
@@ -57,17 +60,33 @@ class CountTests: XCTestCase {
         wait(for: [async], timeout: 5)
     }
     
-    func testLogin() {
-        let params = ["userName": "tiantong", "userPassword": "happytt"]
-        aintx.post("/api/v1/login", params: params) { response in
-            let json = response.json
-            let token = json?["token"] as? String
-            XCTAssertNotNil(token)
-
+    func testRegister() {
+        let params = ["userName": "tiantong", "password": "happytt"]
+        
+        aintx.post("/api/v1/register", params: params) { response in
+            let jsonDic = response.json
+            XCTAssertNotNil(jsonDic)
+            
+            print(jsonDic!)
+            
             self.async.fulfill()
         }
         
         wait(for: [async], timeout: 5)
+    }
+    
+    func testLogin() {
+        let params = ["userName": "tiantong", "password": "happytt"]
+        aintx.post("/api/v1/login", params: params) { response in
+            let json = response.json
+            let token = json?["token"] as? String
+            XCTAssertNotNil(token)
+            print(token!)
+
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 10)
     }
     
 }

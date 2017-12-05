@@ -35,6 +35,8 @@ public struct Aintx {
     let config: SessionConfig
     let session: URLSession
     
+    var sessionDelegate: DownloadTaskDelegate?
+    
     public var isFake = false
     public var fakeResponse: HttpResponse?
     
@@ -161,23 +163,25 @@ public struct Aintx {
     
     /* ✅ */
     @discardableResult
-    public func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public mutating func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return HttpTask(sessionTask: URLSessionTask())
         }
-        return downloadRequest(path: path, method: .get, params: params, headers: headers).go(completion: completion)
+        return downloadRequest(path: path, method: .get, params: params, headers: headers, progress: progress).go(completion: completion)
     }
     
     /* ✅ */
-    public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpRequest {
+    public mutating func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
             request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, session: session)
             return request
         }
         
-        request = DownloadRequest(base: base, path: path, method: method, params: params, headers: headers, session: session)
+        sessionDelegate = DownloadTaskDelegate()
+        let downloadSession = URLSession(configuration: session.configuration, delegate: sessionDelegate, delegateQueue: nil)
+        request = DownloadRequest(base: base, path: path, method: method, params: params, headers: headers, session: downloadSession)
         return request
     }
     
