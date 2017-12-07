@@ -21,6 +21,13 @@ class DownLoadTests: XCTestCase {
         async = expectation(description: "async")
     }
     
+    override func tearDown() {
+        super.tearDown()
+        
+        aintx = nil
+        print("Set aintx to nil")
+    }
+    
     func testDownloadFromDropBox() {
         let filePath = "https://www.dropbox.com/s/r6lr4zlw12ipafm/SpeedTracker_movie.mov?dl=1"
         let progress: ProgressClosure = { _, writtenBytes, totalBytes in
@@ -29,10 +36,11 @@ class DownLoadTests: XCTestCase {
         }
         
         let task = aintx.download(filePath, progress: progress) { response in
+            
             self.async.fulfill()
         }
         
-        sleep(5)
+        sleep(50)
         task.cancel()
         
         wait(for: [async], timeout: 10)

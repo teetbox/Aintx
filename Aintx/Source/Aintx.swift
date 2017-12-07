@@ -180,6 +180,7 @@ public struct Aintx {
         }
         
         sessionDelegate = DownloadTaskDelegate()
+//        sessionDelegate = nil
         let downloadSession = URLSession(configuration: session.configuration, delegate: sessionDelegate, delegateQueue: nil)
         request = DownloadRequest(base: base, path: path, method: method, params: params, headers: headers, session: downloadSession)
         return request

@@ -10,6 +10,15 @@ import Foundation
 
 class DownloadTaskDelegate: NSObject, URLSessionDownloadDelegate {
     
+    override init() {
+        super.init()
+        print("Download delegate init")
+    }
+    
+    deinit {
+        print("Download delegate deinit")
+    }
+    
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
         print(#function)
     }
@@ -23,56 +32,9 @@ class DownloadTaskDelegate: NSObject, URLSessionDownloadDelegate {
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        session.invalidateAndCancel()
+        session.finishTasksAndInvalidate()
         print(#function)
     }
     
 }
-
-
-class ListViewController: UIViewController {
-    
-    lazy var session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
-    
-    
-    func download() {
-        session.downloadTask(with: URL(string: "www")!)
-    }
-
-}
-
-extension ListViewController: URLSessionDownloadDelegate {
-    
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        
-    }
-    
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        print("balabala")
-    }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
