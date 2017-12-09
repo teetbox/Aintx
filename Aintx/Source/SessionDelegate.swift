@@ -32,8 +32,6 @@ class DownloadTaskDelegate: NSObject, URLSessionDownloadDelegate {
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        session.invalidateAndCancel()
-        session.finishTasksAndInvalidate()
         print(#function)
     }
     

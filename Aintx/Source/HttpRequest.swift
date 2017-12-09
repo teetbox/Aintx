@@ -177,12 +177,9 @@ class DownloadRequest: HttpRequest {
         }
         
         let downloadTask: URLSessionDownloadTask
-        downloadTask = session.downloadTask(with: fileURL) { (url, urlResponse, error) in
-            let httpResponse = HttpResponse(response: urlResponse, error: error)
-            completion(httpResponse)
-        }
-        
+        downloadTask = session.downloadTask(with: fileURL)
         downloadTask.resume()
+        
         return HttpTask(sessionTask: downloadTask)
     }
     
