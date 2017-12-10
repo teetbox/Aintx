@@ -25,22 +25,29 @@ class HttpTaskInternalTests: XCTestCase {
     }
     
     func testInit() {
-        XCTAssertEqual(httpTask.sessionTask.state, .running)
+        let dataTask = httpTask as! HttpDataTask
+        XCTAssertEqual(dataTask.task.state, .running)
     }
     
     func testSuspend() {
         httpTask.suspend()
-        XCTAssertEqual(httpTask.sessionTask.state, .suspended)
+        
+        let dataTask = httpTask as! HttpDataTask
+        XCTAssertEqual(dataTask.task.state, .suspended)
     }
     
     func testResume() {
         httpTask.resume()
-        XCTAssertEqual(httpTask.sessionTask.state, .running)
+        
+        let dataTask = httpTask as! HttpDataTask
+        XCTAssertEqual(dataTask.task.state, .running)
     }
     
     func testCancel() {
         httpTask.cancel()
-        XCTAssertEqual(httpTask.sessionTask.state, .canceling)
+        
+        let dataTask = httpTask as! HttpDataTask
+        XCTAssertEqual(dataTask.task.state, .canceling)
     }
     
 }

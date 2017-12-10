@@ -109,7 +109,7 @@ class DataRequest: HttpRequest {
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard httpError == nil else {
             completion(HttpResponse(error: httpError))
-            return HttpTask(sessionTask: URLSessionTask())
+            return HttpDataTask(task: URLSessionDataTask())
         }
         
         let dataTask = session.dataTask(with: urlRequest!) { (data, response, error) in
@@ -118,7 +118,7 @@ class DataRequest: HttpRequest {
         }
         
         dataTask.resume()
-        return HttpTask(sessionTask: dataTask)
+        return HttpDataTask(task: dataTask)
     }
     
 }
@@ -150,7 +150,7 @@ class UploadRequest: HttpRequest {
         }
         
         uploadTask.resume()
-        return HttpTask(sessionTask: uploadTask)
+        return HttpUploadTask(task: uploadTask)
     }
     
 }
@@ -168,19 +168,19 @@ class DownloadRequest: HttpRequest {
         
         guard let filePath = urlString else {
             httpError = HttpError.requestFailed(.invalidURL(""))
-            return HttpTask(sessionTask: URLSessionTask())
+            return HttpDownloadTask(task: URLSessionDownloadTask())
         }
         
         guard let fileURL = URL(string: filePath) else {
             httpError = HttpError.requestFailed(.invalidURL(""))
-            return HttpTask(sessionTask: URLSessionTask())
+            return HttpDownloadTask(task: URLSessionDownloadTask())
         }
         
         let downloadTask: URLSessionDownloadTask
         downloadTask = session.downloadTask(with: fileURL)
         downloadTask.resume()
         
-        return HttpTask(sessionTask: downloadTask)
+        return HttpDownloadTask(task: downloadTask)
     }
     
 }
@@ -219,7 +219,7 @@ class FakeRequest: HttpRequest {
     
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         completion(HttpResponse(fakeRequest: self))
-        return HttpTask(sessionTask: URLSessionTask())
+        return HttpDataTask(task: URLSessionDataTask())
     }
     
 }

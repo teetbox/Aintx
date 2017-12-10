@@ -56,8 +56,8 @@ class AintxInternalTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let task = aintx.get(fakePath) { _ in }
-        XCTAssertNotNil(task.sessionTask)
+        let httpTask = aintx.get(fakePath) { _ in }
+        XCTAssertNotNil(httpTask)
     }
     
     func testGetWithParams() {
@@ -81,8 +81,8 @@ class AintxInternalTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let task = aintx.put(fakePath) { _ in }
-        XCTAssertNotNil(task.sessionTask)
+        let httpTask = aintx.put(fakePath) { _ in }
+        XCTAssertNotNil(httpTask)
     }
     
     func testPutWithParams() {
@@ -99,8 +99,8 @@ class AintxInternalTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let task = aintx.post(fakePath) { _ in }
-        XCTAssertNotNil(task.sessionTask)
+        let httpTask = aintx.post(fakePath) { _ in }
+        XCTAssertNotNil(httpTask)
     }
     
     func testPostWithParams() {
@@ -124,8 +124,8 @@ class AintxInternalTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let task = aintx.delete(fakePath) { _ in }
-        XCTAssertNotNil(task.sessionTask)
+        let httpTask = aintx.delete(fakePath) { _ in }
+        XCTAssertNotNil(httpTask)
     }
     
     func testDeleteWithParams() {

@@ -8,20 +8,72 @@
 
 import Foundation
 
-public struct HttpTask {
+public protocol HttpTask {
+    func suspend()
+    func resume()
+    func cancel()
+}
+
+public class HttpDataTask: HttpTask {
     
-    let sessionTask: URLSessionTask
+    let task: URLSessionDataTask
+    
+    init(task: URLSessionDataTask) {
+        self.task = task
+    }
     
     public func suspend() {
-        sessionTask.suspend()
+        task.suspend()
     }
     
     public func resume() {
-        sessionTask.resume()
+        task.resume()
     }
     
     public func cancel() {
-        sessionTask.cancel()
+        task.cancel()
+    }
+    
+}
+
+public class HttpUploadTask: HttpTask {
+    let task: URLSessionUploadTask
+    
+    init(task: URLSessionUploadTask) {
+        self.task = task
+    }
+    
+    public func suspend() {
+        task.suspend()
+    }
+    
+    public func resume() {
+        task.resume()
+    }
+    
+    public func cancel() {
+        task.cancel()
+    }
+    
+}
+
+public class HttpDownloadTask: HttpTask {
+    let task: URLSessionDownloadTask
+    
+    init(task: URLSessionDownloadTask) {
+        self.task = task
+    }
+    
+    public func suspend() {
+        task.suspend()
+    }
+    
+    public func resume() {
+        task.resume()
+    }
+    
+    public func cancel() {
+        task.cancel()
     }
     
 }
