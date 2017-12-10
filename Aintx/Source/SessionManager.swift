@@ -8,9 +8,21 @@
 
 import Foundation
 
-struct SessionManager {
+protocol SessionManagerProtocol {
+    var sessionTasks: [URLSessionTask: HttpTask]? { get set }
     
-    static func getSession(with config: SessionConfig) -> URLSession {
+    func getSession(with config: SessionConfig) -> URLSession
+}
+
+class SessionManager: SessionManagerProtocol {
+    
+    static let shared = SessionManager()
+    
+    private init() {}
+    
+    var sessionTasks: [URLSessionTask : HttpTask]?
+    
+    func getSession(with config: SessionConfig) -> URLSession {
         _ = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
         
         let session: URLSession

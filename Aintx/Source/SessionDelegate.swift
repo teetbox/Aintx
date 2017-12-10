@@ -8,6 +8,8 @@
 
 import Foundation
 
+class SessionDelegate {}
+
 class DownloadTaskDelegate: NSObject, URLSessionDownloadDelegate {
     
     override init() {

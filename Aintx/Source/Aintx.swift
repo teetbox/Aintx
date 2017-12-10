@@ -44,7 +44,7 @@ public struct Aintx {
     public init(base: String, config: SessionConfig = .standard) {
         self.base = base
         self.config = config
-        self.session = SessionManager.getSession(with: config)
+        self.session = SessionManager.shared.getSession(with: config)
     }
     
     // MARK: - Methods

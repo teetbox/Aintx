@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		350D55361FDCBB2F005C84EC /* SessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350D55351FDCBB2F005C84EC /* SessionManagerTests.swift */; };
+		350D55381FDCBBE6005C84EC /* HttpResponsePublicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350D55371FDCBBE6005C84EC /* HttpResponsePublicTests.swift */; };
+		350D553A1FDCBD1F005C84EC /* SessionDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350D55391FDCBD1F005C84EC /* SessionDelegateTests.swift */; };
 		AC118E861FB1D5EA007EAA40 /* CountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC118E851FB1D5EA007EAA40 /* CountTests.swift */; };
 		AC34238D1F9E05F300BFAF8A /* HttpRequestPublicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC34238C1F9E05F300BFAF8A /* HttpRequestPublicTests.swift */; };
 		AC3BCE4B1F9AD47300644761 /* Aintx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC3BCE411F9AD47300644761 /* Aintx.framework */; };
@@ -47,6 +50,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		350D55351FDCBB2F005C84EC /* SessionManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerTests.swift; sourceTree = "<group>"; };
+		350D55371FDCBBE6005C84EC /* HttpResponsePublicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponsePublicTests.swift; sourceTree = "<group>"; };
+		350D55391FDCBD1F005C84EC /* SessionDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionDelegateTests.swift; sourceTree = "<group>"; };
 		AC118E851FB1D5EA007EAA40 /* CountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountTests.swift; sourceTree = "<group>"; };
 		AC34238C1F9E05F300BFAF8A /* HttpRequestPublicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestPublicTests.swift; sourceTree = "<group>"; };
 		AC3BCE411F9AD47300644761 /* Aintx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Aintx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -146,9 +152,9 @@
 				AC3BCE621F9AF20B00644761 /* HttpResponse.swift */,
 				ACBD11151FB08C8C005E1850 /* HttpTask.swift */,
 				AC3BCE641F9AF23F00644761 /* HttpError.swift */,
+				AC3BCE681F9AF28A00644761 /* URLEncording.swift */,
 				AC3BCE661F9AF26300644761 /* SessionManager.swift */,
 				ACFFCF521FD62BA7000D6BE4 /* SessionDelegate.swift */,
-				AC3BCE681F9AF28A00644761 /* URLEncording.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -158,6 +164,7 @@
 			children = (
 				AC3BCE6B1F9AF3D600644761 /* AintxPublicTests.swift */,
 				AC34238C1F9E05F300BFAF8A /* HttpRequestPublicTests.swift */,
+				350D55371FDCBBE6005C84EC /* HttpResponsePublicTests.swift */,
 				ACBD11191FB08D8B005E1850 /* HttpTaskPublicTests.swift */,
 				ACBDA6781FB27B0500EF9B04 /* HttpErrorPublicTests.swift */,
 			);
@@ -183,9 +190,11 @@
 				C906DC5A1F9EB4FE0096D99C /* AintxInternalTests.swift */,
 				C9C9B2EA1FA01A360008D432 /* HttpRequestInternalTests.swift */,
 				C9C9B2E81FA01A150008D432 /* HttpResponseInternalTests.swift */,
-				AC74FC0A1FA9AFA600B27840 /* URLEncordingTests.swift */,
 				ACBD11171FB08D05005E1850 /* HttpTaskInternalTests.swift */,
 				ACBDA6761FB2749B00EF9B04 /* HttpErrorInternalTests.swift */,
+				AC74FC0A1FA9AFA600B27840 /* URLEncordingTests.swift */,
+				350D55351FDCBB2F005C84EC /* SessionManagerTests.swift */,
+				350D55391FDCBD1F005C84EC /* SessionDelegateTests.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -319,6 +328,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC3BCE6C1F9AF3D600644761 /* AintxPublicTests.swift in Sources */,
+				350D55381FDCBBE6005C84EC /* HttpResponsePublicTests.swift in Sources */,
 				C9C9B2EB1FA01A360008D432 /* HttpRequestInternalTests.swift in Sources */,
 				ACB80B981FCAF31B002CA5F4 /* ReqResTests.swift in Sources */,
 				ACBD111A1FB08D8B005E1850 /* HttpTaskPublicTests.swift in Sources */,
@@ -327,7 +337,9 @@
 				C99888661FC6A9EB0074BAFA /* JSONPlaceHolderTests.swift in Sources */,
 				ACBDA6771FB2749B00EF9B04 /* HttpErrorInternalTests.swift in Sources */,
 				ACBD11181FB08D05005E1850 /* HttpTaskInternalTests.swift in Sources */,
+				350D553A1FDCBD1F005C84EC /* SessionDelegateTests.swift in Sources */,
 				C989FEB11FD138D00065A508 /* DownLoadTests.swift in Sources */,
+				350D55361FDCBB2F005C84EC /* SessionManagerTests.swift in Sources */,
 				C93F5ED31FA2A78700C220B6 /* PostServerTests.swift in Sources */,
 				AC118E861FB1D5EA007EAA40 /* CountTests.swift in Sources */,
 				C9C9B2E91FA01A150008D432 /* HttpResponseInternalTests.swift in Sources */,
