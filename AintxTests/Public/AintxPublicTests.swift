@@ -245,7 +245,7 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(request)
         
         let progress: ProgressHandler = { _, _, _ in }
-        let completion: CompletionHandler = { }
+        let completion: CompletionHandler = { _ in }
         request = aintx.downloadRequest(path: fakePath, progress: progress, completion: completion)
         XCTAssertNotNil(request)
     }

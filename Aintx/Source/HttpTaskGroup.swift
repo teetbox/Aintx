@@ -10,7 +10,8 @@ import Foundation
 
 class HttpTaskGroup: NSObject {
     
-    var sessionTasks: [URLSessionTask: HttpTask] = [:]
+    var sessionTasks = [URLSessionTask: HttpTask]()
+    
     
 }
 

@@ -37,7 +37,7 @@ class HttpRequestInternalTests: XCTestCase {
     
     func testInitDownloadRequest() {
         let progress: ProgressHandler = { _, _, _ in }
-        let completion: CompletionHandler = { }
+        let completion: CompletionHandler = { _ in }
         
         let downloadRequest = DownloadRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], progress: progress, completion: completion, sessionConfig: .standard)
         

@@ -8,6 +8,9 @@
 
 import Foundation
 
+public typealias ProgressHandler = (Int64, Int64, Int64) -> Void
+public typealias CompletionHandler = (HttpResponse) -> Void
+
 public class HttpRequest {
     
     var urlString: String?
@@ -181,7 +184,7 @@ class DownloadRequest: HttpRequest {
         }
         
         let downloadTask: URLSessionDownloadTask
-        let downloadDelegate = DownloadTaskDelegate()
+        let downloadDelegate = HttpTaskDelegate(progress: progress!, completion: self.completion!)
         let downloadSession = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
         downloadTask = downloadSession.downloadTask(with: fileURL)
         downloadTask.resume()
