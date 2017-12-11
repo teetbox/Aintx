@@ -40,11 +40,19 @@ class DownLoadTests: XCTestCase {
         }
 
         let downloadTask = aintx.downloadRequest(path: filePath, progress: progress, completion: completion)
-        downloadTask.go { (_) in
+        downloadTask.go { response in
+            XCTAssertNotNil(response.data)
+            let urlString = String(data: response.data!, encoding: .utf8)
+            print(urlString!)
+            
+            let responseCode = (response.urlResponse as? HTTPURLResponse)?.statusCode
+            XCTAssertNotNil(responseCode)
+            print("Http status code: \(responseCode!)")
+            
             self.async.fulfill()
         }
         
-        wait(for: [async], timeout: 100)
+        wait(for: [async], timeout: 200)
     }
 
 }

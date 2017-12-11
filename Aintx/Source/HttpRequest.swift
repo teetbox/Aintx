@@ -186,7 +186,11 @@ class DownloadRequest: HttpRequest {
         let downloadTask: URLSessionDownloadTask
         let downloadDelegate = HttpTaskDelegate(progress: progress!, completion: self.completion!)
         let downloadSession = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
-        downloadTask = downloadSession.downloadTask(with: fileURL)
+        downloadTask = downloadSession.downloadTask(with: fileURL) { (url, response, error) in
+            let urlData = url?.absoluteString.data(using: .utf8)
+            let httpResponse = HttpResponse(data: urlData, response: response, error: error)
+            completion(httpResponse)
+        }
         downloadTask.resume()
         
         return HttpDownloadTask(task: downloadTask)
