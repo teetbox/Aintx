@@ -27,15 +27,10 @@ public enum UploadType {
     case data(Data)
 }
 
-public typealias ProgressClosure = (_ bytesWritten: Int64, _ totalBytesWritten: Int64, _ totalBytesExpectedToWrite: Int64) -> Void
-
 public struct Aintx {
     
     let base: String
     let config: SessionConfig
-    let session: URLSession
-    
-    var sessionDelegate: DownloadTaskDelegate?
     
     public var isFake = false
     public var fakeResponse: HttpResponse?
@@ -44,7 +39,6 @@ public struct Aintx {
     public init(base: String, config: SessionConfig = .standard) {
         self.base = base
         self.config = config
-        self.session = SessionManager.shared.getSession(with: config)
     }
     
     // MARK: - Methods
@@ -54,7 +48,7 @@ public struct Aintx {
     public func get(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpDataTask(task: URLSessionDataTask())
+            return HttpDataTask()
         }
         return dataRequest(path: path, method: .get, params: params, headers: headers).go(completion: completion)
     }
@@ -64,7 +58,7 @@ public struct Aintx {
     public func put(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpDataTask(task: URLSessionDataTask())
+            return HttpDataTask()
         }
         return dataRequest(path: path, method: .put, params: params, headers: headers).go(completion: completion)
     }
@@ -74,7 +68,7 @@ public struct Aintx {
     public func post(_ path: String, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpDataTask(task: URLSessionDataTask())
+            return HttpDataTask()
         }
         return dataRequest(path: path, method: .post, headers: headers, bodyData: nil).go(completion: completion)
     }
@@ -84,7 +78,7 @@ public struct Aintx {
     public func post(_ path: String, params: [String: Any]?, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpDataTask(task: URLSessionDataTask())
+            return HttpDataTask()
         }
         return dataRequest(path: path, method: .post, params: params, headers: headers).go(completion: completion)
     }
@@ -94,7 +88,7 @@ public struct Aintx {
     public func post(_ path: String, bodyData: Data?, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpDataTask(task: URLSessionDataTask())
+            return HttpDataTask()
         }
         return dataRequest(path: path, method: .post, headers: headers, bodyData: bodyData).go(completion: completion)
     }
@@ -104,7 +98,7 @@ public struct Aintx {
     public func delete(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void)-> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpDataTask(task: URLSessionDataTask())
+            return HttpDataTask()
         }
         return dataRequest(path: path, method: .delete, params: params, headers: headers).go(completion: completion)
     }
@@ -113,11 +107,11 @@ public struct Aintx {
     public func dataRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, bodyData: Data? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
-            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, session: session)
+            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, sessionConfig: config)
             return request
         }
         
-        request = DataRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, session: session)
+        request = DataRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, sessionConfig: config)
         if case .background(_) = config {
             request.httpError = HttpError.requestFailed(.dataRequestInBackgroundSession)
         }
@@ -133,7 +127,7 @@ public struct Aintx {
     public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpUploadTask(task: URLSessionUploadTask())
+            return HttpUploadTask()
         }
         
         return uploadRequest(path: path, method: .put, uploadType: .url(fileURL), params: params, headers: headers).go(completion: completion)
@@ -144,7 +138,7 @@ public struct Aintx {
     public func upload(_ path: String, fileData: Data, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpUploadTask(task: URLSessionUploadTask())
+            return HttpUploadTask()
         }
         return uploadRequest(path: path, method: .put, uploadType: .data(fileData), params: params, headers: headers).go(completion: completion)
     }
@@ -153,35 +147,33 @@ public struct Aintx {
     public func uploadRequest(path: String, method: HttpMethod = .put, uploadType: UploadType, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
-            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, uploadType: uploadType, session: session)
+            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, uploadType: uploadType, sessionConfig: config)
             return request
         }
         
-        request = UploadRequest(base: base, path: path, method: method, uploadType: uploadType, params: params, headers: headers, session: session)
+        request = UploadRequest(base: base, path: path, method: method, uploadType: uploadType, params: params, headers: headers, sessionConfig: config)
         return request
     }
     
     /* ✅ */
     @discardableResult
-    public mutating func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressHandler? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpDownloadTask(task: URLSessionDownloadTask())
+            return HttpDownloadTask()
         }
         return downloadRequest(path: path, method: .get, params: params, headers: headers, progress: progress).go(completion: completion)
     }
     
     /* ✅ */
-    public mutating func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil) -> HttpRequest {
+    public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressHandler? = nil, completion: CompletionHandler? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
-            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, session: session)
+            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config)
             return request
         }
-        
-        sessionDelegate = DownloadTaskDelegate()
-        let downloadSession = URLSession(configuration: session.configuration, delegate: sessionDelegate, delegateQueue: OperationQueue.main)
-        request = DownloadRequest(base: base, path: path, method: method, params: params, headers: headers, session: downloadSession)
+
+        request = DownloadRequest(base: base, path: path, method: method, params: params, headers: headers, progress: progress, completion: completion, sessionConfig: config)
         return request
     }
     

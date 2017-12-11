@@ -218,7 +218,7 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testDownLoadWithProgress() {
-        let progress: ProgressClosure = { (_, writtenBytes, totalBytes) in
+        let progress: ProgressHandler = { (_, writtenBytes, totalBytes) in
             let percentage = writtenBytes / totalBytes * 100
             print("Downloading \(percentage)%")
         }
@@ -242,6 +242,11 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(request)
         
         request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
+        XCTAssertNotNil(request)
+        
+        let progress: ProgressHandler = { _, _, _ in }
+        let completion: CompletionHandler = { }
+        request = aintx.downloadRequest(path: fakePath, progress: progress, completion: completion)
         XCTAssertNotNil(request)
     }
     

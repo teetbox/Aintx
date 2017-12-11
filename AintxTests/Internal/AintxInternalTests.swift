@@ -38,7 +38,6 @@ class AintxInternalTests: XCTestCase {
     func testInit() {
         XCTAssertEqual(aintx.base, fakeBase)
         XCTAssertEqual(aintx.config, .standard)
-        XCTAssertEqual(aintx.session, URLSession.shared)
     }
     
     func testInitWithConfig() {

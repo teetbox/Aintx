@@ -22,6 +22,7 @@
 		AC3BCE671F9AF26300644761 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE661F9AF26300644761 /* SessionManager.swift */; };
 		AC3BCE691F9AF28A00644761 /* URLEncording.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE681F9AF28A00644761 /* URLEncording.swift */; };
 		AC3BCE6C1F9AF3D600644761 /* AintxPublicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3BCE6B1F9AF3D600644761 /* AintxPublicTests.swift */; };
+		AC5B71701FDE1927001736F7 /* HttpTaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5B716F1FDE1927001736F7 /* HttpTaskGroup.swift */; };
 		AC74FC0B1FA9AFA600B27840 /* URLEncordingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC74FC0A1FA9AFA600B27840 /* URLEncordingTests.swift */; };
 		ACB80B981FCAF31B002CA5F4 /* ReqResTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACB80B971FCAF31B002CA5F4 /* ReqResTests.swift */; };
 		ACBD11161FB08C8C005E1850 /* HttpTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBD11151FB08C8C005E1850 /* HttpTask.swift */; };
@@ -68,6 +69,7 @@
 		AC3BCE661F9AF26300644761 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		AC3BCE681F9AF28A00644761 /* URLEncording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncording.swift; sourceTree = "<group>"; };
 		AC3BCE6B1F9AF3D600644761 /* AintxPublicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AintxPublicTests.swift; sourceTree = "<group>"; };
+		AC5B716F1FDE1927001736F7 /* HttpTaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTaskGroup.swift; sourceTree = "<group>"; };
 		AC74FC0A1FA9AFA600B27840 /* URLEncordingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncordingTests.swift; sourceTree = "<group>"; };
 		ACB80B971FCAF31B002CA5F4 /* ReqResTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReqResTests.swift; sourceTree = "<group>"; };
 		ACBD11151FB08C8C005E1850 /* HttpTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTask.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 				AC3BCE601F9AF1D800644761 /* HttpRequest.swift */,
 				AC3BCE621F9AF20B00644761 /* HttpResponse.swift */,
 				ACBD11151FB08C8C005E1850 /* HttpTask.swift */,
+				AC5B716F1FDE1927001736F7 /* HttpTaskGroup.swift */,
 				AC3BCE641F9AF23F00644761 /* HttpError.swift */,
 				AC3BCE681F9AF28A00644761 /* URLEncording.swift */,
 				AC3BCE661F9AF26300644761 /* SessionManager.swift */,
@@ -314,6 +317,7 @@
 			files = (
 				AC3BCE651F9AF23F00644761 /* HttpError.swift in Sources */,
 				AC3BCE631F9AF20B00644761 /* HttpResponse.swift in Sources */,
+				AC5B71701FDE1927001736F7 /* HttpTaskGroup.swift in Sources */,
 				ACBD11161FB08C8C005E1850 /* HttpTask.swift in Sources */,
 				AC3BCE5F1F9AEF6300644761 /* Aintx.swift in Sources */,
 				AC3BCE691F9AF28A00644761 /* URLEncording.swift in Sources */,

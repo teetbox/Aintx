@@ -8,72 +8,60 @@
 
 import Foundation
 
+public typealias ProgressHandler = (_ bytesWritten: Int64, _ totalBytesWritten: Int64, _ totalBytesExpectedToWrite: Int64) -> Void
+
+public typealias CompletionHandler = () -> Void
+
 public protocol HttpTask {
     func suspend()
     func resume()
     func cancel()
 }
 
-public class HttpDataTask: HttpTask {
+class HttpDataTask: HttpTask {
     
-    let task: URLSessionDataTask
+    var task: URLSessionTask
     
     init(task: URLSessionDataTask) {
         self.task = task
     }
     
-    public func suspend() {
-        task.suspend()
+    convenience init() {
+        self.init(task: URLSessionDataTask())
     }
     
-    public func resume() {
-        task.resume()
-    }
-    
-    public func cancel() {
-        task.cancel()
-    }
+    func suspend() { task.suspend() }
+    func resume() { task.resume() }
+    func cancel() { task.cancel() }
     
 }
 
-public class HttpUploadTask: HttpTask {
-    let task: URLSessionUploadTask
+class HttpUploadTask: HttpDataTask {
     
     init(task: URLSessionUploadTask) {
-        self.task = task
+        super.init(task: task)
     }
     
-    public func suspend() {
-        task.suspend()
-    }
-    
-    public func resume() {
-        task.resume()
-    }
-    
-    public func cancel() {
-        task.cancel()
+    convenience init() {
+        self.init(task: URLSessionUploadTask())
     }
     
 }
 
-public class HttpDownloadTask: HttpTask {
-    let task: URLSessionDownloadTask
+class HttpDownloadTask: HttpTask {
+    
+    var task: URLSessionTask
     
     init(task: URLSessionDownloadTask) {
         self.task = task
     }
     
-    public func suspend() {
-        task.suspend()
+    convenience init() {
+        self.init(task: URLSessionDownloadTask())
     }
     
-    public func resume() {
-        task.resume()
-    }
-    
-    public func cancel() {
-        task.cancel()
-    }
+    func suspend() { task.suspend() }
+    func resume() { task.resume() }
+    func cancel() { task.cancel() }
     
 }
