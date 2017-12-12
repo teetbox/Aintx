@@ -1,5 +1,5 @@
 //
-//  HttpTaskInternalTests.swift
+//  HttpTaskTests.swift
 //  AintxTests
 //
 //  Created by Tong Tian on 06/11/2017.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import Aintx
 
-class HttpTaskInternalTests: XCTestCase {
+class HttpTaskTests: XCTestCase {
     
     var httpTask: HttpTask!
     
@@ -25,28 +25,28 @@ class HttpTaskInternalTests: XCTestCase {
     }
     
     func testInit() {
-        let dataTask = httpTask as! HttpDataTask
+        let dataTask = httpTask as! DataTask
         XCTAssertEqual(dataTask.task.state, .running)
     }
     
     func testSuspend() {
         httpTask.suspend()
         
-        let dataTask = httpTask as! HttpDataTask
+        let dataTask = httpTask as! DataTask
         XCTAssertEqual(dataTask.task.state, .suspended)
     }
     
     func testResume() {
         httpTask.resume()
         
-        let dataTask = httpTask as! HttpDataTask
+        let dataTask = httpTask as! DataTask
         XCTAssertEqual(dataTask.task.state, .running)
     }
     
     func testCancel() {
         httpTask.cancel()
         
-        let dataTask = httpTask as! HttpDataTask
+        let dataTask = httpTask as! DataTask
         XCTAssertEqual(dataTask.task.state, .canceling)
     }
     

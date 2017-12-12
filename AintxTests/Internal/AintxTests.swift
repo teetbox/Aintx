@@ -1,5 +1,5 @@
 //
-//  AintxInternalTests.swift
+//  AintxTests.swift
 //  AintxTests
 //
 //  Created by Tong Tian on 10/24/17.
@@ -21,7 +21,7 @@ extension UploadType: Equatable {
     }
 }
 
-class AintxInternalTests: XCTestCase {
+class AintxTests: XCTestCase {
     
     var aintx: Aintx!
     

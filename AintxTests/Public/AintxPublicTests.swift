@@ -243,11 +243,6 @@ class AintxPublicTests: XCTestCase {
         
         request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
-        
-        let progress: ProgressHandler = { _, _, _ in }
-        let completion: CompletionHandler = { _ in }
-        request = aintx.downloadRequest(path: fakePath, progress: progress, completion: completion)
-        XCTAssertNotNil(request)
     }
     
     func testFakeDataResponse() {

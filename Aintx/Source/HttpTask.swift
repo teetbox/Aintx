@@ -14,7 +14,13 @@ public protocol HttpTask {
     func cancel()
 }
 
-class HttpDataTask: HttpTask {
+class FakeTask: HttpTask {
+    func suspend() {}
+    func resume() {}
+    func cancel() {}
+}
+
+class DataTask: HttpTask {
     
     var task: URLSessionTask
     
@@ -32,69 +38,59 @@ class HttpDataTask: HttpTask {
     
 }
 
-class HttpUploadTask: HttpDataTask {
-    
+protocol CombinableTask: HttpTask, Combinable {
+    func go() -> HttpTask
+}
+
+class UploadTask: DataTask, CombinableTask {
+
     init(task: URLSessionUploadTask) {
         super.init(task: task)
     }
     
-    convenience init() {
-        self.init(task: URLSessionUploadTask())
+    func go() -> HttpTask {
+        return self
     }
-    
+
 }
 
-class HttpDownloadTask: HttpTask {
+class DownloadTask: CombinableTask {
     
-    var task: URLSessionTask
+    var task: URLSessionTask?
     
-    init(task: URLSessionDownloadTask) {
-        self.task = task
+    let urlRequest: URLRequest
+    let sessionConfig: SessionConfig
+    
+    let progressHandler: ProgressHandler?
+    let completedHandler: CompletedHandler?
+    
+    lazy var taskGroup: HttpTaskGroup = {
+        return HttpTaskGroup(task: self)
+    }()
+    
+    init(urlRequest: URLRequest, sessionConfig: SessionConfig, progress: ProgressHandler?, completed: CompletedHandler?) {
+        self.urlRequest = urlRequest
+        self.sessionConfig = sessionConfig
+        self.progressHandler = progress
+        self.completedHandler = completed
+        
+        setUp()
     }
     
-    convenience init() {
-        self.init(task: URLSessionDownloadTask())
+    private func setUp() {
+        let session = URLSession(configuration: .default, delegate: taskGroup, delegateQueue: nil)
+        task = session.downloadTask(with: urlRequest)
+        
+        taskGroup.sessionTasks = [task!: self]
     }
     
-    func suspend() { task.suspend() }
-    func resume() { task.resume() }
-    func cancel() { task.cancel() }
-    
-}
-
-class HttpTaskDelegate: NSObject, URLSessionDownloadDelegate {
-    
-    let progress: ProgressHandler
-    let completion: CompletionHandler
-    
-    init(progress: @escaping ProgressHandler, completion: @escaping CompletionHandler) {
-        self.progress = progress
-        self.completion = completion
-        super.init()
-        print("HttpTaskDelegate init")
+    func go() -> HttpTask {
+        task?.resume()
+        return self
     }
     
-    deinit {
-        print("HttpTaskDelegate deinit")
-    }
-    
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didResumeAtOffset fileOffset: Int64, expectedTotalBytes: Int64) {
-        print(#function)
-    }
-    
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        progress(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
-    }
-    
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        print(#function)
-        print(location.absoluteString)
-    }
-    
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        print(#function)
-        let httpResponse = HttpResponse(error: error)
-        completion(httpResponse)
-    }
+    func suspend() { task?.suspend() }
+    func resume() { task?.resume() }
+    func cancel() { task?.cancel() }
     
 }

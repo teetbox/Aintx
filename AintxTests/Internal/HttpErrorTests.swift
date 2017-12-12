@@ -1,5 +1,5 @@
 //
-//  HttpErrorInternalTests.swift
+//  HttpErrorTests.swift
 //  AintxTests
 //
 //  Created by Tong Tian on 08/11/2017.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import Aintx
 
-class HttpErrorInternalTests: XCTestCase {
+class HttpErrorTests: XCTestCase {
     
     var error: HttpError!
     

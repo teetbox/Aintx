@@ -1,5 +1,5 @@
 //
-//  HttpResponseInternalTests.swift
+//  HttpResponseTests.swift
 //  AintxTests
 //
 //  Created by Tong Tian on 10/25/17.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import Aintx
 
-class HttpResponseInternalTests: XCTestCase {
+class HttpResponseTests: XCTestCase {
     
     var httpResponse: HttpResponse!
     

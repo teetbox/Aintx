@@ -8,9 +8,6 @@
 
 import Foundation
 
-public typealias ProgressHandler = (Int64, Int64, Int64) -> Void
-public typealias CompletionHandler = (HttpResponse) -> Void
-
 public class HttpRequest {
     
     var urlString: String?
@@ -114,7 +111,7 @@ class DataRequest: HttpRequest {
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard httpError == nil else {
             completion(HttpResponse(error: httpError))
-            return HttpDataTask()
+            return DataTask()
         }
         
         let dataTask = session.dataTask(with: urlRequest!) { (data, response, error) in
@@ -123,7 +120,7 @@ class DataRequest: HttpRequest {
         }
         
         dataTask.resume()
-        return HttpDataTask(task: dataTask)
+        return DataTask(task: dataTask)
     }
     
 }
@@ -155,45 +152,44 @@ class UploadRequest: HttpRequest {
         }
         
         uploadTask.resume()
-        return HttpUploadTask(task: uploadTask)
+        return UploadTask(task: uploadTask)
     }
     
 }
 
 class DownloadRequest: HttpRequest {
     
-    let progress: ProgressHandler?
-    let completion: CompletionHandler?
+    let progressHandler: ProgressHandler?
+    let completedHandler: CompletedHandler?
     
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, progress: ProgressHandler? = nil, completion: CompletionHandler? = nil, sessionConfig: SessionConfig) {
-        self.progress = progress
-        self.completion = completion
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, progress: ProgressHandler? = nil, completion: (HttpResponse) -> Void, sessionConfig: SessionConfig) {
+        self.progressHandler = progress
+        self.completedHandler = nil
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
     }
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         
-        guard let filePath = urlString else {
+
+        guard let urlString = urlString else {
             httpError = HttpError.requestFailed(.invalidURL(""))
-            return HttpDownloadTask()
+            fatalError()
         }
         
-        guard let fileURL = URL(string: filePath) else {
+        guard let url = URL(string: urlString) else {
             httpError = HttpError.requestFailed(.invalidURL(""))
-            return HttpDownloadTask()
+            fatalError()
         }
         
-        let downloadTask: URLSessionDownloadTask
-        let downloadDelegate = HttpTaskDelegate(progress: progress!, completion: self.completion!)
-        let downloadSession = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
-        downloadTask = downloadSession.downloadTask(with: fileURL) { (url, response, error) in
-            let urlData = url?.absoluteString.data(using: .utf8)
-            let httpResponse = HttpResponse(data: urlData, response: response, error: error)
+        urlRequest = URLRequest(url: url)
+        urlRequest?.httpMethod = method.rawValue
+        let downloadTask = session.downloadTask(with: urlRequest!) { (url, response, error) in
+            let httpResponse = HttpResponse(data: nil, response: response, error: error)
             completion(httpResponse)
         }
         downloadTask.resume()
         
-        return HttpDownloadTask(task: downloadTask)
+        return DataTask()
     }
     
 }
@@ -206,6 +202,37 @@ class StreamRequest: HttpRequest {
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         fatalError()
+    }
+    
+}
+
+public typealias ProgressHandler = (Int64, Int64, Int64) -> Void
+public typealias CompletedHandler = (URL?, Error?) -> Void
+
+public class HttpLoadRequest: HttpRequest {
+    
+    var task: CombinableTask?
+    
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, progress: ProgressHandler? = nil, completed: CompletedHandler? = nil, sessionConfig: SessionConfig) {
+        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
+
+        guard let urlString = urlString else {
+            httpError = HttpError.requestFailed(.invalidURL(""))
+            fatalError()
+        }
+        
+        guard let url = URL(string: urlString) else {
+            httpError = HttpError.requestFailed(.invalidURL(""))
+            fatalError()
+        }
+        
+        urlRequest = URLRequest(url: url)
+        urlRequest?.httpMethod = method.rawValue
+        self.task = DownloadTask(urlRequest: urlRequest!, sessionConfig: sessionConfig, progress: progress, completed: completed)
+    }
+    
+    public func go() -> HttpTask {
+        return task!.go()
     }
     
 }
@@ -232,7 +259,7 @@ class FakeRequest: HttpRequest {
     
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         completion(HttpResponse(fakeRequest: self))
-        return HttpDataTask()
+        return DataTask()
     }
     
 }

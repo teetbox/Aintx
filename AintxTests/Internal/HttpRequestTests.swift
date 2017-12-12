@@ -1,5 +1,5 @@
 //
-//  HttpRequestInternalTests.swift
+//  HttpRequestTests.swift
 //  AintxTests
 //
 //  Created by Tong Tian on 10/25/17.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import Aintx
 
-class HttpRequestInternalTests: XCTestCase {
+class HttpRequestTests: XCTestCase {
     
     var httpRequest: HttpRequest!
     var aintx: Aintx!
@@ -37,7 +37,7 @@ class HttpRequestInternalTests: XCTestCase {
     
     func testInitDownloadRequest() {
         let progress: ProgressHandler = { _, _, _ in }
-        let completion: CompletionHandler = { _ in }
+        let completion: (HttpResponse) -> Void = { _ in }
         
         let downloadRequest = DownloadRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], progress: progress, completion: completion, sessionConfig: .standard)
         
@@ -45,8 +45,6 @@ class HttpRequestInternalTests: XCTestCase {
         XCTAssertEqual(downloadRequest.path, fakePath)
         XCTAssertEqual(downloadRequest.method, .get)
         XCTAssertEqual(downloadRequest.params!["key"] as! String, "value")
-        XCTAssertNotNil(downloadRequest.progress)
-        XCTAssertNotNil(downloadRequest.completion)
     }
     
     func testInitUploadRequest() {
