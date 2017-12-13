@@ -38,6 +38,10 @@ class DataTask: HttpTask {
     
 }
 
+protocol Combinable {
+    
+}
+
 protocol CombinableTask: HttpTask, Combinable {
     func go() -> HttpTask
 }
@@ -54,7 +58,7 @@ class UploadTask: DataTask, CombinableTask {
 
 }
 
-class DownloadTask: CombinableTask {
+class DownloadTask: HttpTask, CombinableTask {
     
     var task: URLSessionTask?
     
@@ -64,24 +68,11 @@ class DownloadTask: CombinableTask {
     let progressHandler: ProgressHandler?
     let completedHandler: CompletedHandler?
     
-    lazy var taskGroup: HttpTaskGroup = {
-        return HttpTaskGroup(task: self)
-    }()
-    
     init(urlRequest: URLRequest, sessionConfig: SessionConfig, progress: ProgressHandler?, completed: CompletedHandler?) {
         self.urlRequest = urlRequest
         self.sessionConfig = sessionConfig
         self.progressHandler = progress
         self.completedHandler = completed
-        
-        setUp()
-    }
-    
-    private func setUp() {
-        let session = URLSession(configuration: .default, delegate: taskGroup, delegateQueue: nil)
-        task = session.downloadTask(with: urlRequest)
-        
-        taskGroup.sessionTasks = [task!: self]
     }
     
     func go() -> HttpTask {
