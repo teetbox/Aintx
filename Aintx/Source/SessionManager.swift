@@ -17,16 +17,15 @@ class SessionManager: NSObject {
     var sessionTasks: [URLSessionTask : HttpTask]?
     
     func getSession(with config: SessionConfig) -> URLSession {
-        _ = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
-        
         let session: URLSession
+        
         switch config {
         case .standard:
-            session = URLSession.shared
+            session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
         case .ephemeral:
-            session = URLSession(configuration: .ephemeral)
+            session = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: nil)
         case .background(let identifier):
-            session = URLSession(configuration: .background(withIdentifier: identifier))
+            session = URLSession(configuration: .background(withIdentifier: identifier), delegate: self, delegateQueue: nil)
         }
         
         return session
