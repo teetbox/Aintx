@@ -235,7 +235,7 @@ public typealias CompletedClosure = (URL?, Error?) -> Void
 
 public class HttpLoadRequest: HttpRequest {
     
-    var task: CombinableTask?
+    var task: HttpDownloadTask?
     
     init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: CompletedClosure? = nil, sessionConfig: SessionConfig) {
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)

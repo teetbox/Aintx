@@ -74,7 +74,8 @@ class HttpUploadTask: HttpDataTask, CombinableTask {
 
 class HttpDownloadTask: HttpTask, CombinableTask {
     
-    var task: URLSessionTask?
+    let sessionTask: URLSessionTask
+    let sessionManager = SessionManager.shared
     
     let urlRequest: URLRequest
     let sessionConfig: SessionConfig
@@ -89,6 +90,9 @@ class HttpDownloadTask: HttpTask, CombinableTask {
         self.progressHandler = progress
         self.completedHandler = completed
         self.completionHandler = nil
+        
+        let session = sessionManager.getSession(with: sessionConfig)
+        sessionTask = session.downloadTask(with: urlRequest)
     }
     
     init(urlRequest: URLRequest, sessionConfig: SessionConfig, completion: @escaping (HttpResponse) -> Void) {
@@ -97,15 +101,24 @@ class HttpDownloadTask: HttpTask, CombinableTask {
         self.progressHandler = nil
         self.completedHandler = nil
         self.completionHandler = completion
+        
+        let session = sessionManager.getSession(with: sessionConfig)
+        sessionTask = session.downloadTask(with: urlRequest)
     }
     
     func go() -> HttpTask {
-        task?.resume()
+        sessionTask.resume()
         return self
     }
     
-    func suspend() { task?.suspend() }
-    func resume() { task?.resume() }
-    func cancel() { task?.cancel() }
+    func suspend() {
+        sessionTask.suspend()
+    }
+    func resume() {
+        sessionTask.resume()
+    }
+    func cancel() {
+        sessionTask.cancel()
+    }
     
 }

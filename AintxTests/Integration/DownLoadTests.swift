@@ -45,6 +45,7 @@ class DownLoadTests: XCTestCase {
         }
         
         let completed: CompletedClosure = { _, _ in
+            print("Downloading Completed")
             self.async.fulfill()
         }
 

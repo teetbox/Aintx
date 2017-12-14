@@ -33,7 +33,7 @@ class CountTests: XCTestCase {
     }
     
     func testGetUser() {
-        let params = ["token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJpYXQiOjE1MTI0NzQ2MDUsImV4cCI6MTUxMjQ3ODIwNX0.3OPpAJoV91lrzprUaoBdpz8z9xQzy6vVb_9gUC2DoRs"]
+        let params = ["token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJ1c2VySWQiOjIsImlhdCI6MTUxMzI2MDAzOSwiZXhwIjoxNTEzMjYzNjM5fQ.xMjRTketOJ3DN1G0Pt6b8yZySODKcsGWiuT21CP6Ne4"]
         aintx.get("/api/v1/user", params: params) { response in
             XCTAssertNotNil(response.data)
             
@@ -48,7 +48,7 @@ class CountTests: XCTestCase {
     }
     
     func testPutUser() {
-        let params = ["eMail": "tiantong@aintx.com"]
+        let params = ["eMail": "tiantong@aintx.com", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJ1c2VySWQiOjIsImlhdCI6MTUxMzI2MDAzOSwiZXhwIjoxNTEzMjYzNjM5fQ.xMjRTketOJ3DN1G0Pt6b8yZySODKcsGWiuT21CP6Ne4"]
         
         aintx.put("/api/v1/user/2", params: params) { response in
             let user = try! JSONDecoder().decode(User.self, from: response.data!)
