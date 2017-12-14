@@ -190,4 +190,50 @@ class HttpbinTests: XCTestCase {
         wait(for: [async], timeout: 10)
     }
     
+    func testCompletionHandler() {
+        let path = "https://httpbin.org/get"
+        
+        let session = URLSession.shared
+        
+        let task = session.dataTask(with: URL(string: path)!) { (data, response, error) in
+            XCTAssertNotNil(data)
+            XCTAssertNil(error)
+            
+            self.async.fulfill()
+            print("************************")
+        }
+        
+        task.resume()
+        wait(for: [async], timeout: 10)
+    }
+    
+    func testDelegate() {
+        let path = "https://httpbin.org/get"
+        let session = URLSession(configuration: .default, delegate: Delegate(), delegateQueue: nil)
+        
+        let task = session.dataTask(with: URL(string: path)!) { (data, response, error) in
+            XCTAssertNotNil(data)
+            XCTAssertNil(error)
+            print("______________________")
+            print("Did receive data \(data?.count)")
+            print("Did complete with error \(error?.localizedDescription)")
+            self.async.fulfill()
+        }
+        task.resume()
+        
+        wait(for: [async], timeout: 10)
+    }
+    
+}
+
+class Delegate: NSObject, URLSessionDelegate, URLSessionDataDelegate {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        print("*********************")
+        print("Did complete with error \(error?.localizedDescription)")
+    }
+    
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        print("+++++++++++++++++++++")
+        print("Did receive data \(data.count)")
+    }
 }

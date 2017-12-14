@@ -218,30 +218,32 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testDownLoadWithProgress() {
-        let progress: ProgressHandler = { (_, writtenBytes, totalBytes) in
+        let progress: ProgressClosure = { (_, writtenBytes, totalBytes) in
             let percentage = writtenBytes / totalBytes * 100
             print("Downloading \(percentage)%")
         }
         
-        aintx.download(fakePath, progress: progress) { response in
-            XCTAssertNotNil(response)
-        }
+        let completed: CompletedClosure = { _, _ in }
+        
+        let request = aintx.downloadRequest(path: fakePath, progress: progress, completed: completed)
+        
+        XCTAssertNotNil(request)
     }
     
     func testDownloadRequest() {
-        var request = aintx.downloadRequest(path: fakePath)
+        var request = aintx.downloadRequest(path: fakePath, completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(path: fakePath, method: .get)
+        request = aintx.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"])
+        request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(path: fakePath, method: .get, headers: ["key": "value"])
+        request = aintx.downloadRequest(path: fakePath, method: .get, headers: ["key": "value"], completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"])
+        request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], completed: { _, _ in })
         XCTAssertNotNil(request)
     }
     

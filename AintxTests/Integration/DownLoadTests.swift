@@ -39,12 +39,12 @@ class DownLoadTests: XCTestCase {
     
     func testDownloadSwift4() {
         let filePath = "http://www.tutorialspoint.com/swift/swift_tutorial.pdf"
-        let progress: ProgressHandler = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
+        let progress: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
             let percentage = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite) * 100
             print("Downloading \(String(format: "%.2f", percentage))%")
         }
         
-        let completed: CompletedHandler = { _, _ in
+        let completed: CompletedClosure = { _, _ in
             self.async.fulfill()
         }
 

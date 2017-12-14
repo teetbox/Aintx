@@ -14,27 +14,35 @@ public protocol HttpTask {
     func cancel()
 }
 
-class FakeTask: HttpTask {
+class HttpFakeTask: HttpTask {
     func suspend() {}
     func resume() {}
     func cancel() {}
 }
 
-class DataTask: HttpTask {
+class HttpDataTask: HttpTask {
     
-    var task: URLSessionTask
+    let sessionTask: URLSessionTask
+    let sessionManager = SessionManager.shared
     
-    init(task: URLSessionDataTask) {
-        self.task = task
+    init(request: URLRequest, config: SessionConfig, completion: @escaping (HttpResponse) -> Void) {
+        let session = sessionManager.getSession(with: config)
+        
+        sessionTask = session.dataTask(with: request)
+        sessionTask.resume()
     }
     
-    convenience init() {
-        self.init(task: URLSessionDataTask())
+    func suspend() {
+        sessionTask.suspend()
     }
     
-    func suspend() { task.suspend() }
-    func resume() { task.resume() }
-    func cancel() { task.cancel() }
+    func resume() {
+        sessionTask.resume()
+    }
+    
+    func cancel() {
+        sessionTask.cancel()
+    }
     
 }
 
@@ -46,33 +54,46 @@ protocol CombinableTask: HttpTask, Combinable {
     func go() -> HttpTask
 }
 
-class UploadTask: DataTask, CombinableTask {
-
-    init(task: URLSessionUploadTask) {
-        super.init(task: task)
+class HttpUploadTask: HttpDataTask, CombinableTask {
+    
+    let type: UploadType
+    
+    init(request: URLRequest, config: SessionConfig, type: UploadType, completion: @escaping (HttpResponse) -> Void) {
+        self.type = type
+        super.init(request: request, config: config, completion: completion)
     }
     
     func go() -> HttpTask {
         return self
     }
-
+    
 }
 
-class DownloadTask: HttpTask, CombinableTask {
+class HttpDownloadTask: HttpTask, CombinableTask {
     
     var task: URLSessionTask?
     
     let urlRequest: URLRequest
     let sessionConfig: SessionConfig
     
-    let progressHandler: ProgressHandler?
-    let completedHandler: CompletedHandler?
+    let progressHandler: ProgressClosure?
+    let completedHandler: CompletedClosure?
+    let completionHandler: ((HttpResponse) -> Void)?
     
-    init(urlRequest: URLRequest, sessionConfig: SessionConfig, progress: ProgressHandler?, completed: CompletedHandler?) {
+    init(urlRequest: URLRequest, sessionConfig: SessionConfig, progress: ProgressClosure?, completed: CompletedClosure?) {
         self.urlRequest = urlRequest
         self.sessionConfig = sessionConfig
         self.progressHandler = progress
         self.completedHandler = completed
+        self.completionHandler = nil
+    }
+    
+    init(urlRequest: URLRequest, sessionConfig: SessionConfig, completion: @escaping (HttpResponse) -> Void) {
+        self.urlRequest = urlRequest
+        self.sessionConfig = sessionConfig
+        self.progressHandler = nil
+        self.completedHandler = nil
+        self.completionHandler = completion
     }
     
     func go() -> HttpTask {

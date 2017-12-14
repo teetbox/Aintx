@@ -26,7 +26,7 @@ class HttpRequestTests: XCTestCase {
     }
     
     func testInitDataRequest() {
-        let dataRequest = DataRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], bodyData: Data(), sessionConfig: .standard)
+        let dataRequest = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], bodyData: Data(), sessionConfig: .standard)
         
         XCTAssertEqual(dataRequest.base, fakeBase)
         XCTAssertEqual(dataRequest.path, fakePath)
@@ -36,10 +36,10 @@ class HttpRequestTests: XCTestCase {
     }
     
     func testInitDownloadRequest() {
-        let progress: ProgressHandler = { _, _, _ in }
+        let progress: ProgressClosure = { _, _, _ in }
         let completion: (HttpResponse) -> Void = { _ in }
         
-        let downloadRequest = DownloadRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], progress: progress, completion: completion, sessionConfig: .standard)
+        let downloadRequest = HttpDownloadRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], progress: progress, completion: completion, sessionConfig: .standard)
         
         XCTAssertEqual(downloadRequest.base, fakeBase)
         XCTAssertEqual(downloadRequest.path, fakePath)
@@ -50,7 +50,7 @@ class HttpRequestTests: XCTestCase {
     func testInitUploadRequest() {
         var uploadType: UploadType = .data(Data())
         
-        var uploadRequest = UploadRequest(base: fakeBase, path: fakePath, method: .put, uploadType: uploadType, params: ["key": "value"], sessionConfig: .standard)
+        var uploadRequest = HttpUploadRequest(base: fakeBase, path: fakePath, method: .put, uploadType: uploadType, params: ["key": "value"], sessionConfig: .standard)
         
         XCTAssertEqual(uploadRequest.base, fakeBase)
         XCTAssertEqual(uploadRequest.path, fakePath)
@@ -60,7 +60,7 @@ class HttpRequestTests: XCTestCase {
         
         uploadType = .url(URL(string: "/file/path")!)
         
-        uploadRequest = UploadRequest(base: fakeBase, path: fakePath, method: .post, uploadType: uploadType, params: ["key": "value"], sessionConfig: .standard)
+        uploadRequest = HttpUploadRequest(base: fakeBase, path: fakePath, method: .post, uploadType: uploadType, params: ["key": "value"], sessionConfig: .standard)
         
         XCTAssertEqual(uploadRequest.base, fakeBase)
         XCTAssertEqual(uploadRequest.path, fakePath)
