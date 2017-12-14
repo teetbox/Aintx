@@ -48,7 +48,7 @@ public struct Aintx {
     public func get(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpFakeTask()
+            return FakeHttpTask()
         }
         return dataRequest(path: path, method: .get, params: params, headers: headers).go(completion: completion)
     }
@@ -132,7 +132,7 @@ public struct Aintx {
     public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpFakeTask()
+            return FakeHttpTask()
         }
         
         return uploadRequest(path: path, method: .put, uploadType: .url(fileURL), params: params, headers: headers).go(completion: completion)
@@ -143,7 +143,7 @@ public struct Aintx {
     public func upload(_ path: String, fileData: Data, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpFakeTask()
+            return FakeHttpTask()
         }
         return uploadRequest(path: path, method: .put, uploadType: .data(fileData), params: params, headers: headers).go(completion: completion)
     }
@@ -165,7 +165,7 @@ public struct Aintx {
     public func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-            return HttpFakeTask()
+            return FakeHttpTask()
         }
         
         let request = HttpDownloadRequest(base: base, path: path, method: .get, params: params, headers: headers, completion: completion, sessionConfig: config)

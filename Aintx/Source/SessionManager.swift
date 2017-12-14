@@ -12,23 +12,41 @@ class SessionManager: NSObject {
     
     static let shared = SessionManager()
     
-    var tasks = [URLSessionTask: HttpTask]()
+    private var standard: URLSession?
+    private var ephemeral: URLSession?
+    private var background: URLSession?
 
+    private var sessionTasks = [URLSessionTask: HttpTask]()
+    
     private override init() {}
     
+    subscript(sessionTask: URLSessionTask) -> HttpTask? {
+        set {
+            sessionTasks[sessionTask] = newValue
+        }
+        get {
+            return sessionTasks[sessionTask]
+        }
+    }
+    
     func getSession(with config: SessionConfig) -> URLSession {
-        let session: URLSession
-        
         switch config {
         case .standard:
-            session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+            if standard == nil {
+                standard = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+            }
+            return standard!
         case .ephemeral:
-            session = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: nil)
+            if ephemeral == nil {
+                ephemeral = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: nil)
+            }
+            return ephemeral!
         case .background(let identifier):
-            session = URLSession(configuration: .background(withIdentifier: identifier), delegate: self, delegateQueue: nil)
+            if (background == nil || background!.configuration.identifier != identifier) {
+                background = URLSession(configuration: .background(withIdentifier: identifier), delegate: self, delegateQueue: nil)
+            }
+            return background!
         }
-        
-        return session
     }
     
 }
@@ -42,10 +60,12 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
         print(#function)
     }
     
+    /* Not ready for authentication
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         print("###### URLSessionDelegate - didReceive, completionHandler ######")
         print(#function)
     }
+    */
     
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         print("###### URLSessionDelegate - session ######")
@@ -70,26 +90,32 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
         print("###### URLSessionTaskDelegate - willPerformHTTPRedirection, newRequest, completionHandler ######")
         print(#function)
     }
-    
+
+    /* Not ready for authentication
     func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         print("###### URLSessionTaskDelegate - didReceive, completionHandler ######")
         print(#function)
     }
+    */
     
     func urlSession(_ session: URLSession, task: URLSessionTask, needNewBodyStream completionHandler: @escaping (InputStream?) -> Void) {
         print("###### URLSessionTaskDelegate - needNewBodyStream ######")
         print(#function)
     }
     
+    /* No need
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         print("###### URLSessionTaskDelegate - didSendBodyData, totalBytesSent, totalBytesExpectedToSend ######")
         print(#function)
     }
+    */
     
+    /* No need
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
         print("###### URLSessionTaskDelegate - didFinishCollecting ######")
         print(#function)
     }
+    */
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         print("###### URLSessionTaskDelegate - didCompleteWithError ######")

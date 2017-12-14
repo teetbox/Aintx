@@ -14,7 +14,7 @@ public protocol HttpTask {
     func cancel()
 }
 
-class HttpFakeTask: HttpTask {
+class FakeHttpTask: HttpTask {
     func suspend() {}
     func resume() {}
     func cancel() {}
@@ -28,7 +28,10 @@ class HttpDataTask: HttpTask {
     init(request: URLRequest, config: SessionConfig, completion: @escaping (HttpResponse) -> Void) {
         let session = sessionManager.getSession(with: config)
         
-        sessionTask = session.dataTask(with: request)
+        sessionTask = session.dataTask(with: request, completionHandler: { (data, response, error) in
+            let httpResponse = HttpResponse(data: data, response: response, error: error)
+            completion(httpResponse)
+        })
         sessionTask.resume()
     }
     

@@ -12,36 +12,51 @@ import XCTest
 class SessionManagerTests: XCTestCase {
     
     var sut: SessionManager!
-    var session: URLSession!
     
+    let session = URLSession.shared
     let fakeURL = URL(string: "www.fake.com")!
     
     override func setUp() {
         super.setUp()
         
         sut = SessionManager.shared
-        session = URLSession.shared
     }
 
-    func testInit() {
+    func testShared() {
         XCTAssertNotNil(sut)
-        XCTAssertNotNil(sut.tasks)
-        XCTAssertEqual(sut.tasks.count, 0)
     }
     
-    func testSessionTasks() {
+    func testGetSessionForStandard() {
+        let standard = sut.getSession(with: .standard)
+        let standard2 = sut.getSession(with: .standard)
+        
+        XCTAssertEqual(standard, standard2)
+    }
+    
+    func testGetSessionForEphmer() {
+        let ephemeral = sut.getSession(with: .ephemeral)
+        let ephemeral2 = sut.getSession(with: .ephemeral)
+        
+        XCTAssertEqual(ephemeral, ephemeral2)
+    }
+    
+    func testGetSessionForBackground() {
+        let background = sut.getSession(with: .background("background"))
+        let background2 = sut.getSession(with: .background("background"))
+        let background3 = sut.getSession(with: .background("background3"))
+        
+        XCTAssertEqual(background, background2)
+        XCTAssertNotEqual(background, background3)
+    }
+    
+    func testSubscript() {
         let sessionTask = session.dataTask(with: fakeURL)
-        let httpTask = HttpDataTask(request: URLRequest(url: URL(string: "www.fake.com")!), config: .standard, completion: { _ in })
+        let httpTask = HttpDataTask(request: URLRequest(url: fakeURL), config: .standard, completion: { _ in })
         
-        sut.tasks[sessionTask] = httpTask
+        sut[sessionTask] = httpTask
         
-        XCTAssertNotNil(sut.tasks[sessionTask])
-        XCTAssertEqual(sut.tasks.count, 1)
-        
-        let savedTask = sut.tasks[sessionTask]
-        
-        XCTAssertNotNil(savedTask)
-        XCTAssert(savedTask! is HttpDataTask)
+        XCTAssertNotNil(sut[sessionTask])
+        XCTAssert(sut[sessionTask] is HttpDataTask)
     }
 
 }

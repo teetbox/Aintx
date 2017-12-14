@@ -122,7 +122,7 @@ class HttpDataRequest: HttpRequest {
         
         guard httpError == nil else {
             completion(HttpResponse(error: httpError))
-            return HttpFakeTask()
+            return FakeHttpTask()
         }
         
         guard let request = urlRequest else {
@@ -284,7 +284,7 @@ class FakeRequest: HttpRequest {
     
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         completion(HttpResponse(fakeRequest: self))
-        return HttpFakeTask()
+        return FakeHttpTask()
     }
     
 }
