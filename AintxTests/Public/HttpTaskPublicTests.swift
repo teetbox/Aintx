@@ -11,31 +11,27 @@ import Aintx
 
 class HttpTaskPublicTests: XCTestCase {
     
-    var httpTask: HttpTask!
+    var sut: HttpTask!
+    
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
     
     override func setUp() {
         super.setUp()
         
-        let aintx = Aintx(base: fakeBase)
-        httpTask = aintx.get(fakePath) { _ in }
-    }
-    
-    func testInit() {
-        XCTAssertNotNil(httpTask)
+        sut = Aintx(base: fakeBase).get(fakePath) { _ in }
     }
 
     func testSuspend() {
-        httpTask.suspend()
+        sut.suspend()
     }
     
     func testResume() {
-        httpTask.resume()
+        sut.resume()
     }
     
     func testCancel() {
-        httpTask.cancel()
+        sut.cancel()
     }
     
 }

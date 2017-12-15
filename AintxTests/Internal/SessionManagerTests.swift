@@ -13,9 +13,6 @@ class SessionManagerTests: XCTestCase {
     
     var sut: SessionManager!
     
-    let session = URLSession.shared
-    let fakeURL = URL(string: "www.fake.com")!
-    
     override func setUp() {
         super.setUp()
         
@@ -33,7 +30,7 @@ class SessionManagerTests: XCTestCase {
         XCTAssertEqual(standard, standard2)
     }
     
-    func testGetSessionForEphmer() {
+    func testGetSessionForEphmeral() {
         let ephemeral = sut.getSession(with: .ephemeral)
         let ephemeral2 = sut.getSession(with: .ephemeral)
         
@@ -50,13 +47,22 @@ class SessionManagerTests: XCTestCase {
     }
     
     func testSubscript() {
-        let sessionTask = session.dataTask(with: fakeURL)
+        let fakeURL = URL(string: "https://httpbin.org")!
+        let sessionTask = URLSessionTask()
         let httpTask = HttpDataTask(request: URLRequest(url: fakeURL), config: .standard, completion: { _ in })
         
         sut[sessionTask] = httpTask
         
         XCTAssertNotNil(sut[sessionTask])
         XCTAssert(sut[sessionTask] is HttpDataTask)
+    }
+    
+    func testReset() {
+        let session = sut.getSession(with: .standard)
+        sut.reset()
+        let newSession = sut.getSession(with: .standard)
+        
+        XCTAssertNotEqual(session, newSession)
     }
 
 }

@@ -32,7 +32,6 @@ class HttpDataTask: HttpTask {
             let httpResponse = HttpResponse(data: data, response: response, error: error)
             completion(httpResponse)
         })
-        sessionTask.resume()
     }
     
     func suspend() {

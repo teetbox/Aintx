@@ -16,12 +16,8 @@ class HttpTaskTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let aintx = Aintx(base: "www.fake.com")
-        httpTask = aintx.get("/fake/path") { _ in }
-    }
-    
-    override func tearDown() {
-        httpTask = nil
+        let aintx = Aintx(base: "https://httpbin.org")
+        httpTask = aintx.get("/get") { _ in }
     }
     
     func testInit() {

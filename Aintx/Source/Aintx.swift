@@ -58,8 +58,7 @@ public struct Aintx {
     public func put(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-//            return HttpDataTask()
-            fatalError()
+            return FakeHttpTask()
         }
         return dataRequest(path: path, method: .put, params: params, headers: headers).go(completion: completion)
     }
@@ -69,8 +68,7 @@ public struct Aintx {
     public func post(_ path: String, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-//            return DataTask()
-            fatalError()
+            return FakeHttpTask()
         }
         return dataRequest(path: path, method: .post, headers: headers, bodyData: nil).go(completion: completion)
     }
@@ -80,8 +78,7 @@ public struct Aintx {
     public func post(_ path: String, params: [String: Any]?, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-//            return DataTask()
-            fatalError()
+            return FakeHttpTask()
         }
         return dataRequest(path: path, method: .post, params: params, headers: headers).go(completion: completion)
     }
@@ -91,8 +88,7 @@ public struct Aintx {
     public func post(_ path: String, bodyData: Data?, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-//            return DataTask()
-            fatalError()
+            return FakeHttpTask()
         }
         return dataRequest(path: path, method: .post, headers: headers, bodyData: bodyData).go(completion: completion)
     }
@@ -102,8 +98,7 @@ public struct Aintx {
     public func delete(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void)-> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
-//            return DataTask()
-            fatalError()
+            return FakeHttpTask()
         }
         return dataRequest(path: path, method: .delete, params: params, headers: headers).go(completion: completion)
     }
@@ -112,7 +107,7 @@ public struct Aintx {
     public func dataRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, bodyData: Data? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
-            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, sessionConfig: config)
+            request = FakeHttpRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, sessionConfig: config)
             return request
         }
         
@@ -152,7 +147,7 @@ public struct Aintx {
     public func uploadRequest(path: String, method: HttpMethod = .put, uploadType: UploadType, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpRequest {
         let request: HttpRequest
         if (isFake) {
-            request = FakeRequest(base: base, path: path, method: method, params: params, headers: headers, uploadType: uploadType, sessionConfig: config)
+            request = FakeHttpRequest(base: base, path: path, method: method, params: params, headers: headers, uploadType: uploadType, sessionConfig: config)
             return request
         }
         
@@ -168,7 +163,13 @@ public struct Aintx {
             return FakeHttpTask()
         }
         
-        let request = HttpDownloadRequest(base: base, path: path, method: .get, params: params, headers: headers, completion: completion, sessionConfig: config)
+        let request: HttpRequest
+        if (isFake) {
+            request = FakeHttpRequest(base: base, path: path, method: .get, sessionConfig: config)
+            return request.go(completion: completion)
+        }
+        
+        request = HttpDownloadRequest(base: base, path: path, method: .get, params: params, headers: headers, completion: completion, sessionConfig: config)
         return request.go(completion: completion)
     }
     

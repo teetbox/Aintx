@@ -43,7 +43,7 @@ class HttpResponseTests: XCTestCase {
     }
     
     func testInitWithFakeRequest() {
-        let fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .get, params: ["paramKey": "paramValue"], sessionConfig: .standard)
+        let fakeRequest = FakeHttpRequest(base: fakeBase, path: fakePath, method: .get, params: ["paramKey": "paramValue"], sessionConfig: .standard)
         
         httpResponse = HttpResponse(fakeRequest: fakeRequest)
         

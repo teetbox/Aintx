@@ -11,7 +11,7 @@ import Aintx
 
 class AintxPublicTests: XCTestCase {
     
-    var aintx: Aintx!
+    var sut: Aintx!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
@@ -19,200 +19,201 @@ class AintxPublicTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        aintx = Aintx(base: fakeBase)
-        aintx.isFake = true
+        sut = Aintx(base: fakeBase)
+        sut.isFake = true
     }
 
     func testGet() {
-        aintx.get(fakePath) { response in
+        sut.get(fakePath) { response in
             XCTAssertNotNil(response)
         }
 
-        aintx.get(fakePath, params: ["key": "value"]) { response in
+        sut.get(fakePath, params: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
 
-        aintx.get(fakePath, headers: ["key": "value"]) { response in
+        sut.get(fakePath, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.get(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+        sut.get(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        let task = aintx.get(fakePath) { _ in }
+        let task = sut.get(fakePath) { _ in }
         XCTAssertNotNil(task)
     }
     
     func testPut() {
-        aintx.put(fakePath) { response in
+        sut.put(fakePath) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.put(fakePath, params: ["key": "value"]) { response in
+        sut.put(fakePath, params: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
 
-        aintx.put(fakePath, headers: ["key": "value"]) { response in
+        sut.put(fakePath, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.put(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+        sut.put(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        let task = aintx.put(fakePath) { _ in }
+        let task = sut.put(fakePath) { _ in }
         XCTAssertNotNil(task)
     }
     
     func testPost() {
-        aintx.post(fakePath) { response in
+        sut.post(fakePath) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.post(fakePath, params: ["key": "value"]) { response in
+        sut.post(fakePath, params: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
 
-        aintx.post(fakePath, bodyData: Data()) { response in
+        sut.post(fakePath, bodyData: Data()) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.post(fakePath, headers: ["key": "value"]) { response in
+        sut.post(fakePath, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.post(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+        sut.post(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.post(fakePath, bodyData: Data(), headers: ["key": "value"]) { response in
+        sut.post(fakePath, bodyData: Data(), headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        let task = aintx.post(fakePath) { _ in }
+        let task = sut.post(fakePath) { _ in }
         XCTAssertNotNil(task)
     }
     
     func testDelete() {
-        aintx.delete(fakePath) { response in
+        sut.delete(fakePath) { response in
             XCTAssertNotNil(response)
         }
 
-        aintx.delete(fakePath, params: ["key": "value"]) { response in
+        sut.delete(fakePath, params: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.delete(fakePath, headers: ["key": "value"]) { response in
+        sut.delete(fakePath, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.delete(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+        sut.delete(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        let task = aintx.delete(fakePath) { _ in }
+        let task = sut.delete(fakePath) { _ in }
         XCTAssertNotNil(task)
     }
     
     func testDataRequest() {
-        var request = aintx.dataRequest(path: fakePath)
+        var request = sut.dataRequest(path: fakePath)
         XCTAssertNotNil(request)
     
-        request = aintx.dataRequest(path: fakePath, params: ["key": "value"])
+        request = sut.dataRequest(path: fakePath, params: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.dataRequest(path: fakePath, headers: ["key": "value"])
+        request = sut.dataRequest(path: fakePath, headers: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.dataRequest(path: fakePath, headers: ["key": "value"], bodyData: Data())
+        request = sut.dataRequest(path: fakePath, headers: ["key": "value"], bodyData: Data())
         XCTAssertNotNil(request)
     
-        request = aintx.dataRequest(path: fakePath, method: .put, params: ["key": "value"], headers: ["key": "value"])
+        request = sut.dataRequest(path: fakePath, method: .put, params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
     
-        request = aintx.dataRequest(path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], bodyData: Data())
+        request = sut.dataRequest(path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], bodyData: Data())
         XCTAssertNotNil(request)
     }
 
-    func testUploadWithURL() {
+    func testUpload() {
         let fileURL = URL(string: "/file/path")!
-        aintx.upload(fakePath, fileURL: fileURL) { response in
+        sut.upload(fakePath, fileURL: fileURL) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.upload(fakePath, fileURL: fileURL, params: nil) { response in
+        sut.upload(fakePath, fileURL: fileURL, params: nil) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.upload(fakePath, fileURL: fileURL, headers: ["key": "value"]) { response in
+        sut.upload(fakePath, fileURL: fileURL, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.upload(fakePath, fileURL: fileURL, params: nil, headers: ["key": "value"]) { response in
+        sut.upload(fakePath, fileURL: fileURL, params: nil, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
     
-        aintx.upload(fakePath, fileData: Data()) { response in
+        sut.upload(fakePath, fileData: Data()) { response in
             XCTAssertNotNil(response)
         }
     
-        aintx.upload(fakePath, fileData: Data(), params: nil) { response in
+        sut.upload(fakePath, fileData: Data(), params: nil) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.upload(fakePath, fileData: Data(), headers: ["key": "value"]) { response in
+        sut.upload(fakePath, fileData: Data(), headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.upload(fakePath, fileData: Data(), params: nil, headers: ["key": "value"]) { response in
+        sut.upload(fakePath, fileData: Data(), params: nil, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
     }
     
     func testUploadRequest() {
-        var request = aintx.uploadRequest(path: fakePath, uploadType: .data(Data()))
+        var request = sut.uploadRequest(path: fakePath, uploadType: .data(Data()))
         XCTAssertNotNil(request)
         
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()))
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()))
         XCTAssertNotNil(request)
         
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), params: ["key": "value"])
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), params: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), headers: ["key": "value"])
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), headers: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), params: ["key": "value"], headers: ["key": "value"])
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .url(URL(string: "/file/path")!))
+        let fileURL = URL(string: "/file/path")!
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL))
         XCTAssertNotNil(request)
         
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .url(URL(string: "/file/path")!), params: ["key": "value"])
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL), params: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .url(URL(string: "/file/path")!), headers: ["key": "value"])
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL), headers: ["key": "value"])
         XCTAssertNotNil(request)
         
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: .url(URL(string: "/file/path")!), params: ["key": "value"], headers: ["key": "value"])
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL), params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
     }
     
     func testDownload() {
-        aintx.download(fakePath) { response in
+        sut.download(fakePath) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.download(fakePath, params: ["key": "value"]) { response in
+        sut.download(fakePath, params: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.download(fakePath, headers: ["key": "value"]) { response in
+        sut.download(fakePath, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
         
-        aintx.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+        sut.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
     }
@@ -225,45 +226,65 @@ class AintxPublicTests: XCTestCase {
         
         let completed: CompletedClosure = { _, _ in }
         
-        let request = aintx.downloadRequest(path: fakePath, progress: progress, completed: completed)
+        let request = sut.downloadRequest(path: fakePath, progress: progress, completed: completed)
         
         XCTAssertNotNil(request)
     }
     
     func testDownloadRequest() {
-        var request = aintx.downloadRequest(path: fakePath, completed: { _, _ in })
+        var request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
+        request = sut.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], completed: { _, _ in })
+        request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(path: fakePath, method: .get, headers: ["key": "value"], completed: { _, _ in })
+        request = sut.downloadRequest(path: fakePath, method: .get, headers: ["key": "value"], completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], completed: { _, _ in })
+        request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], completed: { _, _ in })
         XCTAssertNotNil(request)
     }
     
-    func testFakeDataResponse() {
+    func testFakeResponse() {
         let fakeData = "data".data(using: .utf8)
-        aintx.fakeResponse = HttpResponse(data: fakeData)
+        sut.fakeResponse = HttpResponse(data: fakeData)
         
-        aintx.get(fakePath) { response in
+        sut.get(fakePath) { response in
             XCTAssertEqual(response.data, fakeData)
         }
         
-        aintx.upload(fakePath, fileData: fakeData!) { response in
+        sut.put(fakePath) { response in
             XCTAssertEqual(response.data, fakeData)
         }
         
-        aintx.upload(fakePath, fileURL: URL(string: "/file/path")!) { response in
+        sut.post(fakePath) { response in
             XCTAssertEqual(response.data, fakeData)
         }
         
-        aintx.download(fakePath) { response in
+        sut.post(fakePath, params: ["key": "value"]) { response in
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        sut.post(fakePath, bodyData: fakeData) { response in
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        sut.delete(fakePath) { response in
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        sut.upload(fakePath, fileData: fakeData!) { response in
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        sut.upload(fakePath, fileURL: URL(string: "/file/path")!) { response in
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        sut.download(fakePath) { response in
             XCTAssertEqual(response.data, fakeData)
         }
     }

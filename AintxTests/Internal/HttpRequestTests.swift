@@ -70,7 +70,7 @@ class HttpRequestTests: XCTestCase {
     }
 
     func testInitFakeRequest() {
-        let fakeRequest = httpRequest as! FakeRequest
+        let fakeRequest = httpRequest as! FakeHttpRequest
         XCTAssertEqual(fakeRequest.base, fakeBase)
         XCTAssertEqual(fakeRequest.path, fakePath)
         XCTAssertEqual(fakeRequest.method, .get)
@@ -78,7 +78,7 @@ class HttpRequestTests: XCTestCase {
     
     func testInitFakePostRequest() {
         let bodyData = "body".data(using: .utf8)
-        let fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .post, bodyData: bodyData, sessionConfig: .standard)
+        let fakeRequest = FakeHttpRequest(base: fakeBase, path: fakePath, method: .post, bodyData: bodyData, sessionConfig: .standard)
         
         XCTAssertEqual(fakeRequest.base, fakeBase)
         XCTAssertEqual(fakeRequest.path, fakePath)
@@ -89,7 +89,7 @@ class HttpRequestTests: XCTestCase {
     func testInitFakeUploadRequest() {
         var uploadType: UploadType = .data(Data())
         
-        var fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], uploadType: uploadType, sessionConfig: .standard)
+        var fakeRequest = FakeHttpRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], uploadType: uploadType, sessionConfig: .standard)
         
         XCTAssertEqual(fakeRequest.base, fakeBase)
         XCTAssertEqual(fakeRequest.path, fakePath)
@@ -99,7 +99,7 @@ class HttpRequestTests: XCTestCase {
         
         uploadType = .url(URL(string: "/file/path")!)
         
-        fakeRequest = FakeRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], uploadType: uploadType, sessionConfig: .standard)
+        fakeRequest = FakeHttpRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], uploadType: uploadType, sessionConfig: .standard)
         
         XCTAssertEqual(fakeRequest.base, fakeBase)
         XCTAssertEqual(fakeRequest.path, fakePath)

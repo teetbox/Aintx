@@ -23,7 +23,7 @@ extension UploadType: Equatable {
 
 class AintxTests: XCTestCase {
     
-    var aintx: Aintx!
+    var sut: Aintx!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
@@ -31,162 +31,184 @@ class AintxTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        aintx = Aintx(base: fakeBase)
-        aintx.isFake = true
+        sut = Aintx(base: fakeBase)
+        sut.isFake = true
     }
     
     func testInit() {
-        XCTAssertEqual(aintx.base, fakeBase)
-        XCTAssertEqual(aintx.config, .standard)
+        XCTAssertEqual(sut.base, fakeBase)
+        XCTAssertEqual(sut.config, .standard)
     }
     
     func testInitWithConfig() {
-        aintx = Aintx(base: fakeBase, config: .ephemeral)
-        XCTAssertEqual(aintx.config, .ephemeral)
+        sut = Aintx(base: fakeBase, config: .standard)
+        XCTAssertEqual(sut.config, .standard)
         
-        aintx = Aintx(base: fakePath, config: .background("bg"))
-        XCTAssertEqual(aintx.config, .background("bg"))
+        sut = Aintx(base: fakeBase, config: .ephemeral)
+        XCTAssertEqual(sut.config, .ephemeral)
+        
+        sut = Aintx(base: fakePath, config: .background("background"))
+        XCTAssertEqual(sut.config, .background("background"))
     }
     
     func testGet() {
-        aintx.get(fakePath) { response in
+        sut.get(fakePath) { response in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
             XCTAssertEqual(response.fakeRequest!.method, .get)
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let httpTask = aintx.get(fakePath) { _ in }
+        let httpTask = sut.get(fakePath) { _ in }
         XCTAssertNotNil(httpTask)
     }
     
     func testGetWithParams() {
-        aintx.get(fakePath, params: ["key": "value"]) { response in
+        sut.get(fakePath, params: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .get)
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
     }
     
     func testGetWithHeaders() {
-        aintx.get(fakePath, headers: ["key": "value"]) { response in
+        sut.get(fakePath, headers: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .get)
             XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
         }
     }
     
     func testPut() {
-        aintx.put(fakePath) { response in
+        sut.put(fakePath) { response in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
             XCTAssertEqual(response.fakeRequest!.method, .put)
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let httpTask = aintx.put(fakePath) { _ in }
+        let httpTask = sut.put(fakePath) { _ in }
         XCTAssertNotNil(httpTask)
     }
     
     func testPutWithParams() {
-        aintx.put(fakePath, params: ["key": "value"]) { response in
+        sut.put(fakePath, params: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .put)
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
     }
     
+    func testPutWithHeaders() {
+        sut.put(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .put)
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+    }
+    
     func testPost() {
-        aintx.post(fakePath) { response in
+        sut.post(fakePath) { response in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
             XCTAssertEqual(response.fakeRequest!.method, .post)
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let httpTask = aintx.post(fakePath) { _ in }
+        let httpTask = sut.post(fakePath) { _ in }
         XCTAssertNotNil(httpTask)
     }
     
     func testPostWithParams() {
-        aintx.post(fakePath, params: ["key": "value"]) { response in
+        sut.post(fakePath, params: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .post)
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
+        
+        sut.post(fakePath, params: nil, headers: nil, completion: { _ in })
     }
     
     func testPostWithBodyData() {
         let bodyData = "body".data(using: .utf8)
-        aintx.post(fakePath, bodyData: bodyData) { response in
+        sut.post(fakePath, bodyData: bodyData) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .post)
             XCTAssertEqual(response.fakeRequest!.bodyData, bodyData)
+        }
+        
+        sut.post(fakePath, bodyData: nil, headers: nil, completion: { _ in })
+    }
+    
+    func testPostWithHeaders() {
+        sut.post(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
         }
     }
     
     func testDelete() {
-        aintx.delete(fakePath) { response in
+        sut.delete(fakePath) { response in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
             XCTAssertEqual(response.fakeRequest!.method, .delete)
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let httpTask = aintx.delete(fakePath) { _ in }
+        let httpTask = sut.delete(fakePath) { _ in }
         XCTAssertNotNil(httpTask)
     }
     
     func testDeleteWithParams() {
-        aintx.delete(fakePath, params: ["key": "value"]) { response in
+        sut.delete(fakePath, params: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .delete)
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
     }
     
+    func testDeleteWithHeaders() {
+        sut.delete(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .delete)
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+    }
+    
     func testDataRequest() {
-        let request = aintx.dataRequest(path: fakePath) as! FakeRequest
+        let request = sut.dataRequest(path: fakePath)
         
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.method, .get)
         XCTAssertNil(request.params)
+        XCTAssertNil(request.headers)
+        XCTAssertNil((request as! FakeHttpRequest).bodyData)
+    }
+    
+    func testDataRequestWithMethod() {
+        var request: HttpRequest
+        
+        request = sut.dataRequest(path: fakePath, method: .get)
+        XCTAssertEqual(request.method, .get)
+        
+        request = sut.dataRequest(path: fakePath, method: .put)
+        XCTAssertEqual(request.method, .put)
+        
+        request = sut.dataRequest(path: fakePath, method: .post)
+        XCTAssertEqual(request.method, .post)
+        
+        request = sut.dataRequest(path: fakePath, method: .delete)
+        XCTAssertEqual(request.method, .delete)
     }
     
     func testDataRequestWithParams() {
-        let request = aintx.dataRequest(path: fakePath, params: ["key": "value"]) as! FakeRequest
+        let request = sut.dataRequest(path: fakePath, params: ["key": "value"])
         XCTAssertEqual(request.params!["key"] as! String, "value")
+    }
+    
+    func testDataRequestWithHeaders() {
+        let request = sut.dataRequest(path: fakePath, headers: ["key": "value"])
+        XCTAssertEqual(request.headers!["key"], "value")
     }
     
     func testDataRequestWithBodyData() {
         let bodyData = "body".data(using: .utf8)
-        let request = aintx.dataRequest(path: fakePath, method: .post, bodyData: bodyData) as! FakeRequest
+        let request = sut.dataRequest(path: fakePath, bodyData: bodyData) as! FakeHttpRequest
         XCTAssertEqual(request.bodyData, bodyData)
-    }
-    
-    func testDataRequestWithHeaders() {
-        let request = aintx.dataRequest(path: fakePath, method: .post, headers: ["key": "value"])
-        XCTAssertEqual(request.headers!["key"], "value")
-    }
-    
-    func testDataRequestWithMethod() {
-        var request: FakeRequest
-        
-        request = aintx.dataRequest(path: fakePath, method: .put) as! FakeRequest
-        XCTAssertEqual(request.method, .put)
-        
-        request = aintx.dataRequest(path: fakePath, method: .post) as! FakeRequest
-        XCTAssertEqual(request.method, .post)
-        
-        request = aintx.dataRequest(path: fakePath, method: .delete) as! FakeRequest
-        XCTAssertEqual(request.method, .delete)
-    }
-    
-    func testDataRequestWithParamsAndMethod() {
-        var request: FakeRequest
-        
-        request = aintx.dataRequest(path: fakePath, method: .put, params: ["key": "value"]) as! FakeRequest
-        XCTAssertEqual(request.method, .put)
-        XCTAssertEqual(request.params!["key"] as! String, "value")
-        
-        request = aintx.dataRequest(path: fakePath, method: .delete, params: ["key": "value"]) as! FakeRequest
-        XCTAssertEqual(request.method, .delete)
-        XCTAssertEqual(request.params!["key"] as! String, "value")
     }
     
     func testUploadWithFileURL() {
         let fileURL = URL(string: "/file/path")!
-        aintx.upload(fakePath, fileURL: fileURL) { response in
+        sut.upload(fakePath, fileURL: fileURL) { response in
             XCTAssertEqual(response.fakeRequest!.method, .put)
             XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.url(fileURL))
         }
@@ -194,7 +216,7 @@ class AintxTests: XCTestCase {
     
     func testUploadWithData() {
         let fileData = Data()
-        aintx.upload(fakePath, fileData: fileData) { response in
+        sut.upload(fakePath, fileData: fileData) { response in
             XCTAssertEqual(response.fakeRequest!.method, .put)
             XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.data(fileData))
         }
@@ -202,7 +224,7 @@ class AintxTests: XCTestCase {
     
     func testUploadWithHeaders() {
         let fileData = Data()
-        aintx.upload(fakePath, fileData: fileData, headers: ["key": "value"]) { response in
+        sut.upload(fakePath, fileData: fileData, headers: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .put)
             XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.data(fileData))
             XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
@@ -211,28 +233,28 @@ class AintxTests: XCTestCase {
     
     func testUploadRequest() {
         let fileData: UploadType = .data(Data())
-        var request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: fileData, params: nil)
+        var request = sut.uploadRequest(path: fakePath, method: .put, uploadType: fileData, params: nil)
         
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.method, .put)
         XCTAssertNil(request.params)
-        XCTAssertEqual((request as! FakeRequest).uploadType, fileData)
+        XCTAssertEqual((request as! FakeHttpRequest).uploadType, fileData)
         
         let fileURL: UploadType = .url(URL(string: "/file/path")!)
-        request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, params: nil)
-        XCTAssertEqual((request as! FakeRequest).uploadType, fileURL)
+        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, params: nil)
+        XCTAssertEqual((request as! FakeHttpRequest).uploadType, fileURL)
     }
     
     func testUploadRequestWithHeaders() {
         let fileURL: UploadType = .url(URL(string: "/file/path")!)
-        let request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, headers: ["key": "value"])
+        let request = sut.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, headers: ["key": "value"])
         XCTAssertEqual(request.headers!["key"], "value")
     }
     
     func testUploadRequestWithParamsAndHeaders() {
         let fileURL: UploadType = .url(URL(string: "/file/path")!)
-        let request = aintx.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, params: ["key": "value"], headers: ["key": "value"])
+        let request = sut.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, params: ["key": "value"], headers: ["key": "value"])
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.headers!["key"], "value")
     }
@@ -259,21 +281,21 @@ class AintxTests: XCTestCase {
 //    }
     
     func testDownloadRequest() {
-        let request = aintx.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
+        let request = sut.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertNil(request.params)
     }
     
     func testDownloadRequestWithParams() {
-        let request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], completed: { _, _ in })
+        let request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], completed: { _, _ in })
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.params!["key"] as! String, "value")
     }
     
     func testDownloadRequestWithParamsAndHeaders() {
-        let request = aintx.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], completed: { _, _ in })
+        let request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], completed: { _, _ in })
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.params!["key"] as! String, "value")

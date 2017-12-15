@@ -49,6 +49,12 @@ class SessionManager: NSObject {
         }
     }
     
+    func reset() {
+        standard = nil
+        ephemeral = nil
+        background = nil
+    }
+    
 }
 
 extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate {

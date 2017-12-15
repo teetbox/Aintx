@@ -130,6 +130,7 @@ class HttpDataRequest: HttpRequest {
         }
         
         let dataTask = HttpDataTask(request: request, config: sessionConfig, completion: completion)
+        dataTask.resume()
         return dataTask
     }
     
@@ -181,6 +182,7 @@ class HttpDownloadRequest: HttpRequest {
     let completed: CompletedClosure?
     let completion: ((HttpResponse) -> Void)?
     
+    // For session downloadTask with completionHandler
     init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completion: @escaping (HttpResponse) -> Void, sessionConfig: SessionConfig) {
         self.progress = nil
         self.completed = nil
@@ -188,6 +190,7 @@ class HttpDownloadRequest: HttpRequest {
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
     }
     
+    // For session downloadTask with delegate
     init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: CompletedClosure? = nil, sessionConfig: SessionConfig) {
         self.progress = progress
         self.completed = completed
@@ -196,7 +199,6 @@ class HttpDownloadRequest: HttpRequest {
     }
     
     override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        
 
         guard let urlString = urlString else {
             httpError = HttpError.requestFailed(.invalidURL(""))
@@ -262,7 +264,7 @@ public class HttpLoadRequest: HttpRequest {
     
 }
 
-class FakeRequest: HttpRequest {
+class FakeHttpRequest: HttpRequest {
     
     public var error: HttpError?
 

@@ -11,37 +11,34 @@ import Aintx
 
 class HttpRequestPublicTests: XCTestCase {
     
-    var httpRequest: HttpRequest!
-    var aintx: Aintx!
+    var sut: HttpRequest!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
     
     override func setUp() {
         super.setUp()
-        
-        aintx = Aintx(base: fakeBase)
-        aintx.isFake = true
-        httpRequest = aintx.dataRequest(path: fakePath)
+
+        sut = Aintx(base: fakeBase).dataRequest(path: fakePath)
     }
     
     func testGo() {
-        httpRequest.go { response in
+        sut.go { response in
             XCTAssertNotNil(response)
         }
         
-        let token = httpRequest.go { _ in }
+        let token = sut.go { _ in }
         XCTAssertNotNil(token)
     }
     
     func testSetAuthorizationWithUsernameAndPassword() {
-        httpRequest = httpRequest.setAuthorization(username: "username", password: "password")
-        XCTAssertNotNil(httpRequest)
+        sut = sut.setAuthorization(username: "username", password: "password")
+        XCTAssertNotNil(sut)
     }
     
     func testSetAuthorizationWithBasicToken() {
-        httpRequest = httpRequest.setAuthorization(basicToken: "Basic ABC")
-        XCTAssertNotNil(httpRequest)
+        sut = sut.setAuthorization(basicToken: "Basic ABCDEFG")
+        XCTAssertNotNil(sut)
     }
     
 }
