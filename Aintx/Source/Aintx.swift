@@ -169,7 +169,7 @@ public struct Aintx {
             return request.go(completion: completion)
         }
         
-        request = HttpDownloadRequest(base: base, path: path, method: .get, params: params, headers: headers, completion: completion, sessionConfig: config)
+        request = HttpDataRequest(base: base, path: path, method: .get, params: params, headers: headers, bodyData: nil, sessionConfig: config, taskType: .file(.download))
         return request.go(completion: completion)
     }
     

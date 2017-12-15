@@ -11,39 +11,26 @@ import XCTest
 
 class HttpTaskTests: XCTestCase {
     
-    var httpTask: HttpTask!
-    
-    override func setUp() {
-        super.setUp()
-        
-        let aintx = Aintx(base: "https://httpbin.org")
-        httpTask = aintx.get("/get") { _ in }
-    }
+    let urlRequest = URLRequest(url: URL(string: "www.fake.com")!)
+    let session = URLSession.shared
     
     func testInit() {
-        let dataTask = httpTask as! HttpDataTask
-        XCTAssertEqual(dataTask.sessionTask.state, .running)
+        let sut = HttpDataTask(request: urlRequest, session: session, completion: { _ in })
+        
+        XCTAssert(sut.sessionTask is URLSessionDataTask)
     }
     
-    func testSuspend() {
-        httpTask.suspend()
+    func testInitWithDownloadTask() {
+        let sut = HttpDataTask(request: urlRequest, session: session, taskType: .file(.download), completion: { _ in })
         
-        let dataTask = httpTask as! HttpDataTask
-        XCTAssertEqual(dataTask.sessionTask.state, .suspended)
+        XCTAssert(sut.sessionTask is URLSessionDownloadTask)
     }
-    
-    func testResume() {
-        httpTask.resume()
+
+    func testInitWithUploadTask() {
+        let taskType = TaskType.file(.upload(.data(Data())))
+        let sut = HttpDataTask(request: urlRequest, session: session, taskType: taskType, completion: { _ in })
         
-        let dataTask = httpTask as! HttpDataTask
-        XCTAssertEqual(dataTask.sessionTask.state, .running)
-    }
-    
-    func testCancel() {
-        httpTask.cancel()
-        
-        let dataTask = httpTask as! HttpDataTask
-        XCTAssertEqual(dataTask.sessionTask.state, .canceling)
+        XCTAssert(sut.sessionTask is URLSessionUploadTask)
     }
     
 }

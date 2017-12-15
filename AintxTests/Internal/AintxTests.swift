@@ -165,8 +165,7 @@ class AintxTests: XCTestCase {
     
     func testDataRequest() {
         let request = sut.dataRequest(path: fakePath)
-        
-        XCTAssertEqual(request.base, fakeBase)
+
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.method, .get)
         XCTAssertNil(request.params)
@@ -204,6 +203,16 @@ class AintxTests: XCTestCase {
         let bodyData = "body".data(using: .utf8)
         let request = sut.dataRequest(path: fakePath, bodyData: bodyData) as! FakeHttpRequest
         XCTAssertEqual(request.bodyData, bodyData)
+    }
+    
+    func testDataRequestWithAll() {
+        let request  = sut.dataRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], bodyData: Data())
+
+        XCTAssertEqual(request.path, fakePath)
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.params!["key"] as! String, "value")
+        XCTAssertEqual(request.headers!["key"], "value")
+        XCTAssertEqual((request as! FakeHttpRequest).bodyData, Data())
     }
     
     func testUploadWithFileURL() {
@@ -259,22 +268,25 @@ class AintxTests: XCTestCase {
         XCTAssertEqual(request.headers!["key"], "value")
     }
     
-//    func testDownload() {
-//        aintx.download(fakePath) { response in
-//            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-//            XCTAssertEqual(response.fakeRequest!.method, .get)
-//        }
-//    }
+    func testDownload() {
+        sut.download(fakePath) { response in
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+        }
+        
+        let downloadTask = sut.download(fakePath, completion: { _ in })
+        XCTAssertNotNil(downloadTask)
+    }
     
 //    func testDownloadWithParams() {
-//        aintx.download(fakePath, params: ["key": "value"]) { response in
+//        sut.download(fakePath, params: ["key": "value"]) { response in
 //            XCTAssertEqual(response.fakeRequest!.method, .get)
 //            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
 //        }
 //    }
-    
+//
 //    func testDownloadWithHeaders() {
-//        aintx.download(fakePath, headers: ["key": "value"]) { response in
+//        sut.download(fakePath, headers: ["key": "value"]) { response in
 //            XCTAssertEqual(response.fakeRequest!.method, .get)
 //            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
 //        }

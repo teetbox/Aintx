@@ -118,6 +118,9 @@ class AintxPublicTests: XCTestCase {
     func testDataRequest() {
         var request = sut.dataRequest(path: fakePath)
         XCTAssertNotNil(request)
+        
+        request = sut.dataRequest(path: fakePath, method: .post)
+        XCTAssertNotNil(request)
     
         request = sut.dataRequest(path: fakePath, params: ["key": "value"])
         XCTAssertNotNil(request)
@@ -218,19 +221,6 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
-    func testDownLoadWithProgress() {
-        let progress: ProgressClosure = { (_, writtenBytes, totalBytes) in
-            let percentage = writtenBytes / totalBytes * 100
-            print("Downloading \(percentage)%")
-        }
-        
-        let completed: CompletedClosure = { _, _ in }
-        
-        let request = sut.downloadRequest(path: fakePath, progress: progress, completed: completed)
-        
-        XCTAssertNotNil(request)
-    }
-    
     func testDownloadRequest() {
         var request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
         XCTAssertNotNil(request)
@@ -238,13 +228,16 @@ class AintxPublicTests: XCTestCase {
         request = sut.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], completed: { _, _ in })
+        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = sut.downloadRequest(path: fakePath, method: .get, headers: ["key": "value"], completed: { _, _ in })
+        request = sut.downloadRequest(path: fakePath, headers: ["key": "value"], completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], completed: { _, _ in })
+        request = sut.downloadRequest(path: fakePath, progress:{ _, _, _ in }, completed: { _, _ in })
+        XCTAssertNotNil(request)
+        
+        request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
         XCTAssertNotNil(request)
     }
     

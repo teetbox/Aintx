@@ -48,8 +48,9 @@ class SessionManagerTests: XCTestCase {
     
     func testSubscript() {
         let fakeURL = URL(string: "https://httpbin.org")!
+        let session = URLSession.shared
         let sessionTask = URLSessionTask()
-        let httpTask = HttpDataTask(request: URLRequest(url: fakeURL), config: .standard, completion: { _ in })
+        let httpTask = HttpDataTask(request: URLRequest(url: fakeURL), session: session, completion: { _ in })
         
         sut[sessionTask] = httpTask
         

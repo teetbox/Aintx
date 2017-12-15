@@ -9,6 +9,12 @@
 import XCTest
 @testable import Aintx
 
+extension TaskType: Equatable {
+    public static func ==(lhs: TaskType, rhs: TaskType) -> Bool {
+        return "\(lhs)" == "\(rhs)"
+    }
+}
+
 class HttpRequestTests: XCTestCase {
     
     var httpRequest: HttpRequest!
@@ -26,13 +32,15 @@ class HttpRequestTests: XCTestCase {
     }
     
     func testInitDataRequest() {
-        let dataRequest = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], bodyData: Data(), sessionConfig: .standard)
+        let dataRequest = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], bodyData: Data(), sessionConfig: .standard, taskType: .data)
         
         XCTAssertEqual(dataRequest.base, fakeBase)
         XCTAssertEqual(dataRequest.path, fakePath)
         XCTAssertEqual(dataRequest.method, .get)
+        XCTAssertEqual(dataRequest.headers!["key"], "value")
         XCTAssertEqual(dataRequest.params!["key"] as! String, "value")
         XCTAssertEqual(dataRequest.bodyData, Data())
+        XCTAssertEqual(dataRequest.taskType, .data)
     }
     
     func testInitDownloadRequest() {
@@ -118,9 +126,13 @@ class HttpRequestTests: XCTestCase {
     }
     
     func testGo() {
-        httpRequest.go { response in
-            XCTAssertNotNil(response.fakeRequest)
+        httpRequest = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, bodyData: nil, sessionConfig: .ephemeral)
+        
+        (httpRequest as! HttpDataRequest).go { response in
+            
         }
+        
+        XCTAssert(httpRequest is HttpDataRequest)
         
         let httpTask = httpRequest.go { _ in }
         XCTAssertNotNil(httpTask)
@@ -140,6 +152,18 @@ class HttpRequestTests: XCTestCase {
         _ = httpRequest.setAuthorization(basicToken: "ABC")
         
         XCTAssertEqual(httpRequest.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic ABC")
+    }
+    
+    func testTaskType() {
+        let data: TaskType = .data
+        let fileDownload: TaskType = .file(.download)
+        let fileUploadURL: TaskType = .file(.upload(.url(URL(string: "www.fake.com")!)))
+        let fileUploadData: TaskType = .file(.upload(.data(Data())))
+        
+        XCTAssertEqual(data, TaskType.data)
+        XCTAssertEqual(fileDownload, TaskType.file(.download))
+        XCTAssertEqual(fileUploadURL, TaskType.file(.upload(.url(URL(string: "www.fake.com")!))))
+        XCTAssertEqual(fileUploadData, TaskType.file(.upload(.data(Data()))))
     }
     
 }

@@ -8,30 +8,56 @@
 
 import Foundation
 
+enum TaskType {
+    case data
+    case file(FileType)
+    
+    enum FileType {
+        case download
+        case upload(UploadType)
+    }
+}
+
 public protocol HttpTask {
     func suspend()
     func resume()
     func cancel()
 }
 
-class FakeHttpTask: HttpTask {
-    func suspend() {}
-    func resume() {}
-    func cancel() {}
-}
-
 class HttpDataTask: HttpTask {
     
     let sessionTask: URLSessionTask
-    let sessionManager = SessionManager.shared
     
-    init(request: URLRequest, config: SessionConfig, completion: @escaping (HttpResponse) -> Void) {
-        let session = sessionManager.getSession(with: config)
+    init(request: URLRequest, session: URLSession, taskType: TaskType = .data, completion: @escaping (HttpResponse) -> Void) {
         
-        sessionTask = session.dataTask(with: request, completionHandler: { (data, response, error) in
-            let httpResponse = HttpResponse(data: data, response: response, error: error)
-            completion(httpResponse)
-        })
+        switch taskType {
+        case .data:
+            sessionTask = session.dataTask(with: request) { (data, response, error) in
+                let httpResponse = HttpResponse(data: data, response: response, error: error)
+                completion(httpResponse)
+            }
+        case .file(let fileType):
+            switch fileType {
+            case .download:
+                sessionTask = session.downloadTask(with: request) { (url, response, error) in
+                    let httpResponse = HttpResponse(data: nil, response: response, error: error)
+                    completion(httpResponse)
+                }
+            case .upload(let uploadType):
+                switch uploadType {
+                case .data(let fileData):
+                    sessionTask = session.uploadTask(with: request, from: fileData) { (data, response, error) in
+                        let httpResponse = HttpResponse(data: data, response: response, error: error)
+                        completion(httpResponse)
+                    }
+                case .url(let fileURL):
+                    sessionTask = session.uploadTask(with: request, fromFile: fileURL) { (data, response, error) in
+                        let httpResponse = HttpResponse(data: data, response: response, error: error)
+                        completion(httpResponse)
+                    }
+                }
+            }
+        }
     }
     
     func suspend() {
@@ -60,9 +86,9 @@ class HttpUploadTask: HttpDataTask, CombinableTask {
     
     let type: UploadType
     
-    init(request: URLRequest, config: SessionConfig, type: UploadType, completion: @escaping (HttpResponse) -> Void) {
+    init(request: URLRequest, session: URLSession, type: UploadType, completion: @escaping (HttpResponse) -> Void) {
         self.type = type
-        super.init(request: request, config: config, completion: completion)
+        super.init(request: request, session: session, completion: completion)
     }
     
     func go() -> HttpTask {
@@ -74,34 +100,24 @@ class HttpUploadTask: HttpDataTask, CombinableTask {
 class HttpDownloadTask: HttpTask, CombinableTask {
     
     let sessionTask: URLSessionTask
-    let sessionManager = SessionManager.shared
-    
-    let urlRequest: URLRequest
-    let sessionConfig: SessionConfig
     
     let progressHandler: ProgressClosure?
     let completedHandler: CompletedClosure?
     let completionHandler: ((HttpResponse) -> Void)?
     
-    init(urlRequest: URLRequest, sessionConfig: SessionConfig, progress: ProgressClosure?, completed: CompletedClosure?) {
-        self.urlRequest = urlRequest
-        self.sessionConfig = sessionConfig
+    init(urlRequest: URLRequest, session: URLSession, progress: ProgressClosure?, completed: CompletedClosure?) {
         self.progressHandler = progress
         self.completedHandler = completed
         self.completionHandler = nil
         
-        let session = sessionManager.getSession(with: sessionConfig)
         sessionTask = session.downloadTask(with: urlRequest)
     }
     
-    init(urlRequest: URLRequest, sessionConfig: SessionConfig, completion: @escaping (HttpResponse) -> Void) {
-        self.urlRequest = urlRequest
-        self.sessionConfig = sessionConfig
+    init(urlRequest: URLRequest, session: URLSession, completion: @escaping (HttpResponse) -> Void) {
         self.progressHandler = nil
         self.completedHandler = nil
         self.completionHandler = completion
         
-        let session = sessionManager.getSession(with: sessionConfig)
         sessionTask = session.downloadTask(with: urlRequest)
     }
     
@@ -120,4 +136,10 @@ class HttpDownloadTask: HttpTask, CombinableTask {
         sessionTask.cancel()
     }
     
+}
+
+class FakeHttpTask: HttpTask {
+    func suspend() {}
+    func resume() {}
+    func cancel() {}
 }

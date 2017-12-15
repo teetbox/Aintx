@@ -19,7 +19,7 @@ public class HttpRequest {
     let method: HttpMethod
     let params: [String: Any]?
     let headers: [String: String]?
-    let sessionConfig: SessionConfig
+    let session: URLSession
     
     init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, sessionConfig: SessionConfig) {
         self.base = base
@@ -27,7 +27,7 @@ public class HttpRequest {
         self.method = method
         self.params = params
         self.headers = headers
-        self.sessionConfig = sessionConfig
+        self.session = SessionManager.shared.getSession(with: sessionConfig)
 
         if case .get = method {
             urlString = try? URLEncording.composeURLString(base: base, path: path, params: params)
@@ -71,9 +71,11 @@ extension HttpRequest {
 class HttpDataRequest: HttpRequest {
     
     let bodyData: Data?
+    let taskType: TaskType
     
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, bodyData: Data? = nil, sessionConfig: SessionConfig) {
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]? = nil, bodyData: Data? = nil, sessionConfig: SessionConfig, taskType: TaskType = .data) {
         self.bodyData = bodyData
+        self.taskType = taskType
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
         
         guard let urlString = urlString else {
@@ -106,6 +108,7 @@ class HttpDataRequest: HttpRequest {
         }
     }
     
+    @discardableResult
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
 //        guard httpError == nil else {
 //            completion(HttpResponse(error: httpError))
@@ -129,7 +132,7 @@ class HttpDataRequest: HttpRequest {
             fatalError()
         }
         
-        let dataTask = HttpDataTask(request: request, config: sessionConfig, completion: completion)
+        let dataTask = HttpDataTask(request: request, session: session, completion: completion)
         dataTask.resume()
         return dataTask
     }
@@ -169,7 +172,7 @@ class HttpUploadRequest: HttpRequest {
             fatalError()
         }
         
-        let uploadTask = HttpUploadTask(request: request, config: sessionConfig, type: uploadType, completion: completion
+        let uploadTask = HttpUploadTask(request: request, session: session, type: uploadType, completion: completion
         )
         return uploadTask
     }
@@ -213,7 +216,7 @@ class HttpDownloadRequest: HttpRequest {
         urlRequest = URLRequest(url: url)
         urlRequest?.httpMethod = method.rawValue
 
-        let downloadTask = HttpDownloadTask(urlRequest: urlRequest!, sessionConfig: sessionConfig, completion: completion)
+        let downloadTask = HttpDownloadTask(urlRequest: urlRequest!, session: session, completion: completion)
         
         return downloadTask
     }
@@ -255,7 +258,7 @@ public class HttpLoadRequest: HttpRequest {
         urlRequest = URLRequest(url: url)
         urlRequest?.httpMethod = method.rawValue
         
-        task = HttpDownloadTask(urlRequest: urlRequest!, sessionConfig: sessionConfig, progress: progress, completed: completed)
+        task = HttpDownloadTask(urlRequest: urlRequest!, session: session, progress: progress, completed: completed)
     }
     
     public func go() -> HttpTask {
@@ -309,7 +312,7 @@ class FakeLoadRequest: HttpLoadRequest {
         urlRequest = URLRequest(url: url)
         urlRequest?.httpMethod = method.rawValue
         
-        task = HttpDownloadTask(urlRequest: urlRequest!, sessionConfig: sessionConfig, progress: progress, completed: completed)
+        task = HttpDownloadTask(urlRequest: urlRequest!, session: session, progress: progress, completed: completed)
     }
     
     public override func go() -> HttpTask {
