@@ -11,7 +11,7 @@ import Aintx
 
 class HttpRequestPublicTests: XCTestCase {
     
-    var sut: HttpRequest!
+    var sut: HttpDataRequest!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"

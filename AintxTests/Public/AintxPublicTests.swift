@@ -179,7 +179,7 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(request)
     }
     
-    func testUpload() {
+    func _testUpload() {
         let fileURL = URL(string: "/file/path")!
         sut.upload(fakePath, fileURL: fileURL) { response in
             XCTAssertNotNil(response)
@@ -214,7 +214,7 @@ class AintxPublicTests: XCTestCase {
         }
     }
     
-    func testUploadRequest() {
+    func _testUploadRequest() {
         var request = sut.uploadRequest(path: fakePath, uploadType: .data(Data()))
         XCTAssertNotNil(request)
         

@@ -52,11 +52,6 @@ public class HttpRequest {
             urlRequest?.httpBody = try? JSONSerialization.data(withJSONObject: params, options: [])
         }
     }
-
-    @discardableResult
-    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        fatalError("Must be overrided by subclass!")
-    }
     
 }
 
@@ -85,7 +80,7 @@ extension HttpRequest {
     
 }
 
-class HttpDataRequest: HttpRequest {
+public class HttpDataRequest: HttpRequest {
     
     let bodyData: Data?
     let taskType: TaskType
@@ -110,7 +105,7 @@ class HttpDataRequest: HttpRequest {
     }
     
     @discardableResult
-    public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard httpError == nil else {
             completion(HttpResponse(error: httpError))
             return FakeHttpTask()
@@ -149,7 +144,7 @@ class HttpDownloadRequest: HttpRequest {
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
     }
     
-    override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         
         guard let urlString = urlString else {
             httpError = HttpError.requestFailed(.invalidURL(""))
@@ -171,7 +166,7 @@ class HttpDownloadRequest: HttpRequest {
     
 }
 
-class HttpUploadRequest: HttpRequest {
+public class HttpUploadRequest: HttpRequest {
     
     let uploadType: UploadType
     
@@ -180,7 +175,7 @@ class HttpUploadRequest: HttpRequest {
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
     }
     
-    override public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         
 //        let uploadTask: URLSessionUploadTask
 //
@@ -267,6 +262,15 @@ class FakeHttpRequest: HttpRequest {
         
         urlRequest = URLRequest(url: url)
     }
+    
+    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        completion(HttpResponse(fakeRequest: self))
+        return FakeHttpTask()
+    }
+    
+}
+
+class FakeDataRequest: HttpDataRequest {
     
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         completion(HttpResponse(fakeRequest: self))

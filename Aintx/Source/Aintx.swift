@@ -104,10 +104,10 @@ public struct Aintx {
     }
     
     /* ✅ */
-    public func dataRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, bodyData: Data? = nil) -> HttpRequest {
-        let request: HttpRequest
+    public func dataRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, bodyData: Data? = nil) -> HttpDataRequest {
+        let request: HttpDataRequest
         if (isFake) {
-            request = FakeHttpRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, sessionConfig: config)
+            request = FakeDataRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, bodyData: bodyData)
             return request
         }
         
@@ -132,9 +132,9 @@ public struct Aintx {
             return FakeHttpTask()
         }
         
-        let request: HttpRequest
+        let request: HttpDataRequest
         if (isFake) {
-            request = FakeHttpRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config)
+            request = FakeDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config)
             return request.go(completion: completion)
         }
         
@@ -177,11 +177,10 @@ public struct Aintx {
     }
     
     /* ✅ */
-    public func uploadRequest(path: String, method: HttpMethod = .put, uploadType: UploadType, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpRequest {
-        let request: HttpRequest
+    public func uploadRequest(path: String, method: HttpMethod = .put, uploadType: UploadType, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpUploadRequest {
+        let request: HttpUploadRequest
         if (isFake) {
-            request = FakeHttpRequest(base: base, path: path, method: method, params: params, headers: headers, uploadType: uploadType, sessionConfig: config)
-            return request
+            fatalError()
         }
         
         request = HttpUploadRequest(base: base, path: path, method: method, uploadType: uploadType, params: params, headers: headers, sessionConfig: config)

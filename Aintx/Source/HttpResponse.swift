@@ -20,7 +20,7 @@ public struct HttpResponse: Response {
     public var urlResponse: URLResponse?
     public var error: HttpError?
     
-    var fakeRequest: FakeHttpRequest?
+    var fakeRequest: FakeDataRequest?
     
     public var json: [String: Any]? {
         return parseJSON()
@@ -63,7 +63,7 @@ extension HttpResponse {
 
     /* ✅ */
     init(fakeRequest: HttpRequest) {
-        self.fakeRequest = fakeRequest as? FakeHttpRequest
+        self.fakeRequest = fakeRequest as? FakeDataRequest
     }
 
 }

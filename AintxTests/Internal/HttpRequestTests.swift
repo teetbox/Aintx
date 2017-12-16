@@ -134,7 +134,7 @@ class HttpRequestTests: XCTestCase {
         
         XCTAssert(sut is HttpDataRequest)
         
-        let httpTask = sut.go { _ in }
+        let httpTask = (sut as! HttpDataRequest).go { _ in }
         XCTAssertNotNil(httpTask)
     }
     
