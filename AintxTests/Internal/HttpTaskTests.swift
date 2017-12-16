@@ -20,6 +20,21 @@ class HttpTaskTests: XCTestCase {
         XCTAssert(sut.sessionTask is URLSessionDataTask)
     }
     
+    func testTaskType() {
+        let fileURL = URL(string: "www.fake.com")!
+        let fileData = "data".data(using: .utf8)!
+        
+        let data: TaskType = .data
+        let fileDownload: TaskType = .file(.download)
+        let fileUploadURL: TaskType = .file(.upload(.url(fileURL)))
+        let fileUploadData: TaskType = .file(.upload(.data(fileData)))
+        
+        XCTAssertEqual(data, TaskType.data)
+        XCTAssertEqual(fileDownload, TaskType.file(.download))
+        XCTAssertEqual(fileUploadURL, TaskType.file(.upload(.url(fileURL))))
+        XCTAssertEqual(fileUploadData, TaskType.file(.upload(.data(fileData))))
+    }
+    
     func testInitWithDownloadTask() {
         let sut = HttpDataTask(request: urlRequest, session: session, taskType: .file(.download), completion: { _ in })
         

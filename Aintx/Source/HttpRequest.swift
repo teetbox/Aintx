@@ -218,7 +218,12 @@ public class HttpLoadRequest: HttpRequest {
     
     var task: HttpDownloadTask?
     
+    let progress: ProgressClosure?
+    let completed: CompletedClosure?
+    
     init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completed: CompletedClosure? = nil) {
+        self.progress = progress
+        self.completed = completed
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
 
         guard let urlString = urlString else {
@@ -273,7 +278,7 @@ class FakeHttpRequest: HttpRequest {
 class FakeLoadRequest: HttpLoadRequest {
     
     override init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completed: CompletedClosure? = nil) {
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
+        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig, progress: progress, completed: completed)
         
         guard let urlString = urlString else {
             httpError = HttpError.requestFailed(.invalidURL(""))

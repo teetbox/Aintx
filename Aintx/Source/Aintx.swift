@@ -134,7 +134,7 @@ public struct Aintx {
         
         let request: HttpRequest
         if (isFake) {
-            request = FakeHttpRequest(base: base, path: path, method: .get, sessionConfig: config)
+            request = FakeHttpRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config)
             return request.go(completion: completion)
         }
         

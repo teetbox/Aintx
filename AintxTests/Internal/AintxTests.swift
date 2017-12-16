@@ -58,22 +58,28 @@ class AintxTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let httpTask = sut.get(fakePath) { _ in }
-        XCTAssertNotNil(httpTask)
-    }
-    
-    func testGetWithParams() {
         sut.get(fakePath, params: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .get)
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
-    }
-    
-    func testGetWithHeaders() {
+        
         sut.get(fakePath, headers: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .get)
             XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
         }
+        
+        sut.get(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
+        sut.isFake = false
+        let httpTask = sut.get(fakePath) { _ in }
+        XCTAssert(httpTask is HttpDataTask)
+        
+        let dataTask = httpTask as! HttpDataTask
+        XCTAssert(dataTask.sessionTask is URLSessionDataTask)
     }
     
     func testPut() {
@@ -83,22 +89,28 @@ class AintxTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let httpTask = sut.put(fakePath) { _ in }
-        XCTAssertNotNil(httpTask)
-    }
-    
-    func testPutWithParams() {
         sut.put(fakePath, params: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .put)
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
-    }
-    
-    func testPutWithHeaders() {
+        
         sut.put(fakePath, headers: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .put)
             XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
         }
+        
+        sut.put(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .put)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
+        sut.isFake = false
+        let httpTask = sut.put(fakePath) { _ in }
+        XCTAssert(httpTask is HttpDataTask)
+        
+        let dataTask = httpTask as! HttpDataTask
+        XCTAssert(dataTask.sessionTask is URLSessionDataTask)
     }
     
     func testPost() {
@@ -108,34 +120,40 @@ class AintxTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let httpTask = sut.post(fakePath) { _ in }
-        XCTAssertNotNil(httpTask)
-    }
-    
-    func testPostWithParams() {
         sut.post(fakePath, params: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .post)
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
         
-        sut.post(fakePath, params: nil, headers: nil, completion: { _ in })
-    }
-    
-    func testPostWithBodyData() {
         let bodyData = "body".data(using: .utf8)
         sut.post(fakePath, bodyData: bodyData) { response in
             XCTAssertEqual(response.fakeRequest!.method, .post)
             XCTAssertEqual(response.fakeRequest!.bodyData, bodyData)
         }
         
-        sut.post(fakePath, bodyData: nil, headers: nil, completion: { _ in })
-    }
-    
-    func testPostWithHeaders() {
         sut.post(fakePath, headers: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .post)
             XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
         }
+        
+        sut.post(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
+        sut.post(fakePath, bodyData: bodyData, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.bodyData, bodyData)
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
+        sut.isFake = false
+        let httpTask = sut.post(fakePath) { _ in }
+        XCTAssert(httpTask is HttpDataTask)
+        
+        let dataTask = httpTask as! HttpDataTask
+        XCTAssert(dataTask.sessionTask is URLSessionDataTask)
     }
     
     func testDelete() {
@@ -145,27 +163,34 @@ class AintxTests: XCTestCase {
             XCTAssertNil(response.fakeRequest!.params)
         }
         
-        let httpTask = sut.delete(fakePath) { _ in }
-        XCTAssertNotNil(httpTask)
-    }
-    
-    func testDeleteWithParams() {
         sut.delete(fakePath, params: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .delete)
             XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
         }
-    }
-    
-    func testDeleteWithHeaders() {
+        
         sut.delete(fakePath, headers: ["key": "value"]) { response in
             XCTAssertEqual(response.fakeRequest!.method, .delete)
             XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
         }
+        
+        sut.delete(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .delete)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
+        sut.isFake = false
+        let httpTask = sut.delete(fakePath) { _ in }
+        XCTAssert(httpTask is HttpDataTask)
+        
+        let dataTask = httpTask as! HttpDataTask
+        XCTAssert(dataTask.sessionTask is URLSessionDataTask)
     }
     
     func testDataRequest() {
         let request = sut.dataRequest(path: fakePath)
 
+        XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.method, .get)
         XCTAssertNil(request.params)
@@ -221,12 +246,43 @@ class AintxTests: XCTestCase {
             XCTAssertEqual(response.fakeRequest!.method, .get)
         }
         
+        sut.download(fakePath, params: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+        }
+        
+        sut.download(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
+        sut.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
         sut.isFake = false
         let downloadTask = sut.download(fakePath, completion: { _ in })
         XCTAssert(downloadTask is HttpDataTask)
         
         let dataTask = downloadTask as! HttpDataTask
         XCTAssert(dataTask.sessionTask is URLSessionDownloadTask)
+    }
+    
+    func testDownloadRequest() {
+        // TODO: - to be continued...
+        var request: HttpLoadRequest
+        
+        request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
+        XCTAssertEqual(request.base, fakeBase)
+        XCTAssertEqual(request.path, fakePath)
+        XCTAssertEqual(request.method, .get)
+        XCTAssertNil(request.params)
+    
+        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in print("") }, completed: { _, _ in })
+        XCTAssertNotNil(request.params)
+        XCTAssertNotNil(request.progress)
     }
     
     func testUploadWithFileURL() {
@@ -296,13 +352,6 @@ class AintxTests: XCTestCase {
 //            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
 //        }
 //    }
-    
-    func testDownloadRequest() {
-        let request = sut.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
-        XCTAssertEqual(request.base, fakeBase)
-        XCTAssertEqual(request.path, fakePath)
-        XCTAssertNil(request.params)
-    }
     
     func testDownloadRequestWithParams() {
         let request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], completed: { _, _ in })
