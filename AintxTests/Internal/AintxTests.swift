@@ -215,6 +215,20 @@ class AintxTests: XCTestCase {
         XCTAssertEqual((request as! FakeHttpRequest).bodyData, Data())
     }
     
+    func testDownload() {
+        sut.download(fakePath) { response in
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+        }
+        
+        sut.isFake = false
+        let downloadTask = sut.download(fakePath, completion: { _ in })
+        XCTAssert(downloadTask is HttpDataTask)
+        
+        let dataTask = downloadTask as! HttpDataTask
+        XCTAssert(dataTask.sessionTask is URLSessionDownloadTask)
+    }
+    
     func testUploadWithFileURL() {
         let fileURL = URL(string: "/file/path")!
         sut.upload(fakePath, fileURL: fileURL) { response in
@@ -267,16 +281,7 @@ class AintxTests: XCTestCase {
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.headers!["key"], "value")
     }
-    
-    func testDownload() {
-        sut.download(fakePath) { response in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .get)
-        }
-        
-        let downloadTask = sut.download(fakePath, completion: { _ in })
-        XCTAssertNotNil(downloadTask)
-    }
+
     
 //    func testDownloadWithParams() {
 //        sut.download(fakePath, params: ["key": "value"]) { response in

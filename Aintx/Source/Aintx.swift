@@ -111,7 +111,9 @@ public struct Aintx {
             return request
         }
         
-        request = HttpDataRequest(base: base, path: path, method: method, params: params, headers: headers, bodyData: bodyData, sessionConfig: config)
+        request = HttpDataRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, bodyData: bodyData)
+        
+        // URLSession dataTasks can not run on background session
         if case .background(_) = config {
             request.httpError = HttpError.requestFailed(.dataRequestInBackgroundSession)
         }
@@ -120,6 +122,37 @@ public struct Aintx {
             request.httpError = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
         }
         return request
+    }
+    
+    /* ✅ */
+    @discardableResult
+    public func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        guard fakeResponse == nil else {
+            completion(fakeResponse!)
+            return FakeHttpTask()
+        }
+        
+        let request: HttpRequest
+        if (isFake) {
+            request = FakeHttpRequest(base: base, path: path, method: .get, sessionConfig: config)
+            return request.go(completion: completion)
+        }
+        
+        request = HttpDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config, taskType: .file(.download))
+        return request.go(completion: completion)
+    }
+    
+    /* ✅ */
+    public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpLoadRequest {
+        let loadRequest: HttpLoadRequest
+        
+        if (isFake) {
+            loadRequest = FakeLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
+            return loadRequest
+        }
+        
+        loadRequest = HttpLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
+        return loadRequest
     }
     
     /* ✅ */
@@ -153,37 +186,6 @@ public struct Aintx {
         
         request = HttpUploadRequest(base: base, path: path, method: method, uploadType: uploadType, params: params, headers: headers, sessionConfig: config)
         return request
-    }
-    
-    /* ✅ */
-    @discardableResult
-    public func download(_ path: String, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        guard fakeResponse == nil else {
-            completion(fakeResponse!)
-            return FakeHttpTask()
-        }
-        
-        let request: HttpRequest
-        if (isFake) {
-            request = FakeHttpRequest(base: base, path: path, method: .get, sessionConfig: config)
-            return request.go(completion: completion)
-        }
-        
-        request = HttpDataRequest(base: base, path: path, method: .get, params: params, headers: headers, bodyData: nil, sessionConfig: config, taskType: .file(.download))
-        return request.go(completion: completion)
-    }
-    
-    /* ✅ */
-    public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpLoadRequest {
-        let loadRequest: HttpLoadRequest
-        
-        if (isFake) {
-            loadRequest = FakeLoadRequest(base: base, path: path, method: method, params: params, headers: headers, progress: progress, completed: completed, sessionConfig: config)
-            return loadRequest
-        }
-
-        loadRequest = HttpLoadRequest(base: base, path: path, method: method, params: params, headers: headers, progress: progress, completed: completed, sessionConfig: config)
-        return loadRequest
     }
     
 }

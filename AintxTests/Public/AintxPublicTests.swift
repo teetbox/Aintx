@@ -137,7 +137,48 @@ class AintxPublicTests: XCTestCase {
         request = sut.dataRequest(path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], bodyData: Data())
         XCTAssertNotNil(request)
     }
-
+    
+    func testDownload() {
+        sut.download(fakePath) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        sut.download(fakePath, params: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        sut.download(fakePath, headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        sut.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertNotNil(response)
+        }
+        
+        let request = sut.download(fakePath, completion: { _ in })
+        XCTAssertNotNil(request)
+    }
+    
+    func testDownloadRequest() {
+        var request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
+        XCTAssertNotNil(request)
+        
+        request = sut.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
+        XCTAssertNotNil(request)
+        
+        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], completed: { _, _ in })
+        XCTAssertNotNil(request)
+        
+        request = sut.downloadRequest(path: fakePath, headers: ["key": "value"], completed: { _, _ in })
+        XCTAssertNotNil(request)
+        
+        request = sut.downloadRequest(path: fakePath, progress:{ _, _, _ in }, completed: { _, _ in })
+        XCTAssertNotNil(request)
+        
+        request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
+        XCTAssertNotNil(request)
+    }
+    
     func testUpload() {
         let fileURL = URL(string: "/file/path")!
         sut.upload(fakePath, fileURL: fileURL) { response in
@@ -200,44 +241,6 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(request)
         
         request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL), params: ["key": "value"], headers: ["key": "value"])
-        XCTAssertNotNil(request)
-    }
-    
-    func testDownload() {
-        sut.download(fakePath) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.download(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.download(fakePath, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-    }
-    
-    func testDownloadRequest() {
-        var request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
-        XCTAssertNotNil(request)
-        
-        request = sut.downloadRequest(path: fakePath, method: .get, completed: { _, _ in })
-        XCTAssertNotNil(request)
-        
-        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], completed: { _, _ in })
-        XCTAssertNotNil(request)
-        
-        request = sut.downloadRequest(path: fakePath, headers: ["key": "value"], completed: { _, _ in })
-        XCTAssertNotNil(request)
-        
-        request = sut.downloadRequest(path: fakePath, progress:{ _, _, _ in }, completed: { _, _ in })
-        XCTAssertNotNil(request)
-        
-        request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
         XCTAssertNotNil(request)
     }
     
