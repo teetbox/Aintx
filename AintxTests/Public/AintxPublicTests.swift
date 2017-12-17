@@ -20,96 +20,45 @@ class AintxPublicTests: XCTestCase {
         super.setUp()
         
         sut = Aintx(base: fakeBase)
-        sut.isFake = true
     }
 
     func testGet() {
-        sut.get(fakePath) { response in
-            XCTAssertNotNil(response)
-        }
-
-        sut.get(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-
-        sut.get(fakePath, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.get(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
+        sut.get(fakePath) { response in }
+        sut.get(fakePath, params: ["key": "value"]) { response in }
+        sut.get(fakePath, headers: ["key": "value"]) { response in }
+        sut.get(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in }
         
         let task = sut.get(fakePath) { _ in }
         XCTAssertNotNil(task)
     }
     
     func testPut() {
-        sut.put(fakePath) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.put(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-
-        sut.put(fakePath, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.put(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
+        sut.put(fakePath) { response in }
+        sut.put(fakePath, params: ["key": "value"]) { response in }
+        sut.put(fakePath, headers: ["key": "value"]) { response in }
+        sut.put(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in }
         
         let task = sut.put(fakePath) { _ in }
         XCTAssertNotNil(task)
     }
     
     func testPost() {
-        sut.post(fakePath) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.post(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-
-        sut.post(fakePath, bodyData: Data()) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.post(fakePath, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.post(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.post(fakePath, bodyData: Data(), headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
+        sut.post(fakePath) { response in }
+        sut.post(fakePath, params: ["key": "value"]) { response in }
+        sut.post(fakePath, bodyData: Data()) { response in }
+        sut.post(fakePath, headers: ["key": "value"]) { response in }
+        sut.post(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in }
+        sut.post(fakePath, bodyData: Data(), headers: ["key": "value"]) { response in }
         
         let task = sut.post(fakePath) { _ in }
         XCTAssertNotNil(task)
     }
     
     func testDelete() {
-        sut.delete(fakePath) { response in
-            XCTAssertNotNil(response)
-        }
-
-        sut.delete(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.delete(fakePath, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.delete(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
+        sut.delete(fakePath) { response in }
+        sut.delete(fakePath, params: ["key": "value"]) { response in }
+        sut.delete(fakePath, headers: ["key": "value"]) { response in }
+        sut.delete(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in }
         
         let task = sut.delete(fakePath) { _ in }
         XCTAssertNotNil(task)
@@ -133,38 +82,18 @@ class AintxPublicTests: XCTestCase {
     
         request = sut.dataRequest(path: fakePath, method: .put, params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
-    
-        request = sut.dataRequest(path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], bodyData: Data())
-        XCTAssertNotNil(request)
-        
-        let task = request.go { response in
-            XCTAssertNotNil(response)
-        }
-        XCTAssertNotNil(task)
     }
     
     func testDownload() {
-        sut.download(fakePath) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.download(fakePath, params: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.download(fakePath, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
+        sut.download(fakePath) { response in }
+        sut.download(fakePath, params: ["key": "value"]) { response in }
+        sut.download(fakePath, headers: ["key": "value"]) { response in }
+        sut.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in }
         
         let request = sut.download(fakePath, completion: { _ in })
         XCTAssertNotNil(request)
     }
     
-    // TODO: -
     func testDownloadRequest() {
         var request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
         XCTAssertNotNil(request)
@@ -185,6 +114,7 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(request)
     }
     
+    // TODO: -
     func _testUpload() {
         let fileURL = URL(string: "/file/path")!
         sut.upload(fakePath, fileURL: fileURL) { response in

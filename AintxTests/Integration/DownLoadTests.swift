@@ -49,15 +49,15 @@ class DownLoadTests: XCTestCase {
             self.async.fulfill()
         }
 
-        let request = aintx.downloadRequest(path: filePath, progress: progress, completed: completed)
-        let task = request.go()
-        
-        DispatchQueue.main.async {
-            sleep(20)
-            task.suspend()
-            sleep(20)
-            task.resume()
-        }
+//        let request = aintx.downloadRequest(path: filePath, progress: progress, completed: completed)
+//        let task = request.go()
+//        
+//        DispatchQueue.main.async {
+//            sleep(20)
+//            task.suspend()
+//            sleep(20)
+//            task.resume()
+//        }
         
         wait(for: [async], timeout: 200)
     }

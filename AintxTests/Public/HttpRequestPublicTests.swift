@@ -12,6 +12,7 @@ import Aintx
 class HttpRequestPublicTests: XCTestCase {
     
     var sut: HttpRequest!
+    var aintx: Aintx!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
@@ -19,11 +20,29 @@ class HttpRequestPublicTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        sut = Aintx(base: fakeBase).dataRequest(path: fakePath)
+        aintx = Aintx(base: fakeBase)
+        sut = aintx.dataRequest(path: fakePath)
     }
     
     func testGoForDataRequest() {
         let task = (sut as! HttpDataRequest).go(completion: { _ in })
+        XCTAssertNotNil(task)
+    }
+    
+    func testGoForDataRequestWithParamsAndBodyData() {
+        sut = aintx.dataRequest(path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], bodyData: Data())
+        XCTAssertNotNil(sut)
+        
+        let task = (sut as! HttpDataRequest).go { response in
+            XCTAssertNotNil(response.error)
+            XCTAssertEqual(response.error?.localizedDescription, "Params and bodyData should not be used together in dataRequest")
+        }
+        XCTAssertNotNil(task)
+    }
+    
+    func testGoForFileRequest() {
+        sut = aintx.downloadRequest(path: fakePath, completed: { _, _ in })
+        let task = (sut as! HttpFileRequest).go()
         XCTAssertNotNil(task)
     }
     

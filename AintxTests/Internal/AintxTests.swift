@@ -237,7 +237,9 @@ class AintxTests: XCTestCase {
         XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.headers!["key"], "value")
+        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
         XCTAssertEqual(request.bodyData, Data())
+        XCTAssertEqual(request.taskType, .data)
         
         request.go { response in
             XCTAssertNotNil(response.fakeRequest)
@@ -254,6 +256,7 @@ class AintxTests: XCTestCase {
         sut.download(fakePath) { response in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
             XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.taskType, .file(.download))
         }
         
         sut.download(fakePath, params: ["key": "value"]) { response in
@@ -279,20 +282,24 @@ class AintxTests: XCTestCase {
         let dataTask = downloadTask as! HttpDataTask
         XCTAssert(dataTask.sessionTask is URLSessionDownloadTask)
     }
+
+    // TODO: -
     
     func testDownloadRequest() {
-        // TODO: - to be continued...
-        var request: HttpLoadRequest
+        var request: HttpFileRequest
         
         request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.method, .get)
         XCTAssertNil(request.params)
-    
-        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in print("") }, completed: { _, _ in })
-        XCTAssertNotNil(request.params)
-        XCTAssertNotNil(request.progress)
+        XCTAssertNil(request.headers)
+        XCTAssertNil(request.progress)
+        XCTAssertNotNil(request.completed)
+//
+//        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in print("") }, completed: { _, _ in })
+//        XCTAssertNotNil(request.params)
+//        XCTAssertNotNil(request.progress)
     }
     
     func _testUploadWithFileURL() {

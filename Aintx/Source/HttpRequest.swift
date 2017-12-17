@@ -122,6 +122,23 @@ public class HttpDataRequest: HttpRequest {
     
 }
 
+public class HttpFileRequest: HttpRequest {
+    
+    let progress: ProgressClosure?
+    let completed: CompletedClosure?
+
+    init(base: String, path: String, method: HttpMethod, params: [String : Any]?, headers: [String : String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completed: CompletedClosure?) {
+        self.progress = progress
+        self.completed = completed
+        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
+    }
+    
+    public func go() -> HttpTask {
+        return BlankHttpTask()
+    }
+    
+}
+
 class HttpDownloadRequest: HttpRequest {
     
     let progress: ProgressClosure?

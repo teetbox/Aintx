@@ -32,8 +32,9 @@ public struct Aintx {
     let base: String
     let config: SessionConfig
     
-    public var isFake = false
     public var fakeResponse: HttpResponse?
+
+    var isFake = false
     
     /* ✅ */
     public init(base: String, config: SessionConfig = .standard) {
@@ -118,6 +119,7 @@ public struct Aintx {
             request.httpError = HttpError.requestFailed(.dataRequestInBackgroundSession)
         }
         
+        // URLRequest httpBody information retrieves from either params or bodyData, but not both.
         if params != nil && bodyData != nil {
             request.httpError = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
         }
@@ -134,7 +136,7 @@ public struct Aintx {
         
         let request: HttpDataRequest
         if (isFake) {
-            request = FakeDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config)
+            request = FakeDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config, taskType: .file(.download))
             return request.go(completion: completion)
         }
         
@@ -143,16 +145,17 @@ public struct Aintx {
     }
     
     /* ✅ */
-    public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpLoadRequest {
-        let loadRequest: HttpLoadRequest
-        
-        if (isFake) {
-            loadRequest = FakeLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
-            return loadRequest
-        }
-        
-        loadRequest = HttpLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
-        return loadRequest
+    public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
+//        let loadRequest: HttpLoadRequest
+//
+//        if (isFake) {
+//            loadRequest = FakeLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
+//            return loadRequest
+//        }
+//
+//        loadRequest = HttpLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
+//        return loadRequest
+        return HttpFileRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
     }
     
     /* ✅ */

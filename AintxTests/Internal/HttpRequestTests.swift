@@ -75,6 +75,10 @@ class HttpRequestTests: XCTestCase {
     
     // TODO: -
     
+    func testFileRequest() {
+        
+    }
+    
     func testDownloadRequest() {
         let progress: ProgressClosure = { _, _, _ in }
         let completion: (HttpResponse) -> Void = { _ in }
