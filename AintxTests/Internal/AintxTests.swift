@@ -238,6 +238,16 @@ class AintxTests: XCTestCase {
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.headers!["key"], "value")
         XCTAssertEqual(request.bodyData, Data())
+        
+        request.go { response in
+            XCTAssertNotNil(response.fakeRequest)
+            XCTAssertEqual(response.fakeRequest!.base, self.fakeBase)
+            XCTAssertEqual(response.fakeRequest!.path, self.fakePath)
+            XCTAssertEqual(response.fakeRequest!.method, .get)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+            XCTAssertEqual(response.fakeRequest!.bodyData, Data())
+        }
     }
     
     func testDownload() {

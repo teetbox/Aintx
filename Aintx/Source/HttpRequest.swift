@@ -108,7 +108,7 @@ public class HttpDataRequest: HttpRequest {
     public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard httpError == nil else {
             completion(HttpResponse(error: httpError))
-            return FakeHttpTask()
+            return BlankHttpTask()
         }
         
         guard let request = urlRequest else {
@@ -243,38 +243,11 @@ public class HttpLoadRequest: HttpRequest {
     
 }
 
-class FakeHttpRequest: HttpRequest {
-    
-    public var error: HttpError?
-
-    let bodyData: Data?
-    let uploadType: UploadType?
-    
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]? = nil, headers: [String: String]? = nil, bodyData: Data? = nil, uploadType: UploadType? = nil, sessionConfig: SessionConfig) {
-        self.bodyData = bodyData
-        self.uploadType = uploadType
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
-        
-        guard let url = URL(string: base + path) else {
-            error = HttpError.requestFailed(.invalidURL(base + path))
-            return
-        }
-        
-        urlRequest = URLRequest(url: url)
-    }
-    
-    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        completion(HttpResponse(fakeRequest: self))
-        return FakeHttpTask()
-    }
-    
-}
-
 class FakeDataRequest: HttpDataRequest {
-    
+
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         completion(HttpResponse(fakeRequest: self))
-        return FakeHttpTask()
+        return BlankHttpTask()
     }
     
 }

@@ -136,6 +136,11 @@ class AintxPublicTests: XCTestCase {
     
         request = sut.dataRequest(path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], bodyData: Data())
         XCTAssertNotNil(request)
+        
+        let task = request.go { response in
+            XCTAssertNotNil(response)
+        }
+        XCTAssertNotNil(task)
     }
     
     func testDownload() {
@@ -159,6 +164,7 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(request)
     }
     
+    // TODO: -
     func testDownloadRequest() {
         var request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
         XCTAssertNotNil(request)

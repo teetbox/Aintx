@@ -11,7 +11,7 @@ import Aintx
 
 class HttpRequestPublicTests: XCTestCase {
     
-    var sut: HttpDataRequest!
+    var sut: HttpRequest!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
@@ -22,13 +22,9 @@ class HttpRequestPublicTests: XCTestCase {
         sut = Aintx(base: fakeBase).dataRequest(path: fakePath)
     }
     
-    func testGo() {
-        sut.go { response in
-            XCTAssertNotNil(response)
-        }
-        
-        let token = sut.go { _ in }
-        XCTAssertNotNil(token)
+    func testGoForDataRequest() {
+        let task = (sut as! HttpDataRequest).go(completion: { _ in })
+        XCTAssertNotNil(task)
     }
     
     func testSetAuthorizationWithUsernameAndPassword() {

@@ -42,14 +42,4 @@ class HttpResponseTests: XCTestCase {
         XCTAssertEqual(httpResponse.error!.localizedDescription, httpError.localizedDescription)
     }
     
-    func _testInitWithFakeRequest() {
-        let fakeRequest = FakeHttpRequest(base: fakeBase, path: fakePath, method: .get, params: ["paramKey": "paramValue"], sessionConfig: .standard)
-        
-        httpResponse = HttpResponse(fakeRequest: fakeRequest)
-        
-        XCTAssertEqual(httpResponse.fakeRequest!.path, "/fake/path")
-        XCTAssertEqual(httpResponse.fakeRequest!.params!["paramKey"] as! String, "paramValue")
-        XCTAssertEqual(httpResponse.fakeRequest!.method, .get)
-    }
-    
 }

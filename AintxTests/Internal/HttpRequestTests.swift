@@ -30,8 +30,9 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(sut.base, fakeBase)
         XCTAssertEqual(sut.path, fakePath)
         XCTAssertEqual(sut.method, .put)
-        XCTAssertEqual(sut.headers!["key"], "value")
         XCTAssertEqual(sut.params!["key"] as! String, "value")
+        XCTAssertEqual(sut.headers!["key"], "value")
+        XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
         XCTAssertNotNil(sut.urlString)
         XCTAssertNotNil(sut.urlRequest)
     }
@@ -52,6 +53,27 @@ class HttpRequestTests: XCTestCase {
         sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.upload(.data(fileData))))
         XCTAssertEqual((sut as! HttpDataRequest).taskType, .file(.upload(.data(fileData))))
     }
+    
+    func testFakeDataRequest() {
+        sut = FakeDataRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, bodyData: Data(), taskType: .data)
+        XCTAssertEqual(sut.base, fakeBase)
+        XCTAssertEqual(sut.path, fakePath)
+        XCTAssertEqual(sut.method, .get)
+        XCTAssertEqual(sut.params!["key"] as! String, "value")
+        XCTAssertEqual(sut.headers!["key"], "value")
+        XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertEqual((sut as! HttpDataRequest).bodyData, Data())
+        XCTAssertEqual((sut as! HttpDataRequest).taskType, .data)
+    }
+    
+    func testGoForDataRequest() {
+        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .ephemeral, bodyData: nil)
+        
+        let httpTask = (sut as! HttpDataRequest).go(completion: { _ in })
+        XCTAssertNotNil(httpTask)
+    }
+    
+    // TODO: -
     
     func testDownloadRequest() {
         let progress: ProgressClosure = { _, _, _ in }
@@ -84,58 +106,6 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(uploadRequest.method, .post)
         XCTAssertEqual(uploadRequest.uploadType, .url(URL(string: "/file/path")!))
         XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
-    }
-
-    func _testInitFakeRequest() {
-        let fakeRequest = sut as! FakeHttpRequest
-        XCTAssertEqual(fakeRequest.base, fakeBase)
-        XCTAssertEqual(fakeRequest.path, fakePath)
-        XCTAssertEqual(fakeRequest.method, .get)
-    }
-    
-    func testInitFakePostRequest() {
-        let bodyData = "body".data(using: .utf8)
-        let fakeRequest = FakeHttpRequest(base: fakeBase, path: fakePath, method: .post, bodyData: bodyData, sessionConfig: .standard)
-        
-        XCTAssertEqual(fakeRequest.base, fakeBase)
-        XCTAssertEqual(fakeRequest.path, fakePath)
-        XCTAssertEqual(fakeRequest.method, .post)
-        XCTAssertEqual(fakeRequest.bodyData, bodyData)
-    }
-    
-    func testInitFakeUploadRequest() {
-        var uploadType: UploadType = .data(Data())
-        
-        var fakeRequest = FakeHttpRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], uploadType: uploadType, sessionConfig: .standard)
-        
-        XCTAssertEqual(fakeRequest.base, fakeBase)
-        XCTAssertEqual(fakeRequest.path, fakePath)
-        XCTAssertEqual(fakeRequest.method, .put)
-        XCTAssertEqual(fakeRequest.uploadType, .data(Data()))
-        XCTAssertEqual(fakeRequest.params!["key"] as! String, "value")
-        
-        uploadType = .url(URL(string: "/file/path")!)
-        
-        fakeRequest = FakeHttpRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], uploadType: uploadType, sessionConfig: .standard)
-        
-        XCTAssertEqual(fakeRequest.base, fakeBase)
-        XCTAssertEqual(fakeRequest.path, fakePath)
-        XCTAssertEqual(fakeRequest.method, .put)
-        XCTAssertEqual(fakeRequest.uploadType, .url(URL(string: "/file/path")!))
-        XCTAssertEqual(fakeRequest.params!["key"] as! String, "value")
-    }
-    
-    func testGo() {
-        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .ephemeral, bodyData: nil)
-        
-        (sut as! HttpDataRequest).go { response in
-            
-        }
-        
-        XCTAssert(sut is HttpDataRequest)
-        
-        let httpTask = (sut as! HttpDataRequest).go { _ in }
-        XCTAssertNotNil(httpTask)
     }
     
     func _testSetAuthorizationWithUsernameAndPassword() {

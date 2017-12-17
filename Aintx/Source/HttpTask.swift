@@ -24,6 +24,12 @@ public protocol HttpTask {
     func cancel()
 }
 
+class BlankHttpTask: HttpTask {
+    func suspend() {}
+    func resume() {}
+    func cancel() {}
+}
+
 class HttpDataTask: HttpTask {
     
     let sessionTask: URLSessionTask
@@ -136,10 +142,4 @@ class HttpDownloadTask: HttpTask, CombinableTask {
         sessionTask.cancel()
     }
     
-}
-
-class FakeHttpTask: HttpTask {
-    func suspend() {}
-    func resume() {}
-    func cancel() {}
 }
