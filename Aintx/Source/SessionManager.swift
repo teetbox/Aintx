@@ -126,6 +126,10 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         print("###### URLSessionTaskDelegate - didCompleteWithError ######")
         print(#function)
+        guard error != nil else { return }
+        if let fileTask = sessionTasks[task] as? HttpFileTask {
+            fileTask.completed?(nil, error)
+        }
     }
     
     // URLSessionDataDelegate
@@ -165,11 +169,17 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         print("###### URLSessionDownloadDelegate - didWriteData, totalBytesWritten, totalBytesExpectedToWrite ######")
         print(#function)
+        if let fileTask = sessionTasks[downloadTask] as? HttpFileTask {
+            fileTask.progress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
+        }
     }
     
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         print("###### URLSessionDownloadDelegate - didFinishDownloadingTo ######")
         print(#function)
+        if let fileTask = sessionTasks[downloadTask] as? HttpFileTask {
+            fileTask.completed?(location, nil)
+        }
     }
     
 }

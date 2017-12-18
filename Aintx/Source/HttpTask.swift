@@ -108,16 +108,7 @@ class HttpFileTask: HttpTask {
     
 }
 
-protocol Combinable {
-    
-}
-
-protocol CombinableTask: HttpTask, Combinable {
-    func go() -> HttpTask
-}
-
-
-class HttpDownloadTask: HttpTask, CombinableTask {
+class HttpDownloadTask: HttpTask {
     
     let sessionTask: URLSessionTask
     

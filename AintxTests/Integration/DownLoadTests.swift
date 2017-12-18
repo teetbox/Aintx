@@ -44,13 +44,19 @@ class DownLoadTests: XCTestCase {
             print("Downloading \(String(format: "%.2f", percentage))%")
         }
         
-        let completed: CompletedClosure = { _, _ in
-            print("Downloading Completed")
+        let completed: CompletedClosure = { url, error in
+            print("Downloading Completed with url: - \(url?.absoluteString ?? "nil")")
+            print("Downloading Completed with error: - \(error?.localizedDescription ?? "nil")")
             self.async.fulfill()
         }
 
         let request = aintx.downloadRequest(path: filePath, progress: progress, completed: completed)
-        request.go()
+        let task = request.go()
+        
+        DispatchQueue.main.async {
+            sleep(2)
+            task.cancel()
+        }
 
         wait(for: [async], timeout: 200)
     }

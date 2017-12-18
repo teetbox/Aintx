@@ -118,6 +118,14 @@ class AintxPublicTests: XCTestCase {
         request.go()
     }
     
+    func testFileRequestGroup() {
+//        let fileRequest = sut.downloadRequest(path: fakePath, completed: { _, _ in })
+//        let fileRequest2 = sut.downloadRequest(path: fakePath, completed: { _, _ in })
+//        let fileRequest3 = sut.downloadRequest(path: fakePath, completed: { _, _ in })
+//        
+//        let group = fileRequest.combine(fileRequest2)
+    }
+    
     // TODO: -
     func _testUpload() {
         let fileURL = URL(string: "/file/path")!

@@ -122,10 +122,17 @@ public class HttpDataRequest: HttpRequest {
     
 }
 
+enum GroupType {
+    case sequential
+    case concurrent
+}
+
 public class HttpFileRequest: HttpRequest {
     
     let progress: ProgressClosure?
     let completed: CompletedClosure?
+    
+    let sessionManager = SessionManager.shared
 
     init(base: String, path: String, method: HttpMethod, params: [String : Any]?, headers: [String : String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completed: CompletedClosure?) {
         self.progress = progress
@@ -154,12 +161,36 @@ public class HttpFileRequest: HttpRequest {
         }
         
         let downloadTask = HttpFileTask(request: request, session: session, progress: progress, completed: completed)
+        sessionManager[downloadTask.sessionTask] = downloadTask
         downloadTask.resume()
         
         return downloadTask
     }
     
 }
+/*
+public struct Queue<T> {
+    
+    func enqueue() {
+        
+    }
+    
+}
+
+protocol Combinable {
+    associatedtype T
+    
+    func combine(_ element: T) -> Queue<T>
+}
+
+extension HttpFileRequest: Combinable {
+    
+    public func combine(_ element: HttpFileRequest) -> Queue<HttpFileRequest> {
+        return Queue()
+    }
+}
+*/
+// TODO: -
 
 class HttpDownloadRequest: HttpRequest {
     

@@ -90,6 +90,7 @@ class HttpRequestTests: XCTestCase {
         XCTAssertNotNil(sut.urlRequest)
         XCTAssertNotNil((sut as! HttpFileRequest).progress)
         XCTAssertNotNil((sut as! HttpFileRequest).completed)
+        XCTAssertEqual((sut as! HttpFileRequest).sessionManager, SessionManager.shared)
     }
     
     func testGoForFileRequest() {
@@ -97,6 +98,10 @@ class HttpRequestTests: XCTestCase {
         
         let task = (sut as! HttpFileRequest).go()
         XCTAssert(task is HttpFileTask)
+        
+        let sessionManager = SessionManager.shared
+        let fileTask = task as! HttpFileTask
+        XCTAssertNotNil(sessionManager[fileTask.sessionTask])
         
         (sut as! HttpFileRequest).go()
     }

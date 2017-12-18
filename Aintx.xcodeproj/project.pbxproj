@@ -35,6 +35,8 @@
 		C99888661FC6A9EB0074BAFA /* JSONPlaceHolderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99888651FC6A9EB0074BAFA /* JSONPlaceHolderTests.swift */; };
 		C9C9B2E91FA01A150008D432 /* HttpResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C9B2E81FA01A150008D432 /* HttpResponseTests.swift */; };
 		C9C9B2EB1FA01A360008D432 /* HttpRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C9B2EA1FA01A360008D432 /* HttpRequestTests.swift */; };
+		C9CB3ACC1FE79B10008641E8 /* DataStructure.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB3ACB1FE79B10008641E8 /* DataStructure.swift */; };
+		C9CB3ACE1FE79B3C008641E8 /* DataStructureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CB3ACD1FE79B3C008641E8 /* DataStructureTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +81,8 @@
 		C99888651FC6A9EB0074BAFA /* JSONPlaceHolderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONPlaceHolderTests.swift; sourceTree = "<group>"; };
 		C9C9B2E81FA01A150008D432 /* HttpResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponseTests.swift; sourceTree = "<group>"; };
 		C9C9B2EA1FA01A360008D432 /* HttpRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestTests.swift; sourceTree = "<group>"; };
+		C9CB3ACB1FE79B10008641E8 /* DataStructure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructure.swift; sourceTree = "<group>"; };
+		C9CB3ACD1FE79B3C008641E8 /* DataStructureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructureTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +154,7 @@
 				AC3BCE641F9AF23F00644761 /* HttpError.swift */,
 				AC3BCE681F9AF28A00644761 /* URLEncording.swift */,
 				AC3BCE661F9AF26300644761 /* SessionManager.swift */,
+				C9CB3ACB1FE79B10008641E8 /* DataStructure.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -189,6 +194,7 @@
 				ACBDA6761FB2749B00EF9B04 /* HttpErrorTests.swift */,
 				AC74FC0A1FA9AFA600B27840 /* URLEncordingTests.swift */,
 				350D55351FDCBB2F005C84EC /* SessionManagerTests.swift */,
+				C9CB3ACD1FE79B3C008641E8 /* DataStructureTests.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -307,6 +313,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC3BCE651F9AF23F00644761 /* HttpError.swift in Sources */,
+				C9CB3ACC1FE79B10008641E8 /* DataStructure.swift in Sources */,
 				AC3BCE631F9AF20B00644761 /* HttpResponse.swift in Sources */,
 				ACBD11161FB08C8C005E1850 /* HttpTask.swift in Sources */,
 				AC3BCE5F1F9AEF6300644761 /* Aintx.swift in Sources */,
@@ -331,6 +338,7 @@
 				ACBDA6771FB2749B00EF9B04 /* HttpErrorTests.swift in Sources */,
 				ACBD11181FB08D05005E1850 /* HttpTaskTests.swift in Sources */,
 				C989FEB11FD138D00065A508 /* DownLoadTests.swift in Sources */,
+				C9CB3ACE1FE79B3C008641E8 /* DataStructureTests.swift in Sources */,
 				350D55361FDCBB2F005C84EC /* SessionManagerTests.swift in Sources */,
 				C93F5ED31FA2A78700C220B6 /* PostServerTests.swift in Sources */,
 				AC118E861FB1D5EA007EAA40 /* CountTests.swift in Sources */,
