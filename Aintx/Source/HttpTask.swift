@@ -80,6 +80,34 @@ class HttpDataTask: HttpTask {
     
 }
 
+class HttpFileTask: HttpTask {
+    
+    let sessionTask: URLSessionTask
+    
+    let progress: ProgressClosure?
+    let completed: CompletedClosure?
+    
+    init(request: URLRequest, session: URLSession, progress: ProgressClosure?, completed:  CompletedClosure?) {
+        self.progress = progress
+        self.completed = completed
+        
+        sessionTask = session.downloadTask(with: request)
+    }
+    
+    func suspend() {
+        sessionTask.suspend()
+    }
+    
+    func resume() {
+        sessionTask.resume()
+    }
+    
+    func cancel() {
+        sessionTask.cancel()
+    }
+    
+}
+
 protocol Combinable {
     
 }
@@ -88,20 +116,6 @@ protocol CombinableTask: HttpTask, Combinable {
     func go() -> HttpTask
 }
 
-class HttpUploadTask: HttpDataTask, CombinableTask {
-    
-    let type: UploadType
-    
-    init(request: URLRequest, session: URLSession, type: UploadType, completion: @escaping (HttpResponse) -> Void) {
-        self.type = type
-        super.init(request: request, session: session, completion: completion)
-    }
-    
-    func go() -> HttpTask {
-        return self
-    }
-    
-}
 
 class HttpDownloadTask: HttpTask, CombinableTask {
     
@@ -110,6 +124,14 @@ class HttpDownloadTask: HttpTask, CombinableTask {
     let progressHandler: ProgressClosure?
     let completedHandler: CompletedClosure?
     let completionHandler: ((HttpResponse) -> Void)?
+    
+    init(request: URLRequest, session: URLSession, progress: ProgressClosure?, completed:  CompletedClosure?) {
+        self.progressHandler = progress
+        self.completedHandler = completed
+        self.completionHandler = nil
+        
+        sessionTask = session.downloadTask(with: request)
+    }
     
     init(urlRequest: URLRequest, session: URLSession, progress: ProgressClosure?, completed: CompletedClosure?) {
         self.progressHandler = progress

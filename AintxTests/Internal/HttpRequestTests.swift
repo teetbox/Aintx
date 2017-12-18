@@ -54,6 +54,15 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual((sut as! HttpDataRequest).taskType, .file(.upload(.data(fileData))))
     }
     
+    func testGoForDataRequest() {
+        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .ephemeral, bodyData: nil)
+        
+        let httpTask = (sut as! HttpDataRequest).go(completion: { _ in })
+        XCTAssert(httpTask is HttpDataTask)
+        
+        (sut as! HttpDataRequest).go(completion: { _ in })
+    }
+    
     func testFakeDataRequest() {
         sut = FakeDataRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, bodyData: Data(), taskType: .data)
         XCTAssertEqual(sut.base, fakeBase)
@@ -66,29 +75,33 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual((sut as! HttpDataRequest).taskType, .data)
     }
     
-    func testGoForDataRequest() {
-        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .ephemeral, bodyData: nil)
+    func testFileRequest() {
+        let progress: ProgressClosure = { _, _, _ in }
+        let completed: CompletedClosure = { _, _ in }
         
-        let httpTask = (sut as! HttpDataRequest).go(completion: { _ in })
-        XCTAssertNotNil(httpTask)
+        sut = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, progress: progress, completed: completed)
+        XCTAssertEqual(sut.base, fakeBase)
+        XCTAssertEqual(sut.path, fakePath)
+        XCTAssertEqual(sut.method, .get)
+        XCTAssertEqual(sut.params!["key"] as! String, "value")
+        XCTAssertEqual(sut.headers!["key"], "value")
+        XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertNotNil(sut.urlString)
+        XCTAssertNotNil(sut.urlRequest)
+        XCTAssertNotNil((sut as! HttpFileRequest).progress)
+        XCTAssertNotNil((sut as! HttpFileRequest).completed)
+    }
+    
+    func testGoForFileRequest() {
+        sut = HttpFileRequest(base: fakeBase, path: fakePath, method:.get, params: nil, headers: nil, sessionConfig: .background("bg"), completed: nil)
+        
+        let task = (sut as! HttpFileRequest).go()
+        XCTAssert(task is HttpFileTask)
+        
+        (sut as! HttpFileRequest).go()
     }
     
     // TODO: -
-    
-    func testFileRequest() {
-        
-    }
-    
-    func testDownloadRequest() {
-        let progress: ProgressClosure = { _, _, _ in }
-        let completion: (HttpResponse) -> Void = { _ in }
-        
-        let downloadRequest = HttpDownloadRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: nil, sessionConfig: .standard, progress: progress, completion: completion)
-        XCTAssertEqual(downloadRequest.base, fakeBase)
-        XCTAssertEqual(downloadRequest.path, fakePath)
-        XCTAssertEqual(downloadRequest.method, .get)
-        XCTAssertEqual(downloadRequest.params!["key"] as! String, "value")
-    }
     
     func testInitUploadRequest() {
         var uploadType: UploadType = .data(Data())

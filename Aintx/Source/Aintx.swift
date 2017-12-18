@@ -145,6 +145,7 @@ public struct Aintx {
     }
     
     /* ✅ */
+    // TODO: - Maybe could combine downloadRequest and uploadRequest to fileRequest with fileType enum as a parameter
     public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
 //        let loadRequest: HttpLoadRequest
 //

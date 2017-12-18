@@ -11,13 +11,33 @@ import XCTest
 
 class HttpTaskTests: XCTestCase {
     
-    let urlRequest = URLRequest(url: URL(string: "www.fake.com")!)
+    var sut: HttpTask!
+    
+    let request = URLRequest(url: URL(string: "www.fake.com")!)
     let session = URLSession.shared
     
-    func testInit() {
-        let sut = HttpDataTask(request: urlRequest, session: session, completion: { _ in })
+    override func setUp() {
+        sut = HttpDataTask(request: request, session: session, completion: { _ in })
+    }
+    
+    func testDataTask() {
+        let dataTask = sut as! HttpDataTask
+        XCTAssert(dataTask.sessionTask is URLSessionDataTask)
+    }
+    
+    func testDataTaskForDownloadType() {
+        sut = HttpDataTask(request: request, session: session, taskType: .file(.download), completion: { _ in })
+        XCTAssert((sut as! HttpDataTask).sessionTask is URLSessionDownloadTask)
+    }
+    
+    func testFileTask() {
+        let progress: ProgressClosure = { _, _, _ in }
+        let completed: CompletedClosure = { _, _ in }
         
-        XCTAssert(sut.sessionTask is URLSessionDataTask)
+        sut = HttpFileTask(request: request, session: session, progress: progress, completed: completed)
+        XCTAssertNotNil((sut as! HttpFileTask).progress)
+        XCTAssertNotNil((sut as! HttpFileTask).completed)
+        XCTAssert((sut as! HttpFileTask).sessionTask is URLSessionDownloadTask)
     }
     
     func testTaskType() {
@@ -33,19 +53,6 @@ class HttpTaskTests: XCTestCase {
         XCTAssertEqual(fileDownload, TaskType.file(.download))
         XCTAssertEqual(fileUploadURL, TaskType.file(.upload(.url(fileURL))))
         XCTAssertEqual(fileUploadData, TaskType.file(.upload(.data(fileData))))
-    }
-    
-    func testInitWithDownloadTask() {
-        let sut = HttpDataTask(request: urlRequest, session: session, taskType: .file(.download), completion: { _ in })
-        
-        XCTAssert(sut.sessionTask is URLSessionDownloadTask)
-    }
-
-    func testInitWithUploadTask() {
-        let taskType = TaskType.file(.upload(.data(Data())))
-        let sut = HttpDataTask(request: urlRequest, session: session, taskType: taskType, completion: { _ in })
-        
-        XCTAssert(sut.sessionTask is URLSessionUploadTask)
     }
     
 }

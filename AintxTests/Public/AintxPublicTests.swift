@@ -82,6 +82,8 @@ class AintxPublicTests: XCTestCase {
     
         request = sut.dataRequest(path: fakePath, method: .put, params: ["key": "value"], headers: ["key": "value"])
         XCTAssertNotNil(request)
+        
+        request.go(completion: { _ in })
     }
     
     func testDownload() {
@@ -112,6 +114,8 @@ class AintxPublicTests: XCTestCase {
         
         request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
         XCTAssertNotNil(request)
+        
+        request.go()
     }
     
     // TODO: -

@@ -282,8 +282,6 @@ class AintxTests: XCTestCase {
         let dataTask = downloadTask as! HttpDataTask
         XCTAssert(dataTask.sessionTask is URLSessionDownloadTask)
     }
-
-    // TODO: -
     
     func testDownloadRequest() {
         var request: HttpFileRequest
@@ -294,13 +292,24 @@ class AintxTests: XCTestCase {
         XCTAssertEqual(request.method, .get)
         XCTAssertNil(request.params)
         XCTAssertNil(request.headers)
+        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
         XCTAssertNil(request.progress)
         XCTAssertNotNil(request.completed)
-//
-//        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in print("") }, completed: { _, _ in })
-//        XCTAssertNotNil(request.params)
-//        XCTAssertNotNil(request.progress)
+
+        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
+        XCTAssertEqual(request.method, .get)
+        XCTAssertEqual(request.params!["key"] as! String, "value")
+        XCTAssertEqual(request.headers!["key"], "value")
+        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertNotNil(request.progress)
+        XCTAssertNotNil(request.completed)
     }
+    
+    func testFileRequest() {
+        // TODO: - A private function for both downloadRequest and uploadRequest using
+    }
+    
+    // TODO: -
     
     func _testUploadWithFileURL() {
         let fileURL = URL(string: "/file/path")!

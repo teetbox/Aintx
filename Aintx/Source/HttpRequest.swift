@@ -131,10 +131,32 @@ public class HttpFileRequest: HttpRequest {
         self.progress = progress
         self.completed = completed
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
+        
+        urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        if let headers = headers {
+            for (key, value) in headers {
+                urlRequest?.setValue(value, forHTTPHeaderField: key)
+            }
+        }
     }
     
+    @discardableResult
     public func go() -> HttpTask {
-        return BlankHttpTask()
+        guard httpError == nil else {
+            completed?(nil, httpError)
+            return BlankHttpTask()
+        }
+        
+        guard let request = urlRequest else {
+            fatalError()
+        }
+        
+        let downloadTask = HttpFileTask(request: request, session: session, progress: progress, completed: completed)
+        downloadTask.resume()
+        
+        return downloadTask
     }
     
 }
@@ -211,14 +233,8 @@ public class HttpUploadRequest: HttpRequest {
 //
 //        uploadTask.resume()
 //        return HttpUploadTask(task: uploadTask)
-        
-        guard let request = urlRequest else {
-            fatalError()
-        }
-        
-        let uploadTask = HttpUploadTask(request: request, session: session, type: uploadType, completion: completion
-        )
-        return uploadTask
+
+        return BlankHttpTask()
     }
     
 }
