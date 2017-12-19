@@ -33,10 +33,10 @@ class CountTests: XCTestCase {
     }
     
     func testGetUser() {
-        let params = ["token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJ1c2VySWQiOjIsImlhdCI6MTUxMzI2MDAzOSwiZXhwIjoxNTEzMjYzNjM5fQ.xMjRTketOJ3DN1G0Pt6b8yZySODKcsGWiuT21CP6Ne4"]
+        let params = ["token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJ1c2VySWQiOjIsImlhdCI6MTUxMzY4NjkyMCwiZXhwIjoxNTEzNjkwNTIwfQ.85Fbd3EOLLEElcy8ujuZPJwXcdh9FOCq0y4l4sL0gjM"]
         aintx.get("/api/v1/user", params: params) { response in
             XCTAssertNotNil(response.data)
-            
+
             let decoder = JSONDecoder()
             let users = try! decoder.decode([User].self, from: response.data!)
             print(users)
@@ -82,11 +82,15 @@ class CountTests: XCTestCase {
             let token = json?["token"] as? String
             XCTAssertNotNil(token)
             print(token!)
+            
+            
+            let httpResponse = response.urlResponse as? HTTPURLResponse
+            print(httpResponse!.allHeaderFields)
 
             self.async.fulfill()
         }
         
-        wait(for: [async], timeout: 10)
+        wait(for: [async], timeout: 30)
     }
     
 }

@@ -122,46 +122,46 @@ public class HttpDataRequest: HttpRequest {
     
 }
 
-infix operator -->: AdditionPrecedence
-infix operator |||: AdditionPrecedence
-
-extension HttpFileRequest {
+public class HttpFileRequest: HttpRequest {
     
-    public static func && (_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
-        return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
+    let taskType: TaskType
+    let progress: ProgressClosure?
+    let completed: CompletedClosure?
+    
+    let sessionManager = SessionManager.shared
+    
+    init(base: String, path: String, method: HttpMethod, params: [String : Any]?, headers: [String : String]?, sessionConfig: SessionConfig, taskType: TaskType, progress: ProgressClosure? = nil, completed: CompletedClosure?) {
+        self.taskType = taskType
+        self.progress = progress
+        self.completed = completed
+        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
+        
+        urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        if let headers = headers {
+            for (key, value) in headers {
+                urlRequest?.setValue(value, forHTTPHeaderField: key)
+            }
+        }
     }
     
-    public static func || (_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
-        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent(0))
-    }
-    
-    public static func -->(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
-        return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
-    }
-    
-    
-    public static func |||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
-        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent(0))
-    }
-    
-}
-
-extension HttpRequestGroup {
-    
-    public static func && (_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
-        return group.append(request)
-    }
-    
-    public static func || (_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
-        return group.append(request)
-    }
-    
-    public static func -->(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
-        return group.append(request)
-    }
-    
-    public static func |||(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
-        return group.append(request)
+    @discardableResult
+    public func go() -> HttpTask {
+        guard httpError == nil else {
+            completed?(nil, httpError)
+            return BlankHttpTask()
+        }
+        
+        guard let request = urlRequest else {
+            fatalError()
+        }
+        
+        let downloadTask = HttpFileTask(request: request, session: session, taskType: taskType, progress: progress, completed: completed)
+        sessionManager[downloadTask.sessionTask] = downloadTask
+        downloadTask.resume()
+        
+        return downloadTask
     }
     
 }
@@ -205,120 +205,49 @@ public class HttpRequestGroup {
     
 }
 
-public protocol Combinable {
-    associatedtype T
+infix operator -->: AdditionPrecedence
+infix operator |||: AdditionPrecedence
 
-    var queue: Queue<T> { get set }
-    /*  The maxConcurrentNumber determines the excution sequence of the queue.
-     *  0 - Concurrent with unlimited number
-     *  1 - Sequential
-     *  Integer greater than 1 - Concurrent with limited interger
-     */
-    var maxConcurrentNumber: Int { get set }
-    func combineS(_ element: T) -> [T]
-    func combineC(_ element: T) -> [T]
-}
-
-extension Combinable {
+extension HttpFileRequest {
     
-}
-
-extension Array where Element: HttpFileRequest {
-    public func go() -> [HttpTask] {
-        return [BlankHttpTask]()
-    }
-}
-
-extension Array where Element: Combinable {
-    public func combineS(_ element: Element) -> [Element] {
-        return [element]
+    public static func -->(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }
     
-    public func combineC(_ element: Element) -> [Element] {
-        return [element]
-    }
-}
-
-public class HttpFileRequest: HttpRequest, Combinable {
-    
-    // MARK: - Combinable
-    
-    public var queue = Queue<HttpFileRequest>()
-    public var maxConcurrentNumber = 0
-    
-    public func combineS(_ element: HttpFileRequest) -> [HttpFileRequest] {
-        return [element]
+    public static func |||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent(0))
     }
     
-    public func combineC(_ element: HttpFileRequest) -> [HttpFileRequest] {
-        return [element]
+    public static func && (_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }
     
-    // MARK: -
-    
-    let taskType: TaskType
-    let progress: ProgressClosure?
-    let completed: CompletedClosure?
-    
-    let sessionManager = SessionManager.shared
-
-    init(base: String, path: String, method: HttpMethod, params: [String : Any]?, headers: [String : String]?, sessionConfig: SessionConfig, taskType: TaskType, progress: ProgressClosure? = nil, completed: CompletedClosure?) {
-        self.taskType = taskType
-        self.progress = progress
-        self.completed = completed
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
-        
-        urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
-        
-        if let headers = headers {
-            for (key, value) in headers {
-                urlRequest?.setValue(value, forHTTPHeaderField: key)
-            }
-        }
-    }
-    
-    @discardableResult
-    public func go() -> HttpTask {
-        guard httpError == nil else {
-            completed?(nil, httpError)
-            return BlankHttpTask()
-        }
-        
-        guard let request = urlRequest else {
-            fatalError()
-        }
-        
-        let downloadTask = HttpFileTask(request: request, session: session, taskType: taskType, progress: progress, completed: completed)
-        sessionManager[downloadTask.sessionTask] = downloadTask
-        downloadTask.resume()
-        
-        return downloadTask
-    }
-
-}
-/*
-public struct Queue<T> {
-    
-    func enqueue() {
-        
+    public static func || (_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent(0))
     }
     
 }
 
-protocol Combinable {
-    associatedtype T
+extension HttpRequestGroup {
     
-    func combine(_ element: T) -> Queue<T>
+    public static func -->(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+        return group.append(request)
+    }
+    
+    public static func |||(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+        return group.append(request)
+    }
+    
+    public static func && (_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+        return group.append(request)
+    }
+    
+    public static func || (_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+        return group.append(request)
+    }
+    
 }
 
-extension HttpFileRequest: Combinable {
-    
-    public func combine(_ element: HttpFileRequest) -> Queue<HttpFileRequest> {
-        return Queue()
-    }
-}
-*/
 // TODO: -
 
 class HttpDownloadRequest: HttpRequest {

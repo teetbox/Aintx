@@ -118,15 +118,6 @@ class AintxPublicTests: XCTestCase {
         request.go()
     }
     
-    func testFileRequestCombination() {
-        let fileRequest = sut.downloadRequest(path: fakePath, completed: { _, _ in })
-        let fileRequest2 = sut.downloadRequest(path: fakePath, completed: { _, _ in })
-        let fileRequest3 = sut.downloadRequest(path: fakePath, completed: { _, _ in })
-        
-        let tasks = fileRequest.combineC(fileRequest2).combineC(fileRequest3).go()
-        XCTAssertNotNil(tasks)
-    }
-    
     // TODO: -
     func _testUpload() {
         let fileURL = URL(string: "/file/path")!
