@@ -283,10 +283,10 @@ class AintxTests: XCTestCase {
         XCTAssert(dataTask.sessionTask is URLSessionDownloadTask)
     }
     
-    func testDownloadRequest() {
+    func testFileRequestForDownload() {
         var request: HttpFileRequest
         
-        request = sut.downloadRequest(path: fakePath, completed: { _, _ in })
+        request = sut.fileRequest(downloadPath: fakePath, completed: { _, _ in })
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
         XCTAssertEqual(request.method, .get)
@@ -296,7 +296,7 @@ class AintxTests: XCTestCase {
         XCTAssertNil(request.progress)
         XCTAssertNotNil(request.completed)
 
-        request = sut.downloadRequest(path: fakePath, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
+        request = sut.fileRequest(downloadPath: fakePath, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
         XCTAssertEqual(request.method, .get)
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.headers!["key"], "value")
@@ -305,7 +305,7 @@ class AintxTests: XCTestCase {
         XCTAssertNotNil(request.completed)
     }
     
-    func testFileRequest() {
+    func testFileRequestForUpload() {
         // TODO: - A private function for both downloadRequest and uploadRequest using
     }
     

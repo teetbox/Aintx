@@ -41,7 +41,7 @@ class HttpRequestPublicTests: XCTestCase {
     }
     
     func testGoForFileRequest() {
-        sut = aintx.downloadRequest(path: fakePath, completed: { _, _ in })
+        sut = aintx.fileRequest(downloadPath: fakePath, completed: { _, _ in })
         let task = (sut as! HttpFileRequest).go()
         XCTAssertNotNil(task)
     }

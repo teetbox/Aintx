@@ -57,10 +57,9 @@ class HttpRequestTests: XCTestCase {
     func testGoForDataRequest() {
         sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .ephemeral, bodyData: nil)
         
-        let httpTask = (sut as! HttpDataRequest).go(completion: { _ in })
-        XCTAssert(httpTask is HttpDataTask)
-        
         (sut as! HttpDataRequest).go(completion: { _ in })
+        let httpTask = (sut as! HttpDataRequest).go(completion: { _ in })
+        XCTAssert(httpTask is HttpDataTask)        
     }
     
     func testFakeDataRequest() {
@@ -79,7 +78,7 @@ class HttpRequestTests: XCTestCase {
         let progress: ProgressClosure = { _, _, _ in }
         let completed: CompletedClosure = { _, _ in }
         
-        sut = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, progress: progress, completed: completed)
+        sut = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, taskType: .file(.download), progress: progress, completed: completed)
         XCTAssertEqual(sut.base, fakeBase)
         XCTAssertEqual(sut.path, fakePath)
         XCTAssertEqual(sut.method, .get)
@@ -88,22 +87,22 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
         XCTAssertNotNil(sut.urlString)
         XCTAssertNotNil(sut.urlRequest)
+        XCTAssertEqual((sut as! HttpFileRequest).taskType, .file(.download))
         XCTAssertNotNil((sut as! HttpFileRequest).progress)
         XCTAssertNotNil((sut as! HttpFileRequest).completed)
         XCTAssertEqual((sut as! HttpFileRequest).sessionManager, SessionManager.shared)
     }
     
     func testGoForFileRequest() {
-        sut = HttpFileRequest(base: fakeBase, path: fakePath, method:.get, params: nil, headers: nil, sessionConfig: .background("bg"), completed: nil)
+        sut = HttpFileRequest(base: fakeBase, path: fakePath, method:.get, params: nil, headers: nil, sessionConfig: .background("bg"), taskType: .file(.download), completed: nil)
         
+        (sut as! HttpFileRequest).go()
         let task = (sut as! HttpFileRequest).go()
         XCTAssert(task is HttpFileTask)
         
         let sessionManager = SessionManager.shared
         let fileTask = task as! HttpFileTask
         XCTAssertNotNil(sessionManager[fileTask.sessionTask])
-        
-        (sut as! HttpFileRequest).go()
     }
     
     // TODO: -

@@ -15,6 +15,9 @@ class HttpTaskTests: XCTestCase {
     
     let request = URLRequest(url: URL(string: "www.fake.com")!)
     let session = URLSession.shared
+
+    let fileURL = URL(string: "www.fake.com")!
+    let fileData = "data".data(using: .utf8)!
     
     override func setUp() {
         sut = HttpDataTask(request: request, session: session, completion: { _ in })
@@ -34,16 +37,14 @@ class HttpTaskTests: XCTestCase {
         let progress: ProgressClosure = { _, _, _ in }
         let completed: CompletedClosure = { _, _ in }
         
-        sut = HttpFileTask(request: request, session: session, progress: progress, completed: completed)
+        sut = HttpFileTask(request: request, session: session, taskType: .file(.download), progress: progress, completed: completed)
+        XCTAssertEqual((sut as! HttpFileTask).taskType, .file(.download))
         XCTAssertNotNil((sut as! HttpFileTask).progress)
         XCTAssertNotNil((sut as! HttpFileTask).completed)
         XCTAssert((sut as! HttpFileTask).sessionTask is URLSessionDownloadTask)
     }
     
     func testTaskType() {
-        let fileURL = URL(string: "www.fake.com")!
-        let fileData = "data".data(using: .utf8)!
-        
         let data: TaskType = .data
         let fileDownload: TaskType = .file(.download)
         let fileUploadURL: TaskType = .file(.upload(.url(fileURL)))

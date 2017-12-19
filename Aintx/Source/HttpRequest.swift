@@ -129,12 +129,14 @@ enum GroupType {
 
 public class HttpFileRequest: HttpRequest {
     
+    let taskType: TaskType
     let progress: ProgressClosure?
     let completed: CompletedClosure?
     
     let sessionManager = SessionManager.shared
 
-    init(base: String, path: String, method: HttpMethod, params: [String : Any]?, headers: [String : String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completed: CompletedClosure?) {
+    init(base: String, path: String, method: HttpMethod, params: [String : Any]?, headers: [String : String]?, sessionConfig: SessionConfig, taskType: TaskType, progress: ProgressClosure? = nil, completed: CompletedClosure?) {
+        self.taskType = taskType
         self.progress = progress
         self.completed = completed
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
@@ -160,7 +162,7 @@ public class HttpFileRequest: HttpRequest {
             fatalError()
         }
         
-        let downloadTask = HttpFileTask(request: request, session: session, progress: progress, completed: completed)
+        let downloadTask = HttpFileTask(request: request, session: session, taskType: taskType, progress: progress, completed: completed)
         sessionManager[downloadTask.sessionTask] = downloadTask
         downloadTask.resume()
         

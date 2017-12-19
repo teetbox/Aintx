@@ -144,6 +144,14 @@ public struct Aintx {
         return request.go(completion: completion)
     }
     
+    public func fileRequest(downloadPath: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
+        return HttpFileRequest(base: base, path: downloadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.download), progress: progress, completed: completed)
+    }
+    
+    public func fileRequest(uploadType: UploadType, method: HttpMethod = .put, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) {
+        
+    }
+    
     /* ✅ */
     // TODO: - Maybe could combine downloadRequest and uploadRequest to fileRequest with fileType enum as a parameter
     public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
@@ -156,7 +164,7 @@ public struct Aintx {
 //
 //        loadRequest = HttpLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
 //        return loadRequest
-        return HttpFileRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
+        return HttpFileRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.download), progress: progress, completed: completed)
     }
     
     /* ✅ */

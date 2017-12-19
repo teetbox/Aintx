@@ -84,10 +84,12 @@ class HttpFileTask: HttpTask {
     
     let sessionTask: URLSessionTask
     
+    let taskType: TaskType
     let progress: ProgressClosure?
     let completed: CompletedClosure?
     
-    init(request: URLRequest, session: URLSession, progress: ProgressClosure?, completed:  CompletedClosure?) {
+    init(request: URLRequest, session: URLSession, taskType: TaskType, progress: ProgressClosure?, completed:  CompletedClosure?) {
+        self.taskType = taskType
         self.progress = progress
         self.completed = completed
         
