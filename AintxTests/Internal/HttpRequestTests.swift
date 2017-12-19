@@ -15,6 +15,12 @@ extension TaskType: Equatable {
     }
 }
 
+extension GroupType: Equatable {
+    public static func ==(lhs: GroupType, rhs: GroupType) -> Bool {
+        return "\(lhs)" == "\(rhs)"
+    }
+}
+
 class HttpRequestTests: XCTestCase {
     
     var sut: HttpRequest!
@@ -103,6 +109,22 @@ class HttpRequestTests: XCTestCase {
         let sessionManager = SessionManager.shared
         let fileTask = task as! HttpFileTask
         XCTAssertNotNil(sessionManager[fileTask.sessionTask])
+    }
+    
+    func testRequestGroup() {
+        let fileRequest = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let fileRequest2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let fileRequest3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        
+        let group = HttpRequestGroup(lhs: fileRequest, rhs: fileRequest2, type: .sequential)
+        XCTAssertFalse(group.isEmpty)
+        XCTAssertEqual(group.type, .sequential)
+        
+        _ = group.append(fileRequest3)
+        XCTAssertFalse(group.isEmpty)
+        
+        let tasks = group.go()
+        XCTAssertEqual(tasks.count, 3)
     }
     
     // TODO: -

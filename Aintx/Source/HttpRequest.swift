@@ -122,12 +122,139 @@ public class HttpDataRequest: HttpRequest {
     
 }
 
-enum GroupType {
-    case sequential
-    case concurrent
+infix operator -->: AdditionPrecedence
+infix operator |||: AdditionPrecedence
+
+extension HttpFileRequest {
+    
+    public static func && (_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
+    }
+    
+    public static func || (_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent(0))
+    }
+    
+    public static func -->(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
+    }
+    
+    
+    public static func |||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent(0))
+    }
+    
 }
 
-public class HttpFileRequest: HttpRequest {
+extension HttpRequestGroup {
+    
+    public static func && (_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+        return group.append(request)
+    }
+    
+    public static func || (_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+        return group.append(request)
+    }
+    
+    public static func -->(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+        return group.append(request)
+    }
+    
+    public static func |||(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+        return group.append(request)
+    }
+    
+}
+
+enum GroupType {
+    case sequential
+    case concurrent(Int)
+}
+
+public class HttpRequestGroup {
+    
+    let type: GroupType
+    private var queue = Queue<HttpFileRequest>()
+    
+    public var isEmpty: Bool {
+        return queue.isEmpty
+    }
+    
+    init(lhs: HttpFileRequest, rhs: HttpFileRequest, type: GroupType) {
+        self.type = type
+        queue.enqueue(lhs)
+        queue.enqueue(rhs)
+    }
+    
+    func append(_ request: HttpFileRequest) -> HttpRequestGroup {
+        queue.enqueue(request)
+        return self
+    }
+    
+    public func go() -> [HttpTask] {
+        var tasks = [HttpTask]()
+        var request = queue.dequeue()
+        
+        while request != nil {
+            tasks.append(request!.go())
+            request = queue.dequeue()
+        }
+        
+        return tasks
+    }
+    
+}
+
+public protocol Combinable {
+    associatedtype T
+
+    var queue: Queue<T> { get set }
+    /*  The maxConcurrentNumber determines the excution sequence of the queue.
+     *  0 - Concurrent with unlimited number
+     *  1 - Sequential
+     *  Integer greater than 1 - Concurrent with limited interger
+     */
+    var maxConcurrentNumber: Int { get set }
+    func combineS(_ element: T) -> [T]
+    func combineC(_ element: T) -> [T]
+}
+
+extension Combinable {
+    
+}
+
+extension Array where Element: HttpFileRequest {
+    public func go() -> [HttpTask] {
+        return [BlankHttpTask]()
+    }
+}
+
+extension Array where Element: Combinable {
+    public func combineS(_ element: Element) -> [Element] {
+        return [element]
+    }
+    
+    public func combineC(_ element: Element) -> [Element] {
+        return [element]
+    }
+}
+
+public class HttpFileRequest: HttpRequest, Combinable {
+    
+    // MARK: - Combinable
+    
+    public var queue = Queue<HttpFileRequest>()
+    public var maxConcurrentNumber = 0
+    
+    public func combineS(_ element: HttpFileRequest) -> [HttpFileRequest] {
+        return [element]
+    }
+    
+    public func combineC(_ element: HttpFileRequest) -> [HttpFileRequest] {
+        return [element]
+    }
+    
+    // MARK: -
     
     let taskType: TaskType
     let progress: ProgressClosure?
@@ -168,7 +295,7 @@ public class HttpFileRequest: HttpRequest {
         
         return downloadTask
     }
-    
+
 }
 /*
 public struct Queue<T> {
