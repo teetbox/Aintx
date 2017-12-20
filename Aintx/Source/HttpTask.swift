@@ -80,6 +80,16 @@ class HttpDataTask: HttpTask {
     
 }
 
+extension HttpFileTask: Hashable {
+    var hashValue: Int {
+        return sessionTask.taskIdentifier
+    }
+    
+    static func ==(lhs: HttpFileTask, rhs: HttpFileTask) -> Bool {
+        return lhs.sessionTask == rhs.sessionTask
+    }
+}
+
 class HttpFileTask: HttpTask {
     
     let sessionTask: URLSessionTask
@@ -87,6 +97,10 @@ class HttpFileTask: HttpTask {
     let taskType: TaskType
     let progress: ProgressClosure?
     let completed: CompletedClosure?
+    
+    var state: URLSessionTask.State {
+        return sessionTask.state
+    }
     
     init(request: URLRequest, session: URLSession, taskType: TaskType, progress: ProgressClosure?, completed:  CompletedClosure?) {
         self.taskType = taskType

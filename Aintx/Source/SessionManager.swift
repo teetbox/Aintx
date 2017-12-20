@@ -17,6 +17,7 @@ class SessionManager: NSObject {
     private var background: URLSession?
 
     private var sessionTasks = [URLSessionTask: HttpTask]()
+    private var requestGroup = [HttpFileTask: HttpRequestGroup]()
     
     private override init() {}
     
@@ -26,6 +27,15 @@ class SessionManager: NSObject {
         }
         get {
             return sessionTasks[sessionTask]
+        }
+    }
+    
+    subscript(fileTask: HttpFileTask) -> HttpRequestGroup? {
+        set {
+            requestGroup[fileTask] = newValue
+        }
+        get {
+            return requestGroup[fileTask]
         }
     }
     

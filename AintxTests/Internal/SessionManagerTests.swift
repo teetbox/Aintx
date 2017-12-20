@@ -46,7 +46,7 @@ class SessionManagerTests: XCTestCase {
         XCTAssertNotEqual(background, background3)
     }
     
-    func testSubscript() {
+    func testSubscriptForSessionTasks() {
         let fakeURL = URL(string: "https://httpbin.org")!
         let session = URLSession.shared
         let sessionTask = URLSessionTask()
@@ -56,6 +56,23 @@ class SessionManagerTests: XCTestCase {
         
         XCTAssertNotNil(sut[sessionTask])
         XCTAssert(sut[sessionTask] is HttpDataTask)
+    }
+    
+    func testSubscriptForRequestGroup() {
+        let fakeBase = "http://www.fake.com"
+        let fakePath = "/fake/path"
+        let fakeURL = URL(string: "https://httpbin.org")!
+        let session = URLSession.shared
+        let fileTask = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .file(.download), progress: nil, completed: nil)
+//        let fileTask2 = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .file(.download), progress: nil, completed: nil)
+        
+        let fileRequest = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let fileRequest2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        
+        let requestGroup = HttpRequestGroup(lhs: fileRequest, rhs: fileRequest2, type: .concurrent)
+        
+        sut[fileTask] = requestGroup
+        XCTAssertNotNil(sut[fileTask])
     }
     
     func testReset() {

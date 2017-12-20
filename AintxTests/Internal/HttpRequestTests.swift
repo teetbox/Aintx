@@ -15,12 +15,6 @@ extension TaskType: Equatable {
     }
 }
 
-extension GroupType: Equatable {
-    public static func ==(lhs: GroupType, rhs: GroupType) -> Bool {
-        return "\(lhs)" == "\(rhs)"
-    }
-}
-
 class HttpRequestTests: XCTestCase {
     
     var sut: HttpRequest!
@@ -108,7 +102,8 @@ class HttpRequestTests: XCTestCase {
         
         let sessionManager = SessionManager.shared
         let fileTask = task as! HttpFileTask
-        XCTAssertNotNil(sessionManager[fileTask.sessionTask])
+        let savedTask: HttpTask = sessionManager[fileTask.sessionTask]!
+        XCTAssertNotNil(savedTask)
     }
     
     func testRequestGroup() {
@@ -125,6 +120,51 @@ class HttpRequestTests: XCTestCase {
         
         let tasks = group.go()
         XCTAssertEqual(tasks.count, 3)
+    }
+    
+    func testGoForSequentialRequestGroup() {
+        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        
+        let tasks = (file --> file2 --> file3).go()
+        
+        XCTAssertEqual(tasks.count, 3)
+        XCTAssertEqual((tasks[0] as! HttpFileTask).state, .running)
+        XCTAssertEqual((tasks[1] as! HttpFileTask).state, .suspended)
+        XCTAssertEqual((tasks[2] as! HttpFileTask).state, .suspended)
+    }
+    
+    func testGoForConcurrentRequestGroup() {
+        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        
+        let tasks = (file ||| file2 ||| file3).go()
+        
+        XCTAssertEqual(tasks.count, 3)
+        XCTAssertEqual((tasks[0] as! HttpFileTask).state, .running)
+        XCTAssertEqual((tasks[1] as! HttpFileTask).state, .running)
+        XCTAssertEqual((tasks[2] as! HttpFileTask).state, .running)
+    }
+    
+    func testSessionTaskDidComplete() {
+        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        
+        let group = file --> file2 --> file3
+        let tasks = group.go()
+        
+        XCTAssertEqual(tasks.count, 3)
+        XCTAssertEqual((tasks[0] as! HttpFileTask).state, .running)
+        XCTAssertEqual((tasks[1] as! HttpFileTask).state, .suspended)
+        XCTAssertEqual((tasks[2] as! HttpFileTask).state, .suspended)
+        
+        group.complete((tasks[0] as! HttpFileTask).sessionTask)
+        XCTAssertEqual((tasks[0] as! HttpFileTask).state, .completed)
+        XCTAssertEqual((tasks[1] as! HttpFileTask).state, .running)
+        XCTAssertEqual((tasks[2] as! HttpFileTask).state, .suspended)
     }
     
     // TODO: -

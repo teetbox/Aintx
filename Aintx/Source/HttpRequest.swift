@@ -168,13 +168,14 @@ public class HttpFileRequest: HttpRequest {
 
 enum GroupType {
     case sequential
-    case concurrent(Int)
+    case concurrent
 }
 
 public class HttpRequestGroup {
     
     let type: GroupType
     private var queue = Queue<HttpFileRequest>()
+    private var sessionTasks = [URLSessionTask: HttpFileTask]()
     
     public var isEmpty: Bool {
         return queue.isEmpty
@@ -191,16 +192,54 @@ public class HttpRequestGroup {
         return self
     }
     
+    @discardableResult
     public func go() -> [HttpTask] {
         var tasks = [HttpTask]()
-        var request = queue.dequeue()
-        
-        while request != nil {
-            tasks.append(request!.go())
-            request = queue.dequeue()
+        switch type {
+        case .sequential:
+            var isFirst = true
+            var firstFileTask: HttpFileTask?
+            var fileRequest = queue.dequeue()
+            
+            while fileRequest != nil {
+                let task = fileTask(for: fileRequest!)
+                sessionTasks[task.sessionTask] = task
+                tasks.append(task)
+                if isFirst {
+                    firstFileTask = task
+                    isFirst = false
+                }
+                fileRequest = queue.dequeue()
+            }
+            firstFileTask?.resume()
+            
+        case .concurrent:
+            var fileRequest = queue.dequeue()
+            
+            while fileRequest != nil {
+                let task = fileTask(for: fileRequest!)
+                sessionTasks[task.sessionTask] = task
+                tasks.append(task)
+                task.resume()
+                fileRequest = queue.dequeue()
+            }
         }
         
         return tasks
+    }
+    
+    func complete(_ task: URLSessionTask) {
+        
+    }
+    
+    private func fileTask(for request: HttpFileRequest) -> HttpFileTask {
+        let urlRequest = request.urlRequest!
+        let session = request.session
+        let taskType = request.taskType
+        let progress = request.progress
+        let completed = request.completed
+        
+        return HttpFileTask(request: urlRequest, session: session, taskType: taskType, progress: progress, completed: completed)
     }
     
 }
@@ -215,15 +254,15 @@ extension HttpFileRequest {
     }
     
     public static func |||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
-        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent(0))
+        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent)
     }
     
-    public static func && (_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+    public static func &&(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }
     
-    public static func || (_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
-        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent(0))
+    public static func ||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
+        return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent)
     }
     
 }
@@ -238,11 +277,11 @@ extension HttpRequestGroup {
         return group.append(request)
     }
     
-    public static func && (_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+    public static func &&(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
     
-    public static func || (_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
+    public static func ||(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
     
