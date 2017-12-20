@@ -41,23 +41,43 @@ class DownLoadTests: XCTestCase {
         let filePath = "http://www.tutorialspoint.com/swift/swift_tutorial.pdf"
         let progress: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
             let percentage = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite) * 100
-            print("Downloading \(String(format: "%.2f", percentage))%")
+            print("Downloading file 1 \(String(format: "%.2f", percentage))%")
         }
         
         let completed: CompletedClosure = { url, error in
-            print("Downloading Completed with url: - \(url?.absoluteString ?? "nil")")
-            print("Downloading Completed with error: - \(error?.localizedDescription ?? "nil")")
+            print("Downloading file 1 Completed with url: - \(url?.absoluteString ?? "nil")")
+            print("Downloading file 1 Completed with error: - \(error?.localizedDescription ?? "nil")")
+//            self.async.fulfill()
+        }
+        
+        let progress2: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
+            let percentage = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite) * 100
+            print("Downloading file 2 \(String(format: "%.2f", percentage))%")
+        }
+        
+        let completed2: CompletedClosure = { url, error in
+            print("Downloading file 2 Completed with url: - \(url?.absoluteString ?? "nil")")
+            print("Downloading file 2 Completed with error: - \(error?.localizedDescription ?? "nil")")
+//            self.async.fulfill()
+        }
+        
+        let progress3: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
+            let percentage = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite) * 100
+            print("Downloading file 3 \(String(format: "%.2f", percentage))%")
+        }
+        
+        let completed3: CompletedClosure = { url, error in
+            print("Downloading file 3 Completed with url: - \(url?.absoluteString ?? "nil")")
+            print("Downloading file 3 Completed with error: - \(error?.localizedDescription ?? "nil")")
             self.async.fulfill()
         }
 
-        let request = aintx.downloadRequest(path: filePath, progress: progress, completed: completed)
-        let task = request.go()
-        
-        DispatchQueue.main.async {
-            sleep(2)
-            task.cancel()
-        }
+        let file = aintx.fileRequest(downloadPath: filePath, progress: progress, completed: completed)
+        let file2 = aintx.fileRequest(downloadPath: filePath, progress: progress2, completed: completed2)
+        let file3 = aintx.fileRequest(downloadPath: filePath, progress: progress3, completed: completed3)
+        let tasks = (file --> file2 --> file3).go()
 
+        XCTAssertEqual(tasks.count, 3)
         wait(for: [async], timeout: 200)
     }
 

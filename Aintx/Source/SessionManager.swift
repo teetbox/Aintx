@@ -139,6 +139,9 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
         guard error != nil else { return }
         if let fileTask = sessionTasks[task] as? HttpFileTask {
             fileTask.completed?(nil, error)
+            if let group = requestGroup[fileTask] {
+                group.nextTask()
+            }
         }
     }
     

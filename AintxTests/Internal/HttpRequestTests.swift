@@ -161,10 +161,13 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual((tasks[1] as! HttpFileTask).state, .suspended)
         XCTAssertEqual((tasks[2] as! HttpFileTask).state, .suspended)
         
-        group.complete((tasks[0] as! HttpFileTask).sessionTask)
-        XCTAssertEqual((tasks[0] as! HttpFileTask).state, .completed)
+        group.nextTask()
+//        XCTAssertEqual((tasks[0] as! HttpFileTask).state, .completed)
         XCTAssertEqual((tasks[1] as! HttpFileTask).state, .running)
         XCTAssertEqual((tasks[2] as! HttpFileTask).state, .suspended)
+        
+        group.nextTask()
+        XCTAssertEqual((tasks[2] as! HttpFileTask).state, .running)
     }
     
     // TODO: -

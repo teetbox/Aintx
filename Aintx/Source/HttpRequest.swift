@@ -173,63 +173,62 @@ enum GroupType {
 
 public class HttpRequestGroup {
     
+    private var requestQueue = Queue<HttpFileRequest>()
+    private var taskQueue = Queue<HttpFileTask>()
+    
     let type: GroupType
-    private var queue = Queue<HttpFileRequest>()
-    private var sessionTasks = [URLSessionTask: HttpFileTask]()
+    let sessionManager = SessionManager.shared
     
     public var isEmpty: Bool {
-        return queue.isEmpty
+        return requestQueue.isEmpty
     }
     
     init(lhs: HttpFileRequest, rhs: HttpFileRequest, type: GroupType) {
         self.type = type
-        queue.enqueue(lhs)
-        queue.enqueue(rhs)
+        requestQueue.enqueue(lhs)
+        requestQueue.enqueue(rhs)
     }
     
     func append(_ request: HttpFileRequest) -> HttpRequestGroup {
-        queue.enqueue(request)
+        requestQueue.enqueue(request)
         return self
     }
     
     @discardableResult
     public func go() -> [HttpTask] {
         var tasks = [HttpTask]()
-        switch type {
-        case .sequential:
-            var isFirst = true
-            var firstFileTask: HttpFileTask?
-            var fileRequest = queue.dequeue()
-            
-            while fileRequest != nil {
-                let task = fileTask(for: fileRequest!)
-                sessionTasks[task.sessionTask] = task
-                tasks.append(task)
-                if isFirst {
-                    firstFileTask = task
-                    isFirst = false
-                }
-                fileRequest = queue.dequeue()
-            }
-            firstFileTask?.resume()
-            
-        case .concurrent:
-            var fileRequest = queue.dequeue()
-            
-            while fileRequest != nil {
-                let task = fileTask(for: fileRequest!)
-                sessionTasks[task.sessionTask] = task
-                tasks.append(task)
+        var fileRequest = requestQueue.dequeue()
+        
+        if fileRequest != nil {
+            let task = fileTask(for: fileRequest!)
+            sessionManager[task] = self
+            tasks.append(task)
+            task.resume()
+        } else {
+            return tasks
+        }
+        
+        fileRequest = requestQueue.dequeue()
+        
+        while fileRequest != nil {
+            let task = fileTask(for: fileRequest!)
+            switch type {
+            case .sequential:
+                taskQueue.enqueue(task)
+            case .concurrent:
                 task.resume()
-                fileRequest = queue.dequeue()
             }
+            tasks.append(task)
+            fileRequest = requestQueue.dequeue()
         }
         
         return tasks
     }
     
-    func complete(_ task: URLSessionTask) {
-        
+    func nextTask() {
+        if let task = taskQueue.dequeue() {
+            task.resume()
+        }
     }
     
     private func fileTask(for request: HttpFileRequest) -> HttpFileTask {
