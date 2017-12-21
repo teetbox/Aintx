@@ -201,6 +201,9 @@ public class HttpRequestGroup {
         
         if fileRequest != nil {
             let task = fileTask(for: fileRequest!)
+            // Add first task to sessionTasks
+            sessionManager[task.sessionTask] = task
+            // Add this group to requestGroup, only used for sequential group
             sessionManager[task] = self
             tasks.append(task)
             task.resume()
@@ -209,12 +212,15 @@ public class HttpRequestGroup {
         }
         
         fileRequest = requestQueue.dequeue()
-        
         while fileRequest != nil {
             let task = fileTask(for: fileRequest!)
+            // Add each task to sessionTasks
+            sessionManager[task.sessionTask] = task
             switch type {
             case .sequential:
                 taskQueue.enqueue(task)
+                // Update value typed requestGroup
+                sessionManager[task] = self
             case .concurrent:
                 task.resume()
             }

@@ -192,6 +192,9 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
         print(#function)
         if let fileTask = sessionTasks[downloadTask] as? HttpFileTask {
             fileTask.completed?(location, nil)
+            if let group = requestGroup[fileTask] {
+                group.nextTask()
+            }
         }
     }
     
