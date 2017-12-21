@@ -8,6 +8,9 @@
 
 import Foundation
 
+/* HttpRequest is a base class.
+ * Common used properties such as urlString, urlRequest and session are generated in this class.
+ */
 public class HttpRequest {
     
     var urlString: String?
@@ -80,6 +83,13 @@ extension HttpRequest {
     
 }
 
+// MARK: - HttpDataRequest
+
+/* HttpDataRequest subclass from HttpRequest.
+ * This class handles all requests which has a completion callback.
+ * It will map all request to HttpDataTask class which will create
+ * session tasks using completionHandler as the callback.
+ */
 public class HttpDataRequest: HttpRequest {
     
     let bodyData: Data?
@@ -122,6 +132,17 @@ public class HttpDataRequest: HttpRequest {
     
 }
 
+// MARK: - HttpFileRequest
+
+public typealias ProgressClosure = (Int64, Int64, Int64) -> Void
+public typealias CompletedClosure = (URL?, Error?) -> Void
+
+/* HttpFileRequest subclass from HttpRequest
+ * This class handles download and upload requests with multi callback closures
+ * It will map all request to HttpFileTask class which will create
+ * session tasks using session delegate as the callback.
+ * It also supports gourp action which could be run in sequential or concurrent mode.
+ */
 public class HttpFileRequest: HttpRequest {
     
     let taskType: TaskType
@@ -166,11 +187,16 @@ public class HttpFileRequest: HttpRequest {
     
 }
 
+// MARK: - HttpRequestGroup
+
 enum GroupType {
     case sequential
     case concurrent
 }
 
+/* HttpRequestGroup is used for grouping HttpFileRequest instances.
+ * GroupType determines the run mode for its requests, either sequential or concurrent.
+ */
 public class HttpRequestGroup {
     
     private var requestQueue = Queue<HttpFileRequest>()
@@ -183,17 +209,20 @@ public class HttpRequestGroup {
         return requestQueue.isEmpty
     }
     
+    /* ✅ */
     init(lhs: HttpFileRequest, rhs: HttpFileRequest, type: GroupType) {
         self.type = type
         requestQueue.enqueue(lhs)
         requestQueue.enqueue(rhs)
     }
     
+    /* ✅ */
     func append(_ request: HttpFileRequest) -> HttpRequestGroup {
         requestQueue.enqueue(request)
         return self
     }
     
+    /* ✅ */
     @discardableResult
     public func go() -> [HttpTask] {
         var tasks = [HttpTask]()
@@ -219,7 +248,7 @@ public class HttpRequestGroup {
             switch type {
             case .sequential:
                 taskQueue.enqueue(task)
-                // Update value typed requestGroup
+                // Update value typed taskQueue of requestGroup
                 sessionManager[task] = self
             case .concurrent:
                 task.resume()
@@ -231,6 +260,7 @@ public class HttpRequestGroup {
         return tasks
     }
     
+    /* ✅ */
     func nextTask() {
         if let task = taskQueue.dequeue() {
             task.resume()
@@ -254,18 +284,22 @@ infix operator |||: AdditionPrecedence
 
 extension HttpFileRequest {
     
+    /* ✅ */
     public static func -->(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }
     
+    /* ✅ */
     public static func |||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent)
     }
     
+    /* ✅ */
     public static func &&(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }
     
+    /* ✅ */
     public static func ||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent)
     }
@@ -274,18 +308,22 @@ extension HttpFileRequest {
 
 extension HttpRequestGroup {
     
+    /* ✅ */
     public static func -->(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
     
+    /* ✅ */
     public static func |||(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
     
+    /* ✅ */
     public static func &&(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
     
+    /* ✅ */
     public static func ||(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
@@ -293,50 +331,6 @@ extension HttpRequestGroup {
 }
 
 // TODO: -
-
-class HttpDownloadRequest: HttpRequest {
-    
-    let progress: ProgressClosure?
-    let completed: CompletedClosure?
-    let completion: ((HttpResponse) -> Void)?
-    
-    // For session downloadTask with completionHandler
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completion: @escaping (HttpResponse) -> Void) {
-        self.progress = nil
-        self.completed = nil
-        self.completion = completion
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
-    }
-    
-    // For session downloadTask with delegate
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completed: CompletedClosure? = nil) {
-        self.progress = progress
-        self.completed = completed
-        self.completion = nil
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
-    }
-    
-    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        
-        guard let urlString = urlString else {
-            httpError = HttpError.requestFailed(.invalidURL(""))
-            fatalError()
-        }
-        
-        guard let url = URL(string: urlString) else {
-            httpError = HttpError.requestFailed(.invalidURL(""))
-            fatalError()
-        }
-        
-        urlRequest = URLRequest(url: url)
-        urlRequest?.httpMethod = method.rawValue
-        
-        let downloadTask = HttpDownloadTask(urlRequest: urlRequest!, session: session, completion: completion)
-        
-        return downloadTask
-    }
-    
-}
 
 public class HttpUploadRequest: HttpRequest {
     
@@ -372,43 +366,6 @@ public class HttpUploadRequest: HttpRequest {
     
 }
 
-public typealias ProgressClosure = (Int64, Int64, Int64) -> Void
-public typealias CompletedClosure = (URL?, Error?) -> Void
-
-public class HttpLoadRequest: HttpRequest {
-    
-    var task: HttpDownloadTask?
-    
-    let progress: ProgressClosure?
-    let completed: CompletedClosure?
-    
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completed: CompletedClosure? = nil) {
-        self.progress = progress
-        self.completed = completed
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
-
-        guard let urlString = urlString else {
-            httpError = HttpError.requestFailed(.invalidURL(""))
-            fatalError()
-        }
-        
-        guard let url = URL(string: urlString) else {
-            httpError = HttpError.requestFailed(.invalidURL(""))
-            fatalError()
-        }
-        
-        urlRequest = URLRequest(url: url)
-        urlRequest?.httpMethod = method.rawValue
-        
-        task = HttpDownloadTask(urlRequest: urlRequest!, session: session, progress: progress, completed: completed)
-    }
-    
-    public func go() -> HttpTask {
-        return task!.go()
-    }
-    
-}
-
 class FakeDataRequest: HttpDataRequest {
 
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
@@ -416,30 +373,4 @@ class FakeDataRequest: HttpDataRequest {
         return BlankHttpTask()
     }
     
-}
-
-class FakeLoadRequest: HttpLoadRequest {
-    
-    override init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, progress: ProgressClosure? = nil, completed: CompletedClosure? = nil) {
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig, progress: progress, completed: completed)
-        
-        guard let urlString = urlString else {
-            httpError = HttpError.requestFailed(.invalidURL(""))
-            fatalError()
-        }
-        
-        guard let url = URL(string: urlString) else {
-            httpError = HttpError.requestFailed(.invalidURL(""))
-            fatalError()
-        }
-        
-        urlRequest = URLRequest(url: url)
-        urlRequest?.httpMethod = method.rawValue
-        
-        task = HttpDownloadTask(urlRequest: urlRequest!, session: session, progress: progress, completed: completed)
-    }
-    
-    public override func go() -> HttpTask {
-        return task!.go()
-    }
 }

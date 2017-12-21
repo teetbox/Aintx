@@ -51,15 +51,34 @@ class HttpRequestPublicTests: XCTestCase {
         let file2 = aintx.fileRequest(downloadPath: fakePath, completed: { _, _ in })
         let file3 = aintx.fileRequest(downloadPath: fakePath, completed: { _, _ in })
         
+        var sequentialGroup = file --> file2
+        XCTAssertNotNil(sequentialGroup)
+        
+        sequentialGroup = sequentialGroup --> file3
+        XCTAssertNotNil(sequentialGroup)
+        
+        var concurrentGroup = file ||| file2
+        XCTAssertNotNil(concurrentGroup)
+        
+        concurrentGroup = concurrentGroup ||| file3
+        XCTAssertNotNil(concurrentGroup)
+        
+        sequentialGroup = file && file2 && file3
+        XCTAssertNotNil(sequentialGroup)
+        
+        concurrentGroup = file ||| file2 ||| file3
+        XCTAssertNotNil(concurrentGroup)
+    }
+    
+    func testGoForRequestGroup() {
+        let file = aintx.fileRequest(downloadPath: fakePath, completed: { _, _ in })
+        let file2 = aintx.fileRequest(downloadPath: fakePath, completed: { _, _ in })
+        let file3 = aintx.fileRequest(downloadPath: fakePath, completed: { _, _ in })
+        
         let sequentialTasks = (file --> file2 --> file3).go()
         let concurrentTasks = (file ||| file2 ||| file3).go()
         XCTAssertEqual(sequentialTasks.count, 3)
         XCTAssertEqual(concurrentTasks.count, 3)
-        
-        let sTasks = (file && file2 && file3).go()
-        let cTasks = (file || file2 || file3).go()
-        XCTAssertEqual(sTasks.count, 3)
-        XCTAssertEqual(cTasks.count, 3)
     }
     
     func testSetAuthorizationWithUsernameAndPassword() {

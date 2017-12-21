@@ -283,6 +283,10 @@ class AintxTests: XCTestCase {
         XCTAssert(dataTask.sessionTask is URLSessionDownloadTask)
     }
     
+    func testUpload() {
+        
+    }
+    
     func testFileRequestForDownload() {
         var request: HttpFileRequest
         
@@ -306,7 +310,7 @@ class AintxTests: XCTestCase {
     }
     
     func testFileRequestForUpload() {
-        // TODO: - A private function for both downloadRequest and uploadRequest using
+        
     }
     
     // TODO: -

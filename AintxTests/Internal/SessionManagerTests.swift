@@ -13,6 +13,11 @@ class SessionManagerTests: XCTestCase {
     
     var sut: SessionManager!
     
+    let fakeBase = "http://www.fake.com"
+    let fakePath = "/fake/path"
+    let fakeURL = URL(string: "www.file.com")!
+    let session = URLSession.shared
+    
     override func setUp() {
         super.setUp()
         
@@ -47,31 +52,22 @@ class SessionManagerTests: XCTestCase {
     }
     
     func testSubscriptForSessionTasks() {
-        let fakeURL = URL(string: "https://httpbin.org")!
-        let session = URLSession.shared
         let sessionTask = URLSessionTask()
-        let httpTask = HttpDataTask(request: URLRequest(url: fakeURL), session: session, completion: { _ in })
+        let httpTask = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .file(.upload(.data(Data()))), progress: nil, completed: nil)
         
         sut[sessionTask] = httpTask
         
         XCTAssertNotNil(sut[sessionTask])
-        XCTAssert(sut[sessionTask] is HttpDataTask)
     }
     
     func testSubscriptForRequestGroup() {
-        let fakeBase = "http://www.fake.com"
-        let fakePath = "/fake/path"
-        let fakeURL = URL(string: "https://httpbin.org")!
-        let session = URLSession.shared
-        let fileTask = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .file(.download), progress: nil, completed: nil)
-//        let fileTask2 = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .file(.download), progress: nil, completed: nil)
-        
         let fileRequest = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
         let fileRequest2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        
         let requestGroup = HttpRequestGroup(lhs: fileRequest, rhs: fileRequest2, type: .concurrent)
         
+        let fileTask = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .file(.download), progress: nil, completed: nil)
         sut[fileTask] = requestGroup
+        
         XCTAssertNotNil(sut[fileTask])
     }
     

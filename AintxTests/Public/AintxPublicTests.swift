@@ -96,6 +96,10 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(request)
     }
     
+    func testUpload() {
+        
+    }
+    
     func testFileRequestForDownload() {
         var request = sut.fileRequest(downloadPath: fakePath, completed: { _, _ in })
         XCTAssertNotNil(request)
@@ -116,6 +120,10 @@ class AintxPublicTests: XCTestCase {
         XCTAssertNotNil(request)
         
         request.go()
+    }
+    
+    func testFileRequestForUpload() {
+        
     }
     
     // TODO: -

@@ -19,7 +19,6 @@ class HttpErrorTests: XCTestCase {
     
     func testInvalidURL() {
         error = HttpError.requestFailed(.invalidURL("~!@#$"))
-        print(error.localizedDescription)
         XCTAssertEqual(error.localizedDescription, "Invalid URL: ~!@#$")
     }
     

@@ -28,12 +28,16 @@ class HttpTaskTests: XCTestCase {
         XCTAssert(dataTask.sessionTask is URLSessionDataTask)
     }
     
-    func testDataTaskForDownloadType() {
+    func testDataTaskForDownload() {
         sut = HttpDataTask(request: request, session: session, taskType: .file(.download), completion: { _ in })
         XCTAssert((sut as! HttpDataTask).sessionTask is URLSessionDownloadTask)
     }
     
-    func testFileTask() {
+    func testDataTaskForUpload() {
+        
+    }
+    
+    func testFileTaskForDownload() {
         let progress: ProgressClosure = { _, _, _ in }
         let completed: CompletedClosure = { _, _ in }
         
@@ -42,6 +46,10 @@ class HttpTaskTests: XCTestCase {
         XCTAssertNotNil((sut as! HttpFileTask).progress)
         XCTAssertNotNil((sut as! HttpFileTask).completed)
         XCTAssert((sut as! HttpFileTask).sessionTask is URLSessionDownloadTask)
+    }
+    
+    func testFileTaskForUpload() {
+        
     }
     
     func testTaskType() {

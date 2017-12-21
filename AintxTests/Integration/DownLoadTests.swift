@@ -21,23 +21,7 @@ class DownLoadTests: XCTestCase {
         async = expectation(description: "async")
     }
     
-    override func tearDown() {
-        super.tearDown()
-        
-        aintx = nil
-        print("Set aintx to nil")
-    }
-    
-    func testDownloadTasks() {
-//        let request = aintx.downloadRequest()
-//        let request2 = aintx.downloadRequest()
-//        let request3 = aintx.downloadRequest()
-//        
-//        (request --> request2 --> request3).go
-//        (request ||| request2 ||| request3).go
-    }
-    
-    func testDownloadSwift4() {
+    func testDownloadFiles() {
         let filePath = "http://www.tutorialspoint.com/swift/swift_tutorial.pdf"
         let progress: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
             let percentage = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite) * 100
@@ -47,7 +31,6 @@ class DownLoadTests: XCTestCase {
         let completed: CompletedClosure = { url, error in
             print("Downloading file 1 Completed with url: - \(url?.absoluteString ?? "nil")")
             print("Downloading file 1 Completed with error: - \(error?.localizedDescription ?? "nil")")
-//            self.async.fulfill()
         }
         
         let progress2: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
@@ -58,7 +41,6 @@ class DownLoadTests: XCTestCase {
         let completed2: CompletedClosure = { url, error in
             print("Downloading file 2 Completed with url: - \(url?.absoluteString ?? "nil")")
             print("Downloading file 2 Completed with error: - \(error?.localizedDescription ?? "nil")")
-//            self.async.fulfill()
         }
         
         let progress3: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in

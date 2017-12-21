@@ -16,12 +16,13 @@ class SessionManager: NSObject {
     private var ephemeral: URLSession?
     private var background: URLSession?
 
-    private var sessionTasks = [URLSessionTask: HttpTask]()
+    private var sessionTasks = [URLSessionTask: HttpFileTask]()
     private var requestGroup = [HttpFileTask: HttpRequestGroup]()
     
     private override init() {}
     
-    subscript(sessionTask: URLSessionTask) -> HttpTask? {
+    /* ✅ */
+    subscript(sessionTask: URLSessionTask) -> HttpFileTask? {
         set {
             sessionTasks[sessionTask] = newValue
         }
@@ -30,6 +31,7 @@ class SessionManager: NSObject {
         }
     }
     
+    /* ✅ */
     subscript(fileTask: HttpFileTask) -> HttpRequestGroup? {
         set {
             requestGroup[fileTask] = newValue
@@ -39,6 +41,7 @@ class SessionManager: NSObject {
         }
     }
     
+    /* ✅ */
     func getSession(with config: SessionConfig) -> URLSession {
         switch config {
         case .standard:
@@ -59,6 +62,7 @@ class SessionManager: NSObject {
         }
     }
     
+    /* ✅ */
     func reset() {
         standard = nil
         ephemeral = nil
@@ -137,7 +141,7 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
         print("###### URLSessionTaskDelegate - didCompleteWithError ######")
         print(#function)
         guard error != nil else { return }
-        if let fileTask = sessionTasks[task] as? HttpFileTask {
+        if let fileTask = sessionTasks[task] {
             fileTask.completed?(nil, error)
             if let group = requestGroup[fileTask] {
                 group.nextTask()
@@ -182,7 +186,7 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
         print("###### URLSessionDownloadDelegate - didWriteData, totalBytesWritten, totalBytesExpectedToWrite ######")
         print(#function)
-        if let fileTask = sessionTasks[downloadTask] as? HttpFileTask {
+        if let fileTask = sessionTasks[downloadTask] {
             fileTask.progress?(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite)
         }
     }
@@ -190,7 +194,7 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         print("###### URLSessionDownloadDelegate - didFinishDownloadingTo ######")
         print(#function)
-        if let fileTask = sessionTasks[downloadTask] as? HttpFileTask {
+        if let fileTask = sessionTasks[downloadTask] {
             fileTask.completed?(location, nil)
             if let group = requestGroup[fileTask] {
                 group.nextTask()

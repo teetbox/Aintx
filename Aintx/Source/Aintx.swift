@@ -42,7 +42,7 @@ public struct Aintx {
         self.config = config
     }
     
-    // MARK: - Methods
+    // MARK: - HTTP Methods
     
     /* ✅ */
     @discardableResult
@@ -104,6 +104,8 @@ public struct Aintx {
         return dataRequest(path: path, method: .delete, params: params, headers: headers).go(completion: completion)
     }
     
+    // MARK: - Advanced Methods
+    
     /* ✅ */
     public func dataRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, bodyData: Data? = nil) -> HttpDataRequest {
         let request: HttpDataRequest
@@ -144,6 +146,7 @@ public struct Aintx {
         return request.go(completion: completion)
     }
     
+    /* ✅ */
     public func fileRequest(downloadPath: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
         return HttpFileRequest(base: base, path: downloadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.download), progress: progress, completed: completed)
     }

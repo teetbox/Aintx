@@ -34,6 +34,7 @@ class HttpDataTask: HttpTask {
     
     let sessionTask: URLSessionTask
     
+    /* ✅ */
     init(request: URLRequest, session: URLSession, taskType: TaskType = .data, completion: @escaping (HttpResponse) -> Void) {
         
         switch taskType {
@@ -102,6 +103,7 @@ class HttpFileTask: HttpTask {
         return sessionTask.state
     }
     
+    /* ✅ */
     init(request: URLRequest, session: URLSession, taskType: TaskType, progress: ProgressClosure?, completed:  CompletedClosure?) {
         self.taskType = taskType
         self.progress = progress
@@ -118,55 +120,6 @@ class HttpFileTask: HttpTask {
         sessionTask.resume()
     }
     
-    func cancel() {
-        sessionTask.cancel()
-    }
-    
-}
-
-class HttpDownloadTask: HttpTask {
-    
-    let sessionTask: URLSessionTask
-    
-    let progressHandler: ProgressClosure?
-    let completedHandler: CompletedClosure?
-    let completionHandler: ((HttpResponse) -> Void)?
-    
-    init(request: URLRequest, session: URLSession, progress: ProgressClosure?, completed:  CompletedClosure?) {
-        self.progressHandler = progress
-        self.completedHandler = completed
-        self.completionHandler = nil
-        
-        sessionTask = session.downloadTask(with: request)
-    }
-    
-    init(urlRequest: URLRequest, session: URLSession, progress: ProgressClosure?, completed: CompletedClosure?) {
-        self.progressHandler = progress
-        self.completedHandler = completed
-        self.completionHandler = nil
-        
-        sessionTask = session.downloadTask(with: urlRequest)
-    }
-    
-    init(urlRequest: URLRequest, session: URLSession, completion: @escaping (HttpResponse) -> Void) {
-        self.progressHandler = nil
-        self.completedHandler = nil
-        self.completionHandler = completion
-        
-        sessionTask = session.downloadTask(with: urlRequest)
-    }
-    
-    func go() -> HttpTask {
-        sessionTask.resume()
-        return self
-    }
-    
-    func suspend() {
-        sessionTask.suspend()
-    }
-    func resume() {
-        sessionTask.resume()
-    }
     func cancel() {
         sessionTask.cancel()
     }
