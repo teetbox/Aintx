@@ -284,7 +284,20 @@ class AintxTests: XCTestCase {
     }
     
     func testUpload() {
+        let fileURL = URL(string: "/file/url")!
+        let fileData = "data".data(using: .utf8)!
         
+        sut.upload(fakePath, fileURL: fileURL) { response in
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.taskType, .file(.upload(.url(fileURL))))
+        }
+        
+        sut.upload(fakePath, fileData: fileData) { response in
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.taskType, .file(.upload(.data(fileData))))
+        }
     }
     
     func testFileRequestForDownload() {
@@ -310,92 +323,28 @@ class AintxTests: XCTestCase {
     }
     
     func testFileRequestForUpload() {
+        let fileURL = URL(string: "/fake/url")!
+        let fileData = "data".data(using: .utf8)!
         
-    }
-    
-    // TODO: -
-    
-    func _testUploadWithFileURL() {
-        let fileURL = URL(string: "/file/path")!
-        sut.upload(fakePath, fileURL: fileURL) { response in
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-//            XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.url(fileURL))
-        }
-    }
-    
-    func _testUploadWithData() {
-        let fileData = Data()
-        sut.upload(fakePath, fileData: fileData) { response in
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-//            XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.data(fileData))
-        }
-    }
-    
-    func _testUploadWithHeaders() {
-        let fileData = Data()
-        sut.upload(fakePath, fileData: fileData, headers: ["key": "value"]) { response in
-            XCTAssertEqual(response.fakeRequest!.method, .put)
-//            XCTAssertEqual(response.fakeRequest!.uploadType, UploadType.data(fileData))
-            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
-        }
-    }
-    
-    func _testUploadRequest() {
-        let fileData: UploadType = .data(Data())
-        var request = sut.uploadRequest(path: fakePath, method: .put, uploadType: fileData, params: nil)
+        var request: HttpFileRequest
         
+        request = sut.fileRequest(uploadPath: fakePath, uploadType: .url(fileURL), completed: { _, _ in })
         XCTAssertEqual(request.base, fakeBase)
         XCTAssertEqual(request.path, fakePath)
-        XCTAssertEqual(request.method, .put)
+        XCTAssertEqual(request.method, .post)
         XCTAssertNil(request.params)
-        XCTAssertEqual(request.uploadType, fileData)
+        XCTAssertNil(request.headers)
+        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertNil(request.progress)
+        XCTAssertNotNil(request.completed)
         
-        let fileURL: UploadType = .url(URL(string: "/file/path")!)
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, params: nil)
-        XCTAssertEqual(request.uploadType, fileURL)
-    }
-    
-    func _testUploadRequestWithHeaders() {
-        let fileURL: UploadType = .url(URL(string: "/file/path")!)
-        let request = sut.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, headers: ["key": "value"])
-        XCTAssertEqual(request.headers!["key"], "value")
-    }
-    
-    func _testUploadRequestWithParamsAndHeaders() {
-        let fileURL: UploadType = .url(URL(string: "/file/path")!)
-        let request = sut.uploadRequest(path: fakePath, method: .put, uploadType: fileURL, params: ["key": "value"], headers: ["key": "value"])
+        request = sut.fileRequest(uploadPath: fakePath, uploadType: .data(fileData), method: .put, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
+        XCTAssertEqual(request.method, .put)
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.headers!["key"], "value")
-    }
-
-    
-//    func testDownloadWithParams() {
-//        sut.download(fakePath, params: ["key": "value"]) { response in
-//            XCTAssertEqual(response.fakeRequest!.method, .get)
-//            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
-//        }
-//    }
-//
-//    func testDownloadWithHeaders() {
-//        sut.download(fakePath, headers: ["key": "value"]) { response in
-//            XCTAssertEqual(response.fakeRequest!.method, .get)
-//            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
-//        }
-//    }
-    
-    func testDownloadRequestWithParams() {
-        let request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], completed: { _, _ in })
-        XCTAssertEqual(request.base, fakeBase)
-        XCTAssertEqual(request.path, fakePath)
-        XCTAssertEqual(request.params!["key"] as! String, "value")
-    }
-    
-    func testDownloadRequestWithParamsAndHeaders() {
-        let request = sut.downloadRequest(path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], completed: { _, _ in })
-        XCTAssertEqual(request.base, fakeBase)
-        XCTAssertEqual(request.path, fakePath)
-        XCTAssertEqual(request.params!["key"] as! String, "value")
-        XCTAssertEqual(request.headers!["key"], "value")
+        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertNotNil(request.progress)
+        XCTAssertNotNil(request.completed)
     }
     
 }

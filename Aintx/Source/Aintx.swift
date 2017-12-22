@@ -147,30 +147,6 @@ public struct Aintx {
     }
     
     /* ✅ */
-    public func fileRequest(downloadPath: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
-        return HttpFileRequest(base: base, path: downloadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.download), progress: progress, completed: completed)
-    }
-    
-    public func fileRequest(uploadType: UploadType, method: HttpMethod = .put, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) {
-        
-    }
-    
-    /* ✅ */
-    // TODO: - Maybe could combine downloadRequest and uploadRequest to fileRequest with fileType enum as a parameter
-    public func downloadRequest(path: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
-//        let loadRequest: HttpLoadRequest
-//
-//        if (isFake) {
-//            loadRequest = FakeLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
-//            return loadRequest
-//        }
-//
-//        loadRequest = HttpLoadRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, progress: progress, completed: completed)
-//        return loadRequest
-        return HttpFileRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.download), progress: progress, completed: completed)
-    }
-    
-    /* ✅ */
     @discardableResult
     public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
@@ -178,7 +154,14 @@ public struct Aintx {
             return BlankHttpTask()
         }
         
-        return uploadRequest(path: path, method: .put, uploadType: .url(fileURL), params: params, headers: headers).go(completion: completion)
+        let request: HttpDataRequest
+        if (isFake) {
+            request = FakeDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .file(.upload(.url(fileURL))))
+            return request.go(completion: completion)
+        }
+        
+        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, bodyData: nil, taskType: .file(.upload(.url(fileURL))))
+        return request.go(completion: completion)
     }
     
     /* ✅ */
@@ -188,18 +171,25 @@ public struct Aintx {
             completion(fakeResponse!)
             return BlankHttpTask()
         }
-        return uploadRequest(path: path, method: .put, uploadType: .data(fileData), params: params, headers: headers).go(completion: completion)
+        
+        let request: HttpDataRequest
+        if (isFake) {
+            request = FakeDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .file(.upload(.data(fileData))))
+            return request.go(completion: completion)
+        }
+        
+        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, bodyData: nil, taskType: .file(.upload(.data(fileData))))
+        return request.go(completion: completion)
     }
     
     /* ✅ */
-    public func uploadRequest(path: String, method: HttpMethod = .put, uploadType: UploadType, params: [String: Any]? = nil, headers: [String: String]? = nil) -> HttpUploadRequest {
-        let request: HttpUploadRequest
-        if (isFake) {
-            fatalError()
-        }
-        
-        request = HttpUploadRequest(base: base, path: path, method: method, uploadType: uploadType, params: params, headers: headers, sessionConfig: config)
-        return request
+    public func fileRequest(downloadPath: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
+        return HttpFileRequest(base: base, path: downloadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.download), progress: progress, completed: completed)
+    }
+    
+    /* ✅ */
+    public func fileRequest(uploadPath: String, uploadType: UploadType, method: HttpMethod = .post, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
+        return HttpFileRequest(base: base, path: uploadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.upload(uploadType)), progress: progress, completed: completed)
     }
     
 }

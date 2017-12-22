@@ -92,12 +92,28 @@ class AintxPublicTests: XCTestCase {
         sut.download(fakePath, headers: ["key": "value"]) { response in }
         sut.download(fakePath, params: ["key": "value"], headers: ["key": "value"]) { response in }
         
-        let request = sut.download(fakePath, completion: { _ in })
-        XCTAssertNotNil(request)
+        let task = sut.download(fakePath, completion: { _ in })
+        XCTAssertNotNil(task)
     }
     
     func testUpload() {
+        let fileURL = URL(string: "/fake/url")!
+        let fileData = "data".data(using: .utf8)!
+        sut.upload(fakePath, fileURL: fileURL) { response in }
+        sut.upload(fakePath, fileURL: fileURL, params: ["key": "value"]) { response in }
+        sut.upload(fakePath, fileURL: fileURL, headers: ["key": "value"]) { response in }
+        sut.upload(fakePath, fileURL: fileURL, params: ["key": "value"], headers: ["key": "value"]) { response in }
         
+        sut.upload(fakePath, fileData: fileData) { response in }
+        sut.upload(fakePath, fileData: fileData, params: ["key": "value"]) { response in }
+        sut.upload(fakePath, fileData: fileData, headers: ["key": "value"]) { response in }
+        sut.upload(fakePath, fileData: fileData, params: ["key": "value"], headers: ["key": "value"]) { response in }
+        
+        var task = sut.upload(fakePath, fileURL: fileURL, completion: { _ in })
+        XCTAssertNotNil(task)
+        
+        task = sut.upload(fakePath, fileData: fileData, completion: { _ in })
+        XCTAssertNotNil(task)
     }
     
     func testFileRequestForDownload() {
@@ -119,11 +135,22 @@ class AintxPublicTests: XCTestCase {
         request = sut.fileRequest(downloadPath: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request.go()
+        let task = request.go()
+        XCTAssertNotNil(task)
     }
     
     func testFileRequestForUpload() {
+        let fileURL = URL(string: "/fake/url")!
+        let fileData = "data".data(using: .utf8)!
         
+        var request = sut.fileRequest(uploadPath: fakePath, uploadType: .url(fileURL), progress:{ _, _, _ in }, completed: { _, _ in })
+        XCTAssertNotNil(request)
+        
+        request = sut.fileRequest(uploadPath: fakePath, uploadType: .data(fileData), method: .post, params: ["key": "value"], headers: ["key": "value"], progress: nil, completed: { _, _ in })
+        XCTAssertNotNil(request)
+        
+        let task = request.go()
+        XCTAssertNotNil(task)
     }
     
     // TODO: -
@@ -160,36 +187,6 @@ class AintxPublicTests: XCTestCase {
         sut.upload(fakePath, fileData: Data(), params: nil, headers: ["key": "value"]) { response in
             XCTAssertNotNil(response)
         }
-    }
-    
-    func _testUploadRequest() {
-        var request = sut.uploadRequest(path: fakePath, uploadType: .data(Data()))
-        XCTAssertNotNil(request)
-        
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()))
-        XCTAssertNotNil(request)
-        
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), params: ["key": "value"])
-        XCTAssertNotNil(request)
-        
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), headers: ["key": "value"])
-        XCTAssertNotNil(request)
-        
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .data(Data()), params: ["key": "value"], headers: ["key": "value"])
-        XCTAssertNotNil(request)
-        
-        let fileURL = URL(string: "/file/path")!
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL))
-        XCTAssertNotNil(request)
-        
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL), params: ["key": "value"])
-        XCTAssertNotNil(request)
-        
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL), headers: ["key": "value"])
-        XCTAssertNotNil(request)
-        
-        request = sut.uploadRequest(path: fakePath, method: .put, uploadType: .url(fileURL), params: ["key": "value"], headers: ["key": "value"])
-        XCTAssertNotNil(request)
     }
     
     func testFakeResponse() {

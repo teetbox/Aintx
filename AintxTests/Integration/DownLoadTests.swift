@@ -11,13 +11,13 @@ import Aintx
 
 class DownLoadTests: XCTestCase {
     
-    var aintx: Aintx!
+    var sut: Aintx!
     var async: XCTestExpectation!
     
     override func setUp() {
         super.setUp()
         
-        aintx = Aintx(base: "")
+        sut = Aintx(base: "")
         async = expectation(description: "async")
     }
     
@@ -54,9 +54,9 @@ class DownLoadTests: XCTestCase {
             self.async.fulfill()
         }
 
-        let file = aintx.fileRequest(downloadPath: filePath, progress: progress, completed: completed)
-        let file2 = aintx.fileRequest(downloadPath: filePath, progress: progress2, completed: completed2)
-        let file3 = aintx.fileRequest(downloadPath: filePath, progress: progress3, completed: completed3)
+        let file = sut.fileRequest(downloadPath: filePath, progress: progress, completed: completed)
+        let file2 = sut.fileRequest(downloadPath: filePath, progress: progress2, completed: completed2)
+        let file3 = sut.fileRequest(downloadPath: filePath, progress: progress3, completed: completed3)
         let tasks = (file --> file2 --> file3).go()
 
         XCTAssertEqual(tasks.count, 3)
