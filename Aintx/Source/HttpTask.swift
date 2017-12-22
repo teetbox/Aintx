@@ -109,7 +109,22 @@ class HttpFileTask: HttpTask {
         self.progress = progress
         self.completed = completed
         
-        sessionTask = session.downloadTask(with: request)
+        switch taskType {
+        case .data:
+            fatalError()
+        case .file(let fileType):
+            switch fileType {
+            case .download:
+                sessionTask = session.downloadTask(with: request)
+            case .upload(let uploadType):
+                switch uploadType {
+                case .data(let fileData):
+                    sessionTask = session.uploadTask(with: request, from: fileData)
+                case .url(let fileURL):
+                    sessionTask = session.uploadTask(with: request, fromFile: fileURL)
+                }
+            }
+        }
     }
     
     func suspend() {

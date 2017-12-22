@@ -34,7 +34,8 @@ class HttpTaskTests: XCTestCase {
     }
     
     func testDataTaskForUpload() {
-        
+        sut = HttpDataTask(request: request, session: session, taskType: .file(.upload(.url(fileURL))), completion: { _ in })
+        XCTAssert((sut as! HttpDataTask).sessionTask is URLSessionUploadTask)
     }
     
     func testFileTaskForDownload() {
@@ -49,7 +50,8 @@ class HttpTaskTests: XCTestCase {
     }
     
     func testFileTaskForUpload() {
-        
+        sut = HttpFileTask(request: request, session: session, taskType: .file(.upload(.data(fileData))), progress: nil, completed: nil)
+        XCTAssert((sut as! HttpFileTask).sessionTask is URLSessionUploadTask)
     }
     
     func testTaskType() {

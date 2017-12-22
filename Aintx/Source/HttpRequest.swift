@@ -178,11 +178,11 @@ public class HttpFileRequest: HttpRequest {
             fatalError()
         }
         
-        let downloadTask = HttpFileTask(request: request, session: session, taskType: taskType, progress: progress, completed: completed)
-        sessionManager[downloadTask.sessionTask] = downloadTask
-        downloadTask.resume()
+        let fileTask = HttpFileTask(request: request, session: session, taskType: taskType, progress: progress, completed: completed)
+        sessionManager[fileTask.sessionTask] = fileTask
+        fileTask.resume()
         
-        return downloadTask
+        return fileTask
     }
     
 }
