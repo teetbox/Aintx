@@ -169,9 +169,7 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual((tasks[2] as! HttpFileTask).state, .running)
     }
     
-    // TODO: -
-    
-    func _testSetAuthorizationWithUsernameAndPassword() {
+    func testSetAuthorizationWithUsernameAndPassword() {
         let loginString = "username:password"
         let loginData = loginString.data(using: .utf8)!
         let base64LoginString = loginData.base64EncodedString()
@@ -181,7 +179,7 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(sut.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic \(base64LoginString)")
     }
     
-    func _testSetAuthorizationWithBasicToken() {
+    func testSetAuthorizationWithBasicToken() {
         _ = sut.setAuthorization(basicToken: "ABC")
         
         XCTAssertEqual(sut.urlRequest?.value(forHTTPHeaderField: "Authorization"), "Basic ABC")

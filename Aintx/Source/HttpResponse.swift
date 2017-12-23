@@ -61,7 +61,6 @@ public struct HttpResponse: Response {
 
 extension HttpResponse {
 
-    /* ✅ */
     init(fakeRequest: HttpRequest) {
         self.fakeRequest = fakeRequest as? FakeDataRequest
     }

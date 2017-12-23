@@ -24,6 +24,7 @@ public class HttpRequest {
     let headers: [String: String]?
     let session: URLSession
     
+    /* ✅ */
     init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig) {
         self.base = base
         self.path = path
@@ -58,6 +59,7 @@ public class HttpRequest {
     
 }
 
+/* ✅ */
 extension HttpRequest {
     
     public func setAuthorization(username: String, password: String) -> Self {
@@ -95,6 +97,7 @@ public class HttpDataRequest: HttpRequest {
     let bodyData: Data?
     let taskType: TaskType
     
+    /* ✅ */
     init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, bodyData: Data? = nil, taskType: TaskType = .data) {
         self.bodyData = bodyData
         self.taskType = taskType
@@ -114,6 +117,7 @@ public class HttpDataRequest: HttpRequest {
         }
     }
     
+    /* ✅ */
     @discardableResult
     public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard httpError == nil else {
@@ -151,6 +155,7 @@ public class HttpFileRequest: HttpRequest {
     
     let sessionManager = SessionManager.shared
     
+    /* ✅ */
     init(base: String, path: String, method: HttpMethod, params: [String : Any]?, headers: [String : String]?, sessionConfig: SessionConfig, taskType: TaskType, progress: ProgressClosure? = nil, completed: CompletedClosure?) {
         self.taskType = taskType
         self.progress = progress
@@ -167,6 +172,7 @@ public class HttpFileRequest: HttpRequest {
         }
     }
     
+    /* ✅ */
     @discardableResult
     public func go() -> HttpTask {
         guard httpError == nil else {
@@ -205,6 +211,7 @@ public class HttpRequestGroup {
     let type: GroupType
     let sessionManager = SessionManager.shared
     
+    /* ✅ */
     public var isEmpty: Bool {
         return requestQueue.isEmpty
     }
@@ -282,48 +289,42 @@ public class HttpRequestGroup {
 infix operator -->: AdditionPrecedence
 infix operator |||: AdditionPrecedence
 
+/* ✅ */
 extension HttpFileRequest {
     
-    /* ✅ */
     public static func -->(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }
     
-    /* ✅ */
     public static func |||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent)
     }
     
-    /* ✅ */
     public static func &&(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }
     
-    /* ✅ */
     public static func ||(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .concurrent)
     }
     
 }
 
+/* ✅ */
 extension HttpRequestGroup {
     
-    /* ✅ */
     public static func -->(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
     
-    /* ✅ */
     public static func |||(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
     
-    /* ✅ */
     public static func &&(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }
     
-    /* ✅ */
     public static func ||(_ group: HttpRequestGroup, _ request: HttpFileRequest) -> HttpRequestGroup {
         return group.append(request)
     }

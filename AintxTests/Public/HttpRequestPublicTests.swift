@@ -63,10 +63,11 @@ class HttpRequestPublicTests: XCTestCase {
         concurrentGroup = concurrentGroup ||| file3
         XCTAssertNotNil(concurrentGroup)
         
+        // Other operators for request group
         sequentialGroup = file && file2 && file3
         XCTAssertNotNil(sequentialGroup)
         
-        concurrentGroup = file ||| file2 ||| file3
+        concurrentGroup = file || file2 || file3
         XCTAssertNotNil(concurrentGroup)
     }
     

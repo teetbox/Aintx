@@ -8,6 +8,7 @@
 
 import Foundation
 
+/* ✅ */
 public class Node<T> {
     
     var value: T
@@ -20,6 +21,7 @@ public class Node<T> {
     
 }
 
+/* ✅ */
 public struct LinkedList<T> {
     
     public var head: Node<T>?
@@ -125,6 +127,7 @@ public struct LinkedList<T> {
     
 }
 
+/* ✅ */
 public struct Queue<T> {
     
     private var list = LinkedList<T>()
