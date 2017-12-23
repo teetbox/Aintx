@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import Aintx
+import Aintx
 
 class UploadTests: XCTestCase {
     
@@ -32,7 +32,7 @@ class UploadTests: XCTestCase {
             
             XCTAssertNil(response.error)
             XCTAssertEqual(code, 200)
-            let dataString = String(data: response.data!, encoding: .utf8)
+            let dataString = String(data: response.data ?? Data(), encoding: .utf8)
             print("Data: \(dataString ?? "is blank")")
 
             self.async.fulfill()

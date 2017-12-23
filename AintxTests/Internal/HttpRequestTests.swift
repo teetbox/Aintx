@@ -171,28 +171,6 @@ class HttpRequestTests: XCTestCase {
     
     // TODO: -
     
-    func testInitUploadRequest() {
-        var uploadType: UploadType = .data(Data())
-        
-        var uploadRequest = HttpUploadRequest(base: fakeBase, path: fakePath, method: .put, uploadType: uploadType, params: ["key": "value"], sessionConfig: .standard)
-        
-        XCTAssertEqual(uploadRequest.base, fakeBase)
-        XCTAssertEqual(uploadRequest.path, fakePath)
-        XCTAssertEqual(uploadRequest.method, .put)
-        XCTAssertEqual(uploadRequest.uploadType, .data(Data()))
-        XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
-        
-        uploadType = .url(URL(string: "/file/path")!)
-        
-        uploadRequest = HttpUploadRequest(base: fakeBase, path: fakePath, method: .post, uploadType: uploadType, params: ["key": "value"], sessionConfig: .standard)
-        
-        XCTAssertEqual(uploadRequest.base, fakeBase)
-        XCTAssertEqual(uploadRequest.path, fakePath)
-        XCTAssertEqual(uploadRequest.method, .post)
-        XCTAssertEqual(uploadRequest.uploadType, .url(URL(string: "/file/path")!))
-        XCTAssertEqual(uploadRequest.params!["key"] as! String, "value")
-    }
-    
     func _testSetAuthorizationWithUsernameAndPassword() {
         let loginString = "username:password"
         let loginData = loginString.data(using: .utf8)!

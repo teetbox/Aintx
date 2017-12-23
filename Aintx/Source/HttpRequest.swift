@@ -330,42 +330,6 @@ extension HttpRequestGroup {
     
 }
 
-// TODO: -
-
-public class HttpUploadRequest: HttpRequest {
-    
-    let uploadType: UploadType
-    
-    init(base: String, path: String, method: HttpMethod, uploadType: UploadType, params: [String: Any]?, headers: [String: String]? = nil, sessionConfig: SessionConfig) {
-        self.uploadType = uploadType
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
-    }
-    
-    public func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        
-//        let uploadTask: URLSessionUploadTask
-//
-//        switch uploadType {
-//        case .data(let fileData):
-//            uploadTask = session.uploadTask(with: urlRequest!, from: fileData) { (data, response, error) in
-//                let httpResponse = HttpResponse(data: data, response: response, error: error)
-//                completion(httpResponse)
-//            }
-//        case .url(let fileURL):
-//            uploadTask = session.uploadTask(with: urlRequest!, fromFile: fileURL) { (data, response, error) in
-//                let httpResponse = HttpResponse(data: data, response: response, error: error)
-//                completion(httpResponse)
-//            }
-//        }
-//
-//        uploadTask.resume()
-//        return HttpUploadTask(task: uploadTask)
-
-        return BlankHttpTask()
-    }
-    
-}
-
 class FakeDataRequest: HttpDataRequest {
 
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
