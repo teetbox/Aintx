@@ -18,6 +18,10 @@ class UploadTests: XCTestCase {
     let fileURL = URL(string: "/Users/matt/Desktop/swift.jpg")!
     let headers = ["Content-Type": "application/x-www-form-urlencoded"]
     
+    let imgurBase = "https://imgur.com"
+    let uploadPath = "/upload"
+    let clientID = "05dfe97d5d25788"
+    
     override func setUp() {
         super.setUp()
         
@@ -39,6 +43,15 @@ class UploadTests: XCTestCase {
         }
         
         wait(for: [async], timeout: 20)
+    }
+    
+    func testImgurUpload() {
+        sut = Aintx(base: imgurBase, config: .background("upload"))
+        let request = sut.fileRequest(uploadPath: uploadPath, uploadType: .data(Data())) { url, error in
+            // TODO: - change url to data
+        }
+        
+        request.go()
     }
     
 }
