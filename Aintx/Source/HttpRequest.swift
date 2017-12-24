@@ -55,6 +55,8 @@ public class HttpRequest {
         if let params = params, method != HttpMethod.get {
             urlRequest?.httpBody = try? JSONSerialization.data(withJSONObject: params, options: [])
         }
+        
+        // TODO: - Multi part form data handler
     }
     
 }
