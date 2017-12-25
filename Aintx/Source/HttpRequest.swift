@@ -55,8 +55,6 @@ public class HttpRequest {
         if let params = params, method != HttpMethod.get {
             urlRequest?.httpBody = try? JSONSerialization.data(withJSONObject: params, options: [])
         }
-        
-        // TODO: - Multi part form data handler
     }
     
 }
@@ -85,6 +83,56 @@ extension HttpRequest {
         return self
     }
     
+    func createHttpBody(with data: Data, boundary: String) -> Data? {
+        let breakLine = "\r\n"
+
+        let filePathKey = "userNo"
+        let filePathValue = "test1234"
+        let fileName = "swift.jpg"
+        let mimeType = "image/jpeg"
+        
+        var bodyData = Data()
+        
+        bodyData.append("--\(boundary)\r\n")
+        bodyData.append("Content-Disposition: form-data; name=\"\(filePathKey)\"\r\n\r\n")
+        bodyData.append("\(filePathValue)\r\n")
+
+        bodyData.append("--\(boundary)" + breakLine)
+        bodyData.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(fileName)\"" + breakLine)
+        bodyData.append("Content-Type: \(mimeType)" + breakLine + breakLine)
+        bodyData.append(data)
+        bodyData.append(breakLine)
+        bodyData.append("--\(boundary)--" + breakLine)
+
+        let bodyString = """
+            ------WebKitFormBoundaryYWNidkgxbVCooBgj
+            Content-Disposition: form-data; name="file"; filename="swift.jpg"
+            Content-Type: image/jpeg
+
+
+            """
+        let bodyString2 = """
+            ------WebKitFormBoundaryYWNidkgxbVCooBgj
+            Content-Disposition: form-data; name="userNo"
+
+            go1234
+            ------WebKitFormBoundaryYWNidkgxbVCooBgj--
+            """
+        
+        return bodyData
+    }
+    
+    func generateBoundaryString() -> String {
+        return "Boundary-\(UUID().uuidString)"
+    }
+}
+
+extension Data {
+    mutating func append(_ string: String, using encoding: String.Encoding = .utf8) {
+        if let data = string.data(using: encoding) {
+            append(data)
+        }
+    }
 }
 
 // MARK: - HttpDataRequest
@@ -108,6 +156,12 @@ public class HttpDataRequest: HttpRequest {
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
         
+        
+        let boundary = generateBoundaryString()
+//        if case .post = method {
+//            urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+//        }
+        
         if let headers = headers {
             for (key, value) in headers {
                 urlRequest?.setValue(value, forHTTPHeaderField: key)
@@ -115,7 +169,7 @@ public class HttpDataRequest: HttpRequest {
         }
         
         if let bodyData = bodyData {
-            urlRequest?.httpBody = bodyData
+            urlRequest?.httpBody = createHttpBody(with: bodyData, boundary: boundary)
         }
     }
     
@@ -293,7 +347,7 @@ infix operator |||: AdditionPrecedence
 
 /* ✅ */
 extension HttpFileRequest {
-    
+
     public static func -->(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }

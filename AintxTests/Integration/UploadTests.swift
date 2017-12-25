@@ -18,10 +18,6 @@ class UploadTests: XCTestCase {
     let fileURL = URL(string: "/Users/matt/Desktop/swift.jpg")!
     let headers = ["Content-Type": "application/x-www-form-urlencoded"]
     
-    let imgurBase = "https://imgur.com"
-    let uploadPath = "/upload"
-    let clientID = "05dfe97d5d25788"
-    
     override func setUp() {
         super.setUp()
         
@@ -45,21 +41,62 @@ class UploadTests: XCTestCase {
         wait(for: [async], timeout: 20)
     }
     
+    func testUploadProfile() {
+        sut = Aintx(base: "https://efbplus.ceair.com:600/hwappcms/etp")
+        
+        guard let image = UIImage(contentsOfFile: "/Users/matt/Desktop/swift.jpg") else { return }
+        guard let imageData = UIImageJPEGRepresentation(image, 1.0) else { return }
+        
+        sut.post("/fileUpload/uploadIcon", bodyData: imageData) { response in
+            let httpResponse = response.urlResponse as? HTTPURLResponse
+            if let status = httpResponse?.statusCode {
+                XCTAssertEqual(status, 200)
+            }
+            
+            if let headers = httpResponse?.allHeaderFields {
+                print(headers)
+            }
+            if let json = response.json {
+                print(json)
+            }
+            if let error = response.error {
+                print(error)
+            }
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 50)
+    }
+    
+    func testUpload2() {
+        let headers = ["Content-Type": "multipart/form-data; boundary=--dfyguhimcbe"]
+        sut = Aintx(base: "https://efbplus.ceair.com:600/hwappcms/etp")
+        let request = sut.fileRequest(uploadPath: "/fileUpload/uploadIcon", uploadType: .url(URL(string: "/Users/matt/Desktop/swift.jpg")!), params: ["userNo": "go1234"], completed: { _, error in
+            
+            if let error = error {
+                print(error)
+            }
+            
+            self.async.fulfill()
+        })
+        
+        request.go()
+        wait(for: [async], timeout: 50)
+    }
+    
     func testImgurUpload() {
-        sut = Aintx(base: imgurBase, config: .background("upload"))
+        /*
+        let imgurBase = "https://imgur.com"
+        let uploadPath = "/upload"
+        let clientID = "05dfe97d5d25788"
+        
+        sut = Aintx(base: imgurBase, config: .background("background"))
         let request = sut.fileRequest(uploadPath: uploadPath, uploadType: .data(Data())) { url, error in
             // TODO: - change url to data
         }
         
         request.go()
+        */
     }
     
 }
-
-
-
-
-
-
-
-
