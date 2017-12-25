@@ -154,6 +154,8 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         print("###### URLSessionDataDelegate - didReceive, completionHandler ######")
         print(#function)
+        let httpURLResponse = (response as? HTTPURLResponse)?.statusCode
+        print(httpURLResponse)
     }
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome downloadTask: URLSessionDownloadTask) {

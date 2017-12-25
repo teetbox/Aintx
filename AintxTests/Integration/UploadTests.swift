@@ -15,7 +15,7 @@ class UploadTests: XCTestCase {
     var async: XCTestExpectation!
     
     let path = "http://127.0.0.1:8000/upload"
-    let fileURL = URL(string: "/Users/matt/Desktop/swift.jpg")!
+    let fileURL = URL(string: "/Users/matt/Desktop/swift.jpeg")!
     let headers = ["Content-Type": "application/x-www-form-urlencoded"]
     
     override func setUp() {
@@ -85,18 +85,34 @@ class UploadTests: XCTestCase {
     }
     
     func testImgurUpload() {
-        /*
-        let imgurBase = "https://imgur.com"
-        let uploadPath = "/upload"
+        let imgurBase = "https://api.imgur.com"
+        let uploadPath = "/3/image"
         let clientID = "05dfe97d5d25788"
         
-        sut = Aintx(base: imgurBase, config: .background("background"))
-        let request = sut.fileRequest(uploadPath: uploadPath, uploadType: .data(Data())) { url, error in
-            // TODO: - change url to data
+        sut = Aintx(base: imgurBase)
+//        let request = sut.fileRequest(uploadPath: uploadPath, uploadType: .data(Data())) { url, error in
+//            // TODO: - change url to data
+//            print(error)
+//            self.async.fulfill()
+//        }
+        //        request.go()
+
+//        sut.upload(uploadPath, fileURL: fileURL, headers: ["Client-ID \(clientID)": "Authorization"]) { response in
+//            let statusCode = (response.urlResponse as? HTTPURLResponse)?.statusCode
+//            print(statusCode)
+//            self.async.fulfill()
+//        }
+        
+        let imageURL = "/Users/matt/Desktop/swift.jpeg";
+        
+        let imageData = try! Data(contentsOf: URL(string: imageURL)!)
+        sut.post(uploadPath, bodyData: imageData, headers: ["Client-ID \(clientID)": "Authorization"]) { response in
+            let statusCode = (response.urlResponse as? HTTPURLResponse)?.statusCode
+            print(statusCode)
+            self.async.fulfill()
         }
         
-        request.go()
-        */
+        wait(for: [async], timeout: 50)
     }
     
 }
