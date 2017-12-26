@@ -82,57 +82,6 @@ extension HttpRequest {
         urlRequest?.setValue("Basic \(token)", forHTTPHeaderField: "Authorization")
         return self
     }
-    
-    func createHttpBody(with data: Data, boundary: String) -> Data? {
-        let breakLine = "\r\n"
-
-        let filePathKey = "userNo"
-        let filePathValue = "test1234"
-        let fileName = "swift.jpg"
-        let mimeType = "image/jpeg"
-        
-        var bodyData = Data()
-        
-        bodyData.append("--\(boundary)\r\n")
-        bodyData.append("Content-Disposition: form-data; name=\"\(filePathKey)\"\r\n\r\n")
-        bodyData.append("\(filePathValue)\r\n")
-
-        bodyData.append("--\(boundary)" + breakLine)
-        bodyData.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(fileName)\"" + breakLine)
-        bodyData.append("Content-Type: \(mimeType)" + breakLine + breakLine)
-        bodyData.append(data)
-        bodyData.append(breakLine)
-        bodyData.append("--\(boundary)--" + breakLine)
-
-        let bodyString = """
-            ------WebKitFormBoundaryYWNidkgxbVCooBgj
-            Content-Disposition: form-data; name="file"; filename="swift.jpg"
-            Content-Type: image/jpeg
-
-
-            """
-        let bodyString2 = """
-            ------WebKitFormBoundaryYWNidkgxbVCooBgj
-            Content-Disposition: form-data; name="userNo"
-
-            go1234
-            ------WebKitFormBoundaryYWNidkgxbVCooBgj--
-            """
-        
-        return bodyData
-    }
-    
-    func generateBoundaryString() -> String {
-        return "Boundary-\(UUID().uuidString)"
-    }
-}
-
-extension Data {
-    mutating func append(_ string: String, using encoding: String.Encoding = .utf8) {
-        if let data = string.data(using: encoding) {
-            append(data)
-        }
-    }
 }
 
 // MARK: - HttpDataRequest
@@ -156,21 +105,51 @@ public class HttpDataRequest: HttpRequest {
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
         
-        
-        let boundary = generateBoundaryString()
-//        if case .post = method {
-//            urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-//        }
-        
         if let headers = headers {
             for (key, value) in headers {
                 urlRequest?.setValue(value, forHTTPHeaderField: key)
             }
         }
         
-        if let bodyData = bodyData {
-            urlRequest?.httpBody = createHttpBody(with: bodyData, boundary: boundary)
+        if case .file(.upload(let uploadType)) = taskType {
+            let boundary = generateBoundary()
+            urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            
+            let data: Data
+            switch uploadType {
+            case .data(let fileData):
+                data = fileData
+            case .url(let fileURL):
+                data = try! Data(contentsOf: fileURL, options: .uncached)
+            }
+            
+            urlRequest?.httpBody = createHttpBody(with: data, params: params, boundary: boundary)
         }
+    }
+    
+    private func createHttpBody(with data: Data, params: [String: Any]?, boundary: String) -> Data? {
+        var body = Data()
+        
+        if let params = params {
+            for (key, value) in params {
+                body.append("--\(boundary)\r\n")
+                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.append("\(value)\r\n")
+            }
+        }
+        
+        body.append("--\(boundary)\r\n")
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"swift.jpg\"\r\n")
+        body.append("Content-Type: image/jpeg\r\n\r\n")
+        body.append(data)
+        body.append("\r\n")
+        body.append("--\(boundary)--\r\n")
+        
+        return body
+    }
+    
+    private func generateBoundary() -> String {
+        return "Boundary-\(UUID().uuidString)"
     }
     
     /* ✅ */
@@ -190,6 +169,14 @@ public class HttpDataRequest: HttpRequest {
         return dataTask
     }
     
+}
+
+extension Data {
+    mutating func append(_ string: String, using encoding: String.Encoding = .utf8) {
+        if let data = string.data(using: encoding) {
+            append(data)
+        }
+    }
 }
 
 // MARK: - HttpFileRequest
@@ -226,6 +213,46 @@ public class HttpFileRequest: HttpRequest {
                 urlRequest?.setValue(value, forHTTPHeaderField: key)
             }
         }
+        
+        if case .file(.upload(let uploadType)) = taskType {
+            let boundary = generateBoundary()
+            urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            
+            let data: Data
+            switch uploadType {
+            case .data(let fileData):
+                data = fileData
+            case .url(let fileURL):
+                data = try! Data(contentsOf: fileURL, options: .uncached)
+            }
+            
+            urlRequest?.httpBody = createHttpBody(with: data, params: params, boundary: boundary)
+        }
+    }
+    
+    private func createHttpBody(with data: Data, params: [String: Any]?, boundary: String) -> Data? {
+        var body = Data()
+        
+        if let params = params {
+            for (key, value) in params {
+                body.append("--\(boundary)\r\n")
+                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.append("\(value)\r\n")
+            }
+        }
+        
+        body.append("--\(boundary)\r\n")
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"swift.jpg\"\r\n")
+        body.append("Content-Type: image/jpeg\r\n\r\n")
+        body.append(data)
+        body.append("\r\n")
+        body.append("--\(boundary)--\r\n")
+        
+        return body
+    }
+    
+    private func generateBoundary() -> String {
+        return "Boundary-\(UUID().uuidString)"
     }
     
     /* ✅ */
