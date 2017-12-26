@@ -69,9 +69,6 @@ class UploadTests: XCTestCase {
         guard let imageData = UIImageJPEGRepresentation(image, 1.0) else { return }
         
         sut.fileRequest(uploadPath: path, uploadType: .data(imageData), method: .post, params: params) { url, error in
-            print(error?.localizedDescription)
-            print(url?.absoluteString)
-            
             self.async.fulfill()
         }.go()
         
