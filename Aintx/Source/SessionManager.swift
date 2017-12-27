@@ -123,12 +123,10 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
         print(#function)
     }
     
-    /* No need
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         print("###### URLSessionTaskDelegate - didSendBodyData, totalBytesSent, totalBytesExpectedToSend ######")
         print(#function)
     }
-    */
     
     /* No need
     func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
@@ -137,12 +135,13 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     }
     */
     
+    // When download task completed, this function is called.
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         print("###### URLSessionTaskDelegate - didCompleteWithError ######")
         print(#function)
         guard error != nil else { return }
         if let fileTask = sessionTasks[task] {
-            fileTask.completed?(nil, error)
+            fileTask.completed?(nil, HttpError.responseFailed(error!))
             if let group = requestGroup[fileTask] {
                 group.nextTask()
             }
@@ -151,12 +150,13 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     
     // URLSessionDataDelegate
     
+    // When upload task completed, this function is called.
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         print("###### URLSessionDataDelegate - didReceive, completionHandler ######")
         print(#function)
         let httpURLResponse = (response as? HTTPURLResponse)?.statusCode
         print(httpURLResponse ?? 000)
-        print(response)
+        print(response as! HTTPURLResponse)
     }
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome downloadTask: URLSessionDownloadTask) {

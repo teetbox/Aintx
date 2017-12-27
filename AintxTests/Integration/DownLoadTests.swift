@@ -21,6 +21,25 @@ class DownLoadTests: XCTestCase {
         async = expectation(description: "async")
     }
     
+    func testDownloadFile() {
+        let filePath = "http://www.tutorialspoint.com/swift/swift_tutorial.pdf"
+        let progress: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
+            let percentage = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite) * 100
+            print("Downloading file \(String(format: "%.2f", percentage))%")
+        }
+        
+        let completed: CompletedClosure = { url, error in
+            print("Downloading file Completed with url: - \(url?.absoluteString ?? "nil")")
+            print("Downloading file Completed with error: - \(error?.localizedDescription ?? "nil")")
+            self.async.fulfill()
+        }
+        
+        let file = sut.fileRequest(downloadPath: filePath, progress: progress, completed: completed)
+        file.go()
+        
+        wait(for: [async], timeout: 200)
+    }
+    
     func testDownloadFiles() {
         let filePath = "http://www.tutorialspoint.com/swift/swift_tutorial.pdf"
         let progress: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in

@@ -13,6 +13,7 @@ public enum HttpError: Error {
     case requestFailed(RequestFailedReason)
     case encordingFailed(EncordingFailedReason)
     case responseFailed(Error)
+//    case statusCode(Int)
     
     public enum RequestFailedReason {
         case invalidURL(String)

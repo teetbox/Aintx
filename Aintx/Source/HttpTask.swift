@@ -125,16 +125,10 @@ class HttpFileTask: HttpTask {
             case .upload(let uploadType):
                 switch uploadType {
                 case .data(_):
-                    guard let uploadData = request.httpBody else {
+                    guard let bodyData = request.httpBody else {
                         fatalError()
                     }
-                    sessionTask = session.uploadTask(with: request, from: uploadData) { (data, response, error) in
-                        let httpResponse = HttpResponse(data: data, response: response, error: error)
-                        print(httpResponse.json as? [String: Any])
-                        print((httpResponse.urlResponse as? HTTPURLResponse)?.statusCode)
-                        completion?(httpResponse)
-                        
-                    }
+                    sessionTask = session.uploadTask(with: request, from: bodyData)
                 case .url(let fileURL):
                     sessionTask = session.uploadTask(with: request, fromFile: fileURL)
                 }

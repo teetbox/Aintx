@@ -61,7 +61,7 @@ class UploadTests: XCTestCase {
         wait(for: [async], timeout: 50)
     }
     
-    func testFileRequestForUpload() {
+    func testFileRequestByBodyData() {
         let path = "https://efbplus.ceair.com:600/hwappcms/etp/fileUpload/uploadIcon"
         let params = ["userNo": "test1234"]
         
@@ -69,6 +69,18 @@ class UploadTests: XCTestCase {
         guard let imageData = UIImageJPEGRepresentation(image, 1.0) else { return }
         
         sut.fileRequest(uploadPath: path, uploadType: .data(imageData), method: .post, params: params) { url, error in
+            self.async.fulfill()
+        }.go()
+        
+        wait(for: [async], timeout: 50)
+    }
+    
+    func testFileRequestByURL() {
+        let path = "https://efbplus.ceair.com:600/hwappcms/etp/fileUpload/uploadIcon"
+        let fileURL = URL(string: "/Users/matt/Desktop/swift.jpeg")!
+        let params = ["userNo": "test1234"]
+        
+        sut.fileRequest(uploadPath: path, uploadType: .url(fileURL), method: .post, params: params) { (url, error) in
             self.async.fulfill()
         }.go()
         

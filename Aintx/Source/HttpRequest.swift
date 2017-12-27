@@ -182,7 +182,7 @@ extension Data {
 // MARK: - HttpFileRequest
 
 public typealias ProgressClosure = (Int64, Int64, Int64) -> Void
-public typealias CompletedClosure = (URL?, Error?) -> Void
+public typealias CompletedClosure = (URL?, HttpError?) -> Void
 
 /* HttpFileRequest subclass from HttpRequest
  * This class handles download and upload requests with multi callback closures
@@ -223,7 +223,10 @@ public class HttpFileRequest: HttpRequest {
             case .data(let fileData):
                 data = fileData
             case .url(let fileURL):
-                data = try! Data(contentsOf: fileURL, options: .uncached)
+                guard let image = UIImage(contentsOfFile: "/Users/matt/Desktop/swift.jpg") else { return }
+                guard let imageData = UIImageJPEGRepresentation(image, 1.0) else { return }
+                
+                data = imageData
             }
             
             urlRequest?.httpBody = createHttpBody(with: data, params: params, boundary: boundary)
