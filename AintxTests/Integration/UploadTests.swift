@@ -68,7 +68,14 @@ class UploadTests: XCTestCase {
         guard let image = UIImage(contentsOfFile: "/Users/matt/Desktop/swift.jpg") else { return }
         guard let imageData = UIImageJPEGRepresentation(image, 1.0) else { return }
         
-        sut.fileRequest(uploadPath: path, uploadType: .data(imageData), method: .post, params: params) { url, error in
+        let progress: ProgressClosure = { bytesWritten, totalBytesWritten, totalBytesExpectedToWrite in
+            let percentage = Float(totalBytesWritten) / Float(totalBytesExpectedToWrite) * 100
+            print("Uploading file \(String(format: "%.2f", percentage))%")
+        }
+        
+        sut.fileRequest(uploadPath: path, uploadType: .data(imageData), method: .post, params: params, progress: progress) { url, error in
+            print(url)
+            print(error?.localizedDescription)
             self.async.fulfill()
         }.go()
         
@@ -81,6 +88,8 @@ class UploadTests: XCTestCase {
         let params = ["userNo": "test1234"]
         
         sut.fileRequest(uploadPath: path, uploadType: .url(fileURL), method: .post, params: params) { (url, error) in
+            print(url)
+            print(error!.localizedDescription)
             self.async.fulfill()
         }.go()
         

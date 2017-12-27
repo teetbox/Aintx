@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum HttpStatus: Int {
+public enum HttpStatus: Int {
     // Informational
     case `continue` = 100,
          switchingProtocols = 101
@@ -63,6 +63,10 @@ enum HttpStatus: Int {
     
     init(code: Int) {
         self = HttpStatus(rawValue: code) ?? .unknown
+    }
+    
+    var isSuccessful: Bool {
+        return rawValue >= 200 && rawValue < 300
     }
     
     var description: String {

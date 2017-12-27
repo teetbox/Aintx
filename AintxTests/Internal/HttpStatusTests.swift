@@ -179,4 +179,24 @@ class HttpStatusTests: XCTestCase {
         XCTAssertEqual(sut.description, "Unknown HTTP Status Code")
     }
     
+    func testIsSuccessful() {
+        sut = HttpStatus(code: 199)
+        XCTAssertFalse(sut.isSuccessful)
+
+        sut = HttpStatus(code: 200)
+        XCTAssert(sut.isSuccessful)
+        
+        sut = HttpStatus(code: 299)
+        XCTAssertFalse(sut.isSuccessful)
+        
+        sut = HttpStatus(code: 300)
+        XCTAssertFalse(sut.isSuccessful)
+        
+        sut = HttpStatus(code: 400)
+        XCTAssertFalse(sut.isSuccessful)
+        
+        sut = HttpStatus(code: 500)
+        XCTAssertFalse(sut.isSuccessful)
+    }
+    
 }

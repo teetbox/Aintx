@@ -126,6 +126,9 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         print("###### URLSessionTaskDelegate - didSendBodyData, totalBytesSent, totalBytesExpectedToSend ######")
         print(#function)
+        if let fileTask = sessionTasks[task] {
+            fileTask.progress?(bytesSent, totalBytesSent, totalBytesExpectedToSend)
+        }
     }
     
     /* No need
@@ -154,9 +157,23 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         print("###### URLSessionDataDelegate - didReceive, completionHandler ######")
         print(#function)
-        let httpURLResponse = (response as? HTTPURLResponse)?.statusCode
-        print(httpURLResponse ?? 000)
-        print(response as! HTTPURLResponse)
+        if let httpURLResponse = response as? HTTPURLResponse {
+            let statusCode = httpURLResponse.statusCode
+            let httpStatus = HttpStatus(code: statusCode)
+            
+            var httpError: HttpError?
+            if !httpStatus.isSuccessful {
+                httpError = HttpError.statusCodeError(httpStatus)
+            }
+            
+            if let fileTask = sessionTasks[dataTask] {
+                fileTask.completed?(httpURLResponse.url, httpError)
+                if let group = requestGroup[fileTask] {
+                    group.nextTask()
+                }
+            }
+            print(httpURLResponse)
+        }
     }
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didBecome downloadTask: URLSessionDownloadTask) {

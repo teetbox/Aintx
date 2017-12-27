@@ -13,7 +13,7 @@ public enum HttpError: Error {
     case requestFailed(RequestFailedReason)
     case encordingFailed(EncordingFailedReason)
     case responseFailed(Error)
-//    case statusCode(Int)
+    case statusCodeError(HttpStatus)
     
     public enum RequestFailedReason {
         case invalidURL(String)
@@ -38,6 +38,8 @@ extension HttpError: LocalizedError {
             return reason.localizedDescription
         case .responseFailed(let error):
             return error.localizedDescription
+        case .statusCodeError(let statusCode):
+            return "HTTP Status Code: \(statusCode.rawValue) - " + statusCode.description
         }
     }
     

@@ -146,6 +146,11 @@ public struct Aintx {
         return request.go(completion: completion)
     }
     
+    @discardableResult
+    public func upload(_ path: String, contents: MultipartContent..., params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+        return BlankHttpTask()
+    }
+    
     /* ✅ */
     @discardableResult
     public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {

@@ -97,22 +97,14 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testUpload() {
-        let fileURL = URL(string: "/fake/url")!
-        let fileData = "data".data(using: .utf8)!
-        sut.upload(fakePath, fileURL: fileURL) { response in }
-        sut.upload(fakePath, fileURL: fileURL, params: ["key": "value"]) { response in }
-        sut.upload(fakePath, fileURL: fileURL, headers: ["key": "value"]) { response in }
-        sut.upload(fakePath, fileURL: fileURL, params: ["key": "value"], headers: ["key": "value"]) { response in }
+        let content = MultipartContent(name: "file", fileName: "swift.jpg", contentType: .jpg, data: Data())
+        let content2 = content
+        let content3 = content
         
-        sut.upload(fakePath, fileData: fileData) { response in }
-        sut.upload(fakePath, fileData: fileData, params: ["key": "value"]) { response in }
-        sut.upload(fakePath, fileData: fileData, headers: ["key": "value"]) { response in }
-        sut.upload(fakePath, fileData: fileData, params: ["key": "value"], headers: ["key": "value"]) { response in }
+        sut.upload(fakeBase, contents: content, completion: { _ in })
+        sut.upload(fakeBase, contents: content, content2, content3, completion: { _ in })
         
-        var task = sut.upload(fakePath, fileURL: fileURL, completion: { _ in })
-        XCTAssertNotNil(task)
-        
-        task = sut.upload(fakePath, fileData: fileData, completion: { _ in })
+        let task = sut.upload(fakeBase, contents: content, params: ["key": "value"], headers: ["key": "value"], completion: { _ in })
         XCTAssertNotNil(task)
     }
     
