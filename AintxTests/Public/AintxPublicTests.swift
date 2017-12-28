@@ -101,10 +101,10 @@ class AintxPublicTests: XCTestCase {
         let content2 = content
         let content3 = content
         
-        sut.upload(fakeBase, contents: content, completion: { _ in })
-        sut.upload(fakeBase, contents: content, content2, content3, completion: { _ in })
+        sut.upload(fakePath, contents: content, completion: { _ in })
+        sut.upload(fakePath, contents: content, content2, content3, completion: { _ in })
         
-        let task = sut.upload(fakeBase, contents: content, params: ["key": "value"], headers: ["key": "value"], completion: { _ in })
+        let task = sut.upload(fakePath, contents: content, params: ["key": "value"], headers: ["key": "value"], completion: { _ in })
         XCTAssertNotNil(task)
     }
     
@@ -132,53 +132,15 @@ class AintxPublicTests: XCTestCase {
     }
     
     func testFileRequestForUpload() {
-        let fileURL = URL(string: "/fake/url")!
-        let fileData = "data".data(using: .utf8)!
-        
-        var request = sut.fileRequest(uploadPath: fakePath, uploadType: .url(fileURL), progress:{ _, _, _ in }, completed: { _, _ in })
+        let content = MultipartContent(name: "", fileName: "", contentType: .png, data: Data())
+        var request = sut.fileRequest(uploadPath: fakePath, contents: content, progress:{ _, _, _ in }, completed: { _, _ in })
         XCTAssertNotNil(request)
         
-        request = sut.fileRequest(uploadPath: fakePath, uploadType: .data(fileData), method: .post, params: ["key": "value"], headers: ["key": "value"], progress: nil, completed: { _, _ in })
+        request = sut.fileRequest(uploadPath: fakePath, method: .post, contents: content, params: ["key": "value"], headers: ["key": "value"], progress: nil, completed: { _, _ in })
         XCTAssertNotNil(request)
         
         let task = request.go()
         XCTAssertNotNil(task)
-    }
-    
-    // TODO: -
-    func _testUpload() {
-        let fileURL = URL(string: "/file/path")!
-        sut.upload(fakePath, fileURL: fileURL) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.upload(fakePath, fileURL: fileURL, params: nil) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.upload(fakePath, fileURL: fileURL, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.upload(fakePath, fileURL: fileURL, params: nil, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-    
-        sut.upload(fakePath, fileData: Data()) { response in
-            XCTAssertNotNil(response)
-        }
-    
-        sut.upload(fakePath, fileData: Data(), params: nil) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.upload(fakePath, fileData: Data(), headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
-        
-        sut.upload(fakePath, fileData: Data(), params: nil, headers: ["key": "value"]) { response in
-            XCTAssertNotNil(response)
-        }
     }
     
     func testFakeResponse() {
@@ -209,15 +171,12 @@ class AintxPublicTests: XCTestCase {
             XCTAssertEqual(response.data, fakeData)
         }
         
-        sut.upload(fakePath, fileData: fakeData!) { response in
-            XCTAssertEqual(response.data, fakeData)
-        }
-        
-        sut.upload(fakePath, fileURL: URL(string: "/file/path")!) { response in
-            XCTAssertEqual(response.data, fakeData)
-        }
-        
         sut.download(fakePath) { response in
+            XCTAssertEqual(response.data, fakeData)
+        }
+        
+        let content = MultipartContent(name: "", fileName: "", contentType: .png, data: Data())
+        sut.upload(fakePath, contents: content) { response in
             XCTAssertEqual(response.data, fakeData)
         }
     }

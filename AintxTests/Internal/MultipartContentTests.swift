@@ -22,7 +22,7 @@ class MultipartContentTests: XCTestCase {
     func testInitWithData() {
         XCTAssertEqual(sut.name, "file")
         XCTAssertEqual(sut.fileName, "swift.jpg")
-        XCTAssertEqual(sut.contentType, "image/jpeg")
+        XCTAssertEqual(sut.type, "image/jpeg")
         XCTAssertEqual(sut.data, Data())
     }
     

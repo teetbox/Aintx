@@ -29,12 +29,13 @@ class HttpTaskTests: XCTestCase {
     }
     
     func testDataTaskForDownload() {
-        sut = HttpDataTask(request: request, session: session, taskType: .file(.download), completion: { _ in })
+        sut = HttpDataTask(request: request, session: session, taskType: .download, completion: { _ in })
         XCTAssert((sut as! HttpDataTask).sessionTask is URLSessionDownloadTask)
     }
     
     func testDataTaskForUpload() {
-        sut = HttpDataTask(request: request, session: session, taskType: .file(.upload(.url(fileURL))), completion: { _ in })
+        let content = MultipartContent(name: "", fileName: "", contentType: .png, data: Data())
+        sut = HttpDataTask(request: request, session: session, taskType: .upload([content]), completion: { _ in })
         XCTAssert((sut as! HttpDataTask).sessionTask is URLSessionUploadTask)
     }
     
@@ -42,28 +43,30 @@ class HttpTaskTests: XCTestCase {
         let progress: ProgressClosure = { _, _, _ in }
         let completed: CompletedClosure = { _, _ in }
         
-        sut = HttpFileTask(request: request, session: session, taskType: .file(.download), progress: progress, completed: completed)
-        XCTAssertEqual((sut as! HttpFileTask).taskType, .file(.download))
+        sut = HttpFileTask(request: request, session: session, taskType: .download, progress: progress, completed: completed)
+        XCTAssertEqual((sut as! HttpFileTask).taskType, .download)
         XCTAssertNotNil((sut as! HttpFileTask).progress)
         XCTAssertNotNil((sut as! HttpFileTask).completed)
         XCTAssert((sut as! HttpFileTask).sessionTask is URLSessionDownloadTask)
     }
     
     func testFileTaskForUpload() {
-        sut = HttpFileTask(request: request, session: session, taskType: .file(.upload(.data(fileData))), progress: nil, completed: nil)
+        let content = MultipartContent(name: "", fileName: "", contentType: .png, data: Data())
+        sut = HttpFileTask(request: request, session: session, taskType: .upload([content]), progress: nil, completed: nil)
         XCTAssert((sut as! HttpFileTask).sessionTask is URLSessionUploadTask)
     }
     
     func testTaskType() {
+        let content = MultipartContent(name: "file", fileName: "swift.jpg", contentType: .jpg, data: Data())
+        let contents = [content, content]
+        
         let data: TaskType = .data
-        let fileDownload: TaskType = .file(.download)
-        let fileUploadURL: TaskType = .file(.upload(.url(fileURL)))
-        let fileUploadData: TaskType = .file(.upload(.data(fileData)))
+        let download: TaskType = .download
+        let upload: TaskType = .upload(contents)
         
         XCTAssertEqual(data, TaskType.data)
-        XCTAssertEqual(fileDownload, TaskType.file(.download))
-        XCTAssertEqual(fileUploadURL, TaskType.file(.upload(.url(fileURL))))
-        XCTAssertEqual(fileUploadData, TaskType.file(.upload(.data(fileData))))
+        XCTAssertEqual(download, TaskType.download)
+        XCTAssertEqual(upload, TaskType.upload(contents))
     }
     
 }

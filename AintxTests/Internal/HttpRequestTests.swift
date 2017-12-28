@@ -42,16 +42,12 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual((sut as! HttpDataRequest).bodyData, Data())
         XCTAssertEqual((sut as! HttpDataRequest).taskType, .data)
         
-        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download))
-        XCTAssertEqual((sut as! HttpDataRequest).taskType, .file(.download))
+        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download)
+        XCTAssertEqual((sut as! HttpDataRequest).taskType, .download)
         
-        let fileURL = URL(string: "www.fake.com")!
-        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.upload(.url(fileURL))))
-        XCTAssertEqual((sut as! HttpDataRequest).taskType, .file(.upload(.url(fileURL))))
-        
-        let fileData = "data".data(using: .utf8)!
-        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.upload(.data(fileData))))
-        XCTAssertEqual((sut as! HttpDataRequest).taskType, .file(.upload(.data(fileData))))
+        let content = MultipartContent(name: "", fileName: "", contentType: .png, data: Data())
+        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .upload([content]))
+        XCTAssertEqual((sut as! HttpDataRequest).taskType, .upload([content]))
     }
     
     func testGoForDataRequest() {
@@ -78,7 +74,7 @@ class HttpRequestTests: XCTestCase {
         let progress: ProgressClosure = { _, _, _ in }
         let completed: CompletedClosure = { _, _ in }
         
-        sut = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, taskType: .file(.download), progress: progress, completed: completed)
+        sut = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, taskType: .download, progress: progress, completed: completed)
         XCTAssertEqual(sut.base, fakeBase)
         XCTAssertEqual(sut.path, fakePath)
         XCTAssertEqual(sut.method, .get)
@@ -87,14 +83,18 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
         XCTAssertNotNil(sut.urlString)
         XCTAssertNotNil(sut.urlRequest)
-        XCTAssertEqual((sut as! HttpFileRequest).taskType, .file(.download))
+        XCTAssertEqual((sut as! HttpFileRequest).taskType, .download)
         XCTAssertNotNil((sut as! HttpFileRequest).progress)
         XCTAssertNotNil((sut as! HttpFileRequest).completed)
         XCTAssertEqual((sut as! HttpFileRequest).sessionManager, SessionManager.shared)
+        
+        let content = MultipartContent(name: "", fileName: "", contentType: .png, data: Data())
+        sut = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, taskType: .upload([content]), progress: progress, completed: completed)
+        XCTAssertEqual((sut as! HttpFileRequest).taskType, .upload([content]))
     }
     
     func testGoForFileRequest() {
-        sut = HttpFileRequest(base: fakeBase, path: fakePath, method:.get, params: nil, headers: nil, sessionConfig: .background("bg"), taskType: .file(.download), completed: nil)
+        sut = HttpFileRequest(base: fakeBase, path: fakePath, method:.get, params: nil, headers: nil, sessionConfig: .background("bg"), taskType: .download, completed: nil)
         
         (sut as! HttpFileRequest).go()
         let task = (sut as! HttpFileRequest).go()
@@ -107,9 +107,9 @@ class HttpRequestTests: XCTestCase {
     }
     
     func testRequestGroup() {
-        let fileRequest = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let fileRequest2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let fileRequest3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let fileRequest = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let fileRequest2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let fileRequest3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
         
         let group = HttpRequestGroup(lhs: fileRequest, rhs: fileRequest2, type: .sequential)
         XCTAssertFalse(group.isEmpty)
@@ -123,9 +123,9 @@ class HttpRequestTests: XCTestCase {
     }
     
     func testGoForSequentialRequestGroup() {
-        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
         
         let tasks = (file --> file2 --> file3).go()
         
@@ -136,9 +136,9 @@ class HttpRequestTests: XCTestCase {
     }
     
     func testGoForConcurrentRequestGroup() {
-        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
         
         let tasks = (file ||| file2 ||| file3).go()
         
@@ -149,9 +149,9 @@ class HttpRequestTests: XCTestCase {
     }
     
     func testSessionTaskDidComplete() {
-        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let file = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let file2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let file3 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
         
         let group = file --> file2 --> file3
         let tasks = group.go()

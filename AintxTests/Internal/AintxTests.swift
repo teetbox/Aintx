@@ -15,12 +15,6 @@ extension SessionConfig: Equatable {
     }
 }
 
-extension UploadType: Equatable {
-    public static func ==(lhs: UploadType, rhs: UploadType) -> Bool {
-        return "\(lhs)" == "\(rhs)"
-    }
-}
-
 class AintxTests: XCTestCase {
     
     var sut: Aintx!
@@ -256,7 +250,7 @@ class AintxTests: XCTestCase {
         sut.download(fakePath) { response in
             XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
             XCTAssertEqual(response.fakeRequest!.method, .get)
-            XCTAssertEqual(response.fakeRequest!.taskType, .file(.download))
+            XCTAssertEqual(response.fakeRequest!.taskType, .download)
         }
         
         sut.download(fakePath, params: ["key": "value"]) { response in
@@ -284,19 +278,12 @@ class AintxTests: XCTestCase {
     }
     
     func testUpload() {
-        let fileURL = URL(string: "/file/url")!
-        let fileData = "data".data(using: .utf8)!
+        let content = MultipartContent(name: "file", fileName: "swift.jpg", contentType: .jpg, data: Data())
+        let content2 = content
+        let content3 = content
         
-        sut.upload(fakePath, fileURL: fileURL) { response in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .post)
-            XCTAssertEqual(response.fakeRequest!.taskType, .file(.upload(.url(fileURL))))
-        }
-        
-        sut.upload(fakePath, fileData: fileData) { response in
-            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
-            XCTAssertEqual(response.fakeRequest!.method, .post)
-            XCTAssertEqual(response.fakeRequest!.taskType, .file(.upload(.data(fileData))))
+        sut.upload(fakePath, contents: content, content2, content3) { response in
+            XCTAssertEqual(response.fakeRequest!.base, "/fake/path")
         }
     }
     
@@ -323,28 +310,7 @@ class AintxTests: XCTestCase {
     }
     
     func testFileRequestForUpload() {
-        let fileURL = URL(string: "/fake/url")!
-        let fileData = "data".data(using: .utf8)!
         
-        var request: HttpFileRequest
-        
-        request = sut.fileRequest(uploadPath: fakePath, uploadType: .url(fileURL), completed: { _, _ in })
-        XCTAssertEqual(request.base, fakeBase)
-        XCTAssertEqual(request.path, fakePath)
-        XCTAssertEqual(request.method, .post)
-        XCTAssertNil(request.params)
-        XCTAssertNil(request.headers)
-        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
-        XCTAssertNil(request.progress)
-        XCTAssertNotNil(request.completed)
-        
-        request = sut.fileRequest(uploadPath: fakePath, uploadType: .data(fileData), method: .put, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
-        XCTAssertEqual(request.method, .put)
-        XCTAssertEqual(request.params!["key"] as! String, "value")
-        XCTAssertEqual(request.headers!["key"], "value")
-        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
-        XCTAssertNotNil(request.progress)
-        XCTAssertNotNil(request.completed)
     }
     
 }

@@ -84,6 +84,38 @@ extension HttpRequest {
     }
 }
 
+extension HttpRequest {
+    
+    // For upload request, the media type is Multipart/form-data.
+    func createHttpBody(with contents: [MultipartContent], params: [String: Any]?, boundary: String) -> Data? {
+        var body = Data()
+        
+        if let params = params {
+            for (key, value) in params {
+                body.append("--\(boundary)\r\n")
+                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+                body.append("\(value)\r\n")
+            }
+        }
+        
+        for content in contents {
+            body.append("--\(boundary)\r\n")
+            body.append("Content-Disposition: form-data; name=\"\(content.name)\"; filename=\"\(content.fileName)\"\r\n")
+            body.append("Content-Type: \(content.type)\r\n\r\n")
+            body.append(content.data)
+            body.append("\r\n")
+        }
+        
+        body.append("--\(boundary)--\r\n")
+        
+        return body
+    }
+    
+    func generateBoundary() -> String {
+        return "Boundary-\(UUID().uuidString)"
+    }
+}
+
 // MARK: - HttpDataRequest
 
 /* HttpDataRequest subclass from HttpRequest.
@@ -111,45 +143,11 @@ public class HttpDataRequest: HttpRequest {
             }
         }
         
-        if case .file(.upload(let uploadType)) = taskType {
+        if case .upload(let contents) = taskType {
             let boundary = generateBoundary()
             urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            
-            let data: Data
-            switch uploadType {
-            case .data(let fileData):
-                data = fileData
-            case .url(let fileURL):
-                data = try! Data(contentsOf: fileURL, options: .uncached)
-            }
-            
-            urlRequest?.httpBody = createHttpBody(with: data, params: params, boundary: boundary)
+            urlRequest?.httpBody = createHttpBody(with: contents, params: params, boundary: boundary)
         }
-    }
-    
-    private func createHttpBody(with data: Data, params: [String: Any]?, boundary: String) -> Data? {
-        var body = Data()
-        
-        if let params = params {
-            for (key, value) in params {
-                body.append("--\(boundary)\r\n")
-                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
-                body.append("\(value)\r\n")
-            }
-        }
-        
-        body.append("--\(boundary)\r\n")
-        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"swift.jpg\"\r\n")
-        body.append("Content-Type: image/jpeg\r\n\r\n")
-        body.append(data)
-        body.append("\r\n")
-        body.append("--\(boundary)--\r\n")
-        
-        return body
-    }
-    
-    private func generateBoundary() -> String {
-        return "Boundary-\(UUID().uuidString)"
     }
     
     /* ✅ */
@@ -214,48 +212,11 @@ public class HttpFileRequest: HttpRequest {
             }
         }
         
-        if case .file(.upload(let uploadType)) = taskType {
+        if case .upload(let contents) = taskType {
             let boundary = generateBoundary()
             urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            
-            let data: Data
-            switch uploadType {
-            case .data(let fileData):
-                data = fileData
-            case .url(let fileURL):
-                guard let image = UIImage(contentsOfFile: "/Users/matt/Desktop/swift.jpg") else { return }
-                guard let imageData = UIImageJPEGRepresentation(image, 1.0) else { return }
-                
-                data = imageData
-            }
-            
-            urlRequest?.httpBody = createHttpBody(with: data, params: params, boundary: boundary)
+            urlRequest?.httpBody = createHttpBody(with: contents, params: params, boundary: boundary)
         }
-    }
-    
-    private func createHttpBody(with data: Data, params: [String: Any]?, boundary: String) -> Data? {
-        var body = Data()
-        
-        if let params = params {
-            for (key, value) in params {
-                body.append("--\(boundary)\r\n")
-                body.append("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
-                body.append("\(value)\r\n")
-            }
-        }
-        
-        body.append("--\(boundary)\r\n")
-        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"swift.jpg\"\r\n")
-        body.append("Content-Type: image/jpeg\r\n\r\n")
-        body.append(data)
-        body.append("\r\n")
-        body.append("--\(boundary)--\r\n")
-        
-        return body
-    }
-    
-    private func generateBoundary() -> String {
-        return "Boundary-\(UUID().uuidString)"
     }
     
     /* ✅ */

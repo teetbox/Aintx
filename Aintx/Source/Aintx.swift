@@ -22,11 +22,6 @@ public enum HttpMethod: String {
     case delete = "DELETE"
 }
 
-public enum UploadType {
-    case url(URL)
-    case data(Data)
-}
-
 public struct Aintx {
     
     let base: String
@@ -138,22 +133,16 @@ public struct Aintx {
         
         let request: HttpDataRequest
         if (isFake) {
-            request = FakeDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config, taskType: .file(.download))
+            request = FakeDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config, taskType: .download)
             return request.go(completion: completion)
         }
         
-        request = HttpDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config, taskType: .file(.download))
+        request = HttpDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config, taskType: .download)
         return request.go(completion: completion)
     }
     
     @discardableResult
     public func upload(_ path: String, contents: MultipartContent..., params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        return BlankHttpTask()
-    }
-    
-    /* ✅ */
-    @discardableResult
-    public func upload(_ path: String, fileURL: URL, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return BlankHttpTask()
@@ -161,40 +150,22 @@ public struct Aintx {
         
         let request: HttpDataRequest
         if (isFake) {
-            request = FakeDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .file(.upload(.url(fileURL))))
+            request = FakeDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .upload(contents))
             return request.go(completion: completion)
         }
         
-        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, bodyData: nil, taskType: .file(.upload(.url(fileURL))))
-        return request.go(completion: completion)
-    }
-    
-    /* ✅ */
-    @discardableResult
-    public func upload(_ path: String, fileData: Data, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
-        guard fakeResponse == nil else {
-            completion(fakeResponse!)
-            return BlankHttpTask()
-        }
-        
-        let request: HttpDataRequest
-        if (isFake) {
-            request = FakeDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .file(.upload(.data(fileData))))
-            return request.go(completion: completion)
-        }
-        
-        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, bodyData: nil, taskType: .file(.upload(.data(fileData))))
+        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .upload(contents))
         return request.go(completion: completion)
     }
     
     /* ✅ */
     public func fileRequest(downloadPath: String, method: HttpMethod = .get, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
-        return HttpFileRequest(base: base, path: downloadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.download), progress: progress, completed: completed)
+        return HttpFileRequest(base: base, path: downloadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .download, progress: progress, completed: completed)
     }
     
     /* ✅ */
-    public func fileRequest(uploadPath: String, uploadType: UploadType, method: HttpMethod = .post, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
-        return HttpFileRequest(base: base, path: uploadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .file(.upload(uploadType)), progress: progress, completed: completed)
+    public func fileRequest(uploadPath: String, method: HttpMethod = .post, contents: MultipartContent..., params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
+        return HttpFileRequest(base: base, path: uploadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .upload(contents), progress: progress, completed: completed)
     }
     
 }

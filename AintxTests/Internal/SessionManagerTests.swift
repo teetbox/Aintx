@@ -53,7 +53,7 @@ class SessionManagerTests: XCTestCase {
     
     func testSubscriptForSessionTasks() {
         let sessionTask = URLSessionTask()
-        let httpTask = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .file(.upload(.data(Data()))), progress: nil, completed: nil)
+        let httpTask = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .download, progress: nil, completed: nil)
         
         sut[sessionTask] = httpTask
         
@@ -61,11 +61,11 @@ class SessionManagerTests: XCTestCase {
     }
     
     func testSubscriptForRequestGroup() {
-        let fileRequest = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
-        let fileRequest2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .file(.download), completed: nil)
+        let fileRequest = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
+        let fileRequest2 = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download, completed: nil)
         let requestGroup = HttpRequestGroup(lhs: fileRequest, rhs: fileRequest2, type: .concurrent)
         
-        let fileTask = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .file(.download), progress: nil, completed: nil)
+        let fileTask = HttpFileTask(request: URLRequest(url: fakeURL), session: session, taskType: .download, progress: nil, completed: nil)
         sut[fileTask] = requestGroup
         
         XCTAssertNotNil(sut[fileTask])

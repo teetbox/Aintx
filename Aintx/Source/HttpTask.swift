@@ -10,12 +10,8 @@ import Foundation
 
 enum TaskType {
     case data
-    case file(FileType)
-    
-    enum FileType {
-        case download
-        case upload(UploadType)
-    }
+    case download
+    case upload([MultipartContent])
 }
 
 public protocol HttpTask {
@@ -43,30 +39,15 @@ class HttpDataTask: HttpTask {
                 let httpResponse = HttpResponse(data: data, response: response, error: error)
                 completion(httpResponse)
             }
-        case .file(let fileType):
-            switch fileType {
-            case .download:
-                sessionTask = session.downloadTask(with: request) { (url, response, error) in
-                    let httpResponse = HttpResponse(data: nil, response: response, error: error)
-                    completion(httpResponse)
-                }
-            case .upload(let uploadType):
-                switch uploadType {
-                case .data(_):
-//                    sessionTask = session.uploadTask(with: request, from: fileData) { (data, response, error) in
-//                        let httpResponse = HttpResponse(data: data, response: response, error: error)
-//                        completion(httpResponse)
-//                    }
-                    sessionTask = session.dataTask(with: request) { (data, response, error) in
-                        let httpResponse = HttpResponse(data: data, response: response, error: error)
-                        completion(httpResponse)
-                    }
-                case .url(let fileURL):
-                    sessionTask = session.uploadTask(with: request, fromFile: fileURL) { (data, response, error) in
-                        let httpResponse = HttpResponse(data: data, response: response, error: error)
-                        completion(httpResponse)
-                    }
-                }
+        case .download:
+            sessionTask = session.downloadTask(with: request) { (url, response, error) in
+                let httpResponse = HttpResponse(data: nil, response: response, error: error)
+                completion(httpResponse)
+            }
+        case .upload(_):
+            sessionTask = session.dataTask(with: request) { (data, response, error) in
+                let httpResponse = HttpResponse(data: data, response: response, error: error)
+                completion(httpResponse)
             }
         }
     }
@@ -117,22 +98,15 @@ class HttpFileTask: HttpTask {
         
         switch taskType {
         case .data:
-            fatalError()
-        case .file(let fileType):
-            switch fileType {
-            case .download:
-                sessionTask = session.downloadTask(with: request)
-            case .upload(let uploadType):
-                switch uploadType {
-                case .data(_):
-                    guard let bodyData = request.httpBody else {
-                        fatalError()
-                    }
-                    sessionTask = session.uploadTask(with: request, from: bodyData)
-                case .url(let fileURL):
-                    sessionTask = session.uploadTask(with: request, fromFile: fileURL)
-                }
+            // No need for data taskType
+            fatalError("HttpFileTask can only be initialized by download or upload tsakType")
+        case .download:
+            sessionTask = session.downloadTask(with: request)
+        case .upload(_):
+            guard let bodyData = request.httpBody else {
+                fatalError()
             }
+            sessionTask = session.uploadTask(with: request, from: bodyData)
         }
     }
     

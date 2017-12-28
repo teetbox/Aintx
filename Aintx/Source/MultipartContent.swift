@@ -29,13 +29,13 @@ public struct MultipartContent {
     
     let name: String
     let fileName: String
-    let contentType: String
+    let type: String
     let data: Data
     
     public init(name: String, fileName: String, contentType: ContentType, data: Data) {
         self.name = name
         self.fileName = fileName
-        self.contentType = contentType.rawValue
+        self.type = contentType.rawValue
         self.data = data
     }
     
