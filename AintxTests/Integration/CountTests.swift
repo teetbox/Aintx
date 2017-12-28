@@ -22,19 +22,19 @@ struct User: Decodable {
 
 class CountTests: XCTestCase {
     
-    var aintx: Aintx!
+    var sut: Aintx!
     var async: XCTestExpectation!
     
     override func setUp() {
         super.setUp()
         
-        aintx = Aintx(base: "http://count.aintx.com")
+        sut = Aintx(base: "http://count.aintx.com")
         async = expectation(description: "async")
     }
     
     func testGetUser() {
         let params = ["token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJ1c2VySWQiOjIsImlhdCI6MTUxMzY4NjkyMCwiZXhwIjoxNTEzNjkwNTIwfQ.85Fbd3EOLLEElcy8ujuZPJwXcdh9FOCq0y4l4sL0gjM"]
-        aintx.get("/api/v1/user", params: params) { response in
+        sut.get("/api/v1/user", params: params) { response in
             XCTAssertNotNil(response.data)
 
             let decoder = JSONDecoder()
@@ -50,7 +50,7 @@ class CountTests: XCTestCase {
     func testPutUser() {
         let params = ["eMail": "tiantong@aintx.com", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJ1c2VySWQiOjIsImlhdCI6MTUxMzI2MDAzOSwiZXhwIjoxNTEzMjYzNjM5fQ.xMjRTketOJ3DN1G0Pt6b8yZySODKcsGWiuT21CP6Ne4"]
         
-        aintx.put("/api/v1/user/2", params: params) { response in
+        sut.put("/api/v1/user/2", params: params) { response in
             let user = try! JSONDecoder().decode(User.self, from: response.data!)
             XCTAssertEqual(user.eMail, "tiantong@aintx.com")
             
@@ -63,7 +63,7 @@ class CountTests: XCTestCase {
     func testRegister() {
         let params = ["userName": "tiantong", "password": "happytt"]
         
-        aintx.post("/api/v1/register", params: params) { response in
+        sut.post("/api/v1/register", params: params) { response in
             let jsonDic = response.json
             XCTAssertNotNil(jsonDic)
             
@@ -77,7 +77,7 @@ class CountTests: XCTestCase {
     
     func testLogin() {
         let params = ["userName": "tiantong", "password": "happytt"]
-        aintx.post("/api/v1/login", params: params) { response in
+        sut.post("/api/v1/login", params: params) { response in
             let json = response.json
             let token = json?["token"] as? String
             XCTAssertNotNil(token)

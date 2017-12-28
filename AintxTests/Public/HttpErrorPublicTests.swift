@@ -25,7 +25,7 @@ class HttpErrorPublicTests: XCTestCase {
     func testDataRequestInBackgroundSession() {
         sut = Aintx(base: fakeBase, config: .background("bg"))
         sut.get(fakePath) { response in
-            XCTAssertEqual(response.error?.localizedDescription, "Data tasks are not supported in background session")
+            XCTAssertEqual(response.error?.localizedDescription, "Data request can't run in background session")
         }
     }
     

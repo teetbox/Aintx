@@ -11,35 +11,42 @@ import XCTest
 
 class HttpResponseTests: XCTestCase {
     
-    var httpResponse: HttpResponse!
+    var sut: HttpResponse!
     
     let fakeBase = "http://www.fake.com"
     let fakePath = "/fake/path"
     
-    func testInit() {
-        httpResponse = HttpResponse()
+    func testInitWithFakeRequest() {
+        var request = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard)
         
-        XCTAssertNil(httpResponse.data)
-        XCTAssertNil(httpResponse.urlResponse)
-        XCTAssertNil(httpResponse.error)
-    }
-    
-    func testInitWithData() {
-        httpResponse = HttpResponse(data: "some".data(using: .utf8), response: URLResponse(), error: nil)
+        sut = HttpResponse(fakeRequest: request)
         
-        XCTAssertEqual(httpResponse.data, "some".data(using: .utf8))
-        XCTAssertNotNil(httpResponse.urlResponse)
-        XCTAssertNil(httpResponse.error)
-    }
-    
-    func testInitWithError() {
-        let httpError = HttpError.requestFailed(.invalidURL("/faka/path"))
-        httpResponse = HttpResponse(data: nil, response: nil, error: httpError)
+        XCTAssertEqual(sut.fakeRequest!.base, fakeBase)
+        XCTAssertEqual(sut.fakeRequest!.path, fakePath)
+        XCTAssertEqual(sut.fakeRequest!.method, .get)
+        XCTAssertEqual(sut.fakeRequest!.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertEqual(sut.fakeRequest!.taskType, .data)
+        XCTAssertNil(sut.fakeRequest!.params)
+        XCTAssertNil(sut.fakeRequest!.headers)
+        XCTAssertNil(sut.fakeRequest!.bodyData)
+        XCTAssertNotNil(sut.fakeRequest!.urlString)
+        XCTAssertNotNil(sut.fakeRequest!.urlRequest)
         
-        XCTAssertNil(httpResponse.data)
-        XCTAssertNil(httpResponse.urlResponse)
-        XCTAssertNotNil(httpResponse.error)
-        XCTAssertEqual(httpResponse.error!.localizedDescription, httpError.localizedDescription)
+        let content = MultiPartContent(name: "", fileName: "", type: .jpg, data: Data())
+        request = HttpDataRequest(base: fakeBase, path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .background("bg"), taskType: .upload(content))
+        
+        sut = HttpResponse(fakeRequest: request)
+        
+        XCTAssertEqual(sut.fakeRequest!.base, fakeBase)
+        XCTAssertEqual(sut.fakeRequest!.path, fakePath)
+        XCTAssertEqual(sut.fakeRequest!.method, .post)
+        XCTAssertEqual(sut.fakeRequest!.session, SessionManager.shared.getSession(with: .background("bg")))
+        XCTAssertEqual(sut.fakeRequest!.taskType, .upload(content))
+        XCTAssertEqual(sut.fakeRequest!.params!["key"] as! String, "value")
+        XCTAssertEqual(sut.fakeRequest!.headers!["key"], "value")
+        XCTAssertNil(sut.fakeRequest!.bodyData)
+        XCTAssertNotNil(sut.fakeRequest!.urlString)
+        XCTAssertNotNil(sut.fakeRequest!.urlRequest)
     }
     
 }

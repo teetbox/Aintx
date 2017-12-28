@@ -54,7 +54,7 @@ extension HttpError.RequestFailedReason: LocalizedError {
         case .paramsAndBodyDataUsedTogether:
             return "Params and bodyData should not be used together in dataRequest"
         case .dataRequestInBackgroundSession:
-            return "Data tasks are not supported in background session"
+            return "Data request can't run in background session"
         }
     }
     

@@ -11,18 +11,18 @@ import Aintx
 
 class ReqResTests: XCTestCase {
     
-    var aintx: Aintx!
+    var sut: Aintx!
     var async: XCTestExpectation!
     
     override func setUp() {
         super.setUp()
         
-        aintx = Aintx(base: "https://reqres.in")
+        sut = Aintx(base: "https://reqres.in")
         async = expectation(description: "async")
     }
     
     func testGetListUsers() {
-        aintx.get("/api/users", params: ["page": 2]) { response in
+        sut.get("/api/users", params: ["page": 2]) { response in
             XCTAssertNotNil(response)
             XCTAssertNil(response.error)
             
@@ -36,7 +36,7 @@ class ReqResTests: XCTestCase {
     }
     
     func testPostCreate() {
-        aintx.post("/api/users", params: ["name": "morpheus", "job": "leader"]) { response in
+        sut.post("/api/users", params: ["name": "morpheus", "job": "leader"]) { response in
             XCTAssertNotNil(response)
             XCTAssertNil(response.error)
             
@@ -54,7 +54,7 @@ class ReqResTests: XCTestCase {
     }
     
     func testPutUpdate() {
-        aintx.put("/api/users", params: ["name": "morpheus", "job": "zion resident"]) { response in
+        sut.put("/api/users", params: ["name": "morpheus", "job": "zion resident"]) { response in
             XCTAssertNotNil(response)
             XCTAssertNil(response.error)
             
@@ -72,7 +72,7 @@ class ReqResTests: XCTestCase {
     }
     
     func testDelete() {
-        aintx.delete("/api/users/2") { response in
+        sut.delete("/api/users/2") { response in
             XCTAssertNotNil(response)
             XCTAssertNil(response.error)
             
@@ -86,7 +86,7 @@ class ReqResTests: XCTestCase {
     }
     
     func testLoginSuccessful() {
-        aintx.post("/api/login", params: ["email": "peter@klaven", "password": "cityslicka"]) { response in
+        sut.post("/api/login", params: ["email": "peter@klaven", "password": "cityslicka"]) { response in
             let httpURLResponse = response.urlResponse as! HTTPURLResponse
             XCTAssertEqual(httpURLResponse.statusCode, 200)
             

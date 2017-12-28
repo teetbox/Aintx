@@ -1,5 +1,5 @@
 //
-//  MultipartContentTests.swift
+//  MultiPartContentTests.swift
 //  AintxTests
 //
 //  Created by Matt Tian on 27/12/2017.
@@ -9,14 +9,14 @@
 import XCTest
 @testable import Aintx
 
-class MultipartContentTests: XCTestCase {
+class MultiPartContentTests: XCTestCase {
     
-    var sut: MultipartContent!
+    var sut: MultiPartContent!
     
     override func setUp() {
         super.setUp()
 
-        sut = MultipartContent(name: "file", fileName: "swift.jpg", contentType: .jpg, data: Data())
+        sut = MultiPartContent(name: "file", fileName: "swift.jpg", type: .jpg, data: Data())
     }
     
     func testInitWithData() {
@@ -27,7 +27,12 @@ class MultipartContentTests: XCTestCase {
     }
     
     func testInitWithURL() {
-        
+        let fileURL = URL(string: "/upload/swift.jpg")!
+        sut = MultiPartContent(name: "file", type: .jpg, url: fileURL)
+        XCTAssertEqual(sut.name, "file")
+        XCTAssertEqual(sut.fileName, "swift.jpg")
+        XCTAssertEqual(sut.type, "image/jpeg")
+        XCTAssertEqual(sut.url, fileURL)
     }
     
     func testContentType() {

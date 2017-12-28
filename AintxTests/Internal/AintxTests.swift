@@ -190,6 +190,7 @@ class AintxTests: XCTestCase {
         XCTAssertNil(request.params)
         XCTAssertNil(request.headers)
         XCTAssertNil(request.bodyData)
+        XCTAssert(request is FakeDataRequest)
     }
     
     func testDataRequestWithMethod() {
@@ -278,12 +279,49 @@ class AintxTests: XCTestCase {
     }
     
     func testUpload() {
-        let content = MultipartContent(name: "file", fileName: "swift.jpg", contentType: .jpg, data: Data())
-        let content2 = content
-        let content3 = content
+        let content = MultiPartContent(name: "file", fileName: "swift.jpg", type: .jpg, data: Data())
         
-        sut.upload(fakePath, contents: content, content2, content3) { response in
-            XCTAssertEqual(response.fakeRequest!.base, "/fake/path")
+        sut.upload(fakePath, content: content) { response in
+            XCTAssertEqual(response.fakeRequest!.path, "/fake/path")
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.taskType, .upload(content))
+        }
+        
+        sut.upload(fakePath, content: content, params: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+        }
+        
+        sut.upload(fakePath, content: content, headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
+        sut.upload(fakePath, content: content, params: ["key": "value"], headers: ["key": "value"]) { response in
+            XCTAssertEqual(response.fakeRequest!.method, .post)
+            XCTAssertEqual(response.fakeRequest!.params!["key"] as! String, "value")
+            XCTAssertEqual(response.fakeRequest!.headers!["key"], "value")
+        }
+        
+        sut.isFake = false
+        let uploadTask = sut.upload(fakePath, content: content, completion: { _ in })
+        XCTAssert(uploadTask is HttpDataTask)
+        
+        let dataTask = uploadTask as! HttpDataTask
+        XCTAssert(dataTask.sessionTask is URLSessionUploadTask)
+    }
+    
+    func testUploadRequestHeader() {
+        var content = MultiPartContent(name: "", fileName: "", type: .jpg, data: Data())
+        sut.upload(fakePath, content: content) { response in
+            let allHeaders = response.fakeRequest!.urlRequest!.allHTTPHeaderFields
+            XCTAssert(allHeaders!["Content-Type"]!.contains("multipart/form-data;"))
+        }
+        
+        content = MultiPartContent(name: "", type: .jpg, url: URL(string: "/upload/swift.jpg")!)
+        sut.upload(fakePath, content: content) { response in
+            let allHeaders = response.fakeRequest!.urlRequest!.allHTTPHeaderFields
+            XCTAssertEqual(allHeaders!["Content-Type"]!, "application/x-www-form-urlencoded")
         }
     }
     
@@ -297,6 +335,7 @@ class AintxTests: XCTestCase {
         XCTAssertNil(request.params)
         XCTAssertNil(request.headers)
         XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertEqual(request.taskType, .download)
         XCTAssertNil(request.progress)
         XCTAssertNotNil(request.completed)
 
@@ -305,12 +344,34 @@ class AintxTests: XCTestCase {
         XCTAssertEqual(request.params!["key"] as! String, "value")
         XCTAssertEqual(request.headers!["key"], "value")
         XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertEqual(request.taskType, .download)
         XCTAssertNotNil(request.progress)
         XCTAssertNotNil(request.completed)
     }
     
     func testFileRequestForUpload() {
+        var request: HttpFileRequest
         
+        let content = MultiPartContent(name: "file", fileName: "swift.jpg", type: .jpg, data: Data())
+        request = sut.fileRequest(uploadPath: fakePath, method: .post, content: content, params: ["key": "value"], headers: ["key": "value"], progress: { _, _, _ in }, completed: { _, _ in })
+        XCTAssertEqual(request.method, .post)
+        XCTAssertEqual(request.params!["key"] as! String, "value")
+        XCTAssertEqual(request.headers!["key"], "value")
+        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertEqual(request.taskType, .upload(content))
+        XCTAssertNotNil(request.progress)
+        XCTAssertNotNil(request.completed)
+        
+        request = sut.fileRequest(uploadPath: fakePath, content: content, completed: { _, _ in })
+        XCTAssertEqual(request.base, fakeBase)
+        XCTAssertEqual(request.path, fakePath)
+        XCTAssertEqual(request.method, .post)
+        XCTAssertNil(request.params)
+        XCTAssertNil(request.headers)
+        XCTAssertEqual(request.session, SessionManager.shared.getSession(with: .standard))
+        XCTAssertEqual(request.taskType, .upload(content))
+        XCTAssertNil(request.progress)
+        XCTAssertNotNil(request.completed)
     }
     
 }

@@ -11,25 +11,25 @@ import XCTest
 
 class HttpErrorTests: XCTestCase {
     
-    var error: HttpError!
+    var sut: HttpError!
     
     override func setUp() {
         super.setUp()
     }
     
     func testInvalidURL() {
-        error = HttpError.requestFailed(.invalidURL("~!@#$"))
-        XCTAssertEqual(error.localizedDescription, "Invalid URL: ~!@#$")
+        sut = HttpError.requestFailed(.invalidURL("~!@#$"))
+        XCTAssertEqual(sut.localizedDescription, "Invalid URL: ~!@#$")
     }
     
     func testUnsupportedSession() {
-        error = HttpError.requestFailed(.dataRequestInBackgroundSession)
-        XCTAssertEqual(error.localizedDescription, "Data tasks are not supported in background session")
+        sut = HttpError.requestFailed(.dataRequestInBackgroundSession)
+        XCTAssertEqual(sut.localizedDescription, "Data request can't run in background session")
     }
     
     func testParamsAndBodyDataUsedTogether() {
-        error = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
-        XCTAssertEqual(error.localizedDescription, "Params and bodyData should not be used together in dataRequest")
+        sut = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
+        XCTAssertEqual(sut.localizedDescription, "Params and bodyData should not be used together in dataRequest")
     }
     
 }

@@ -45,9 +45,9 @@ class HttpRequestTests: XCTestCase {
         sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .download)
         XCTAssertEqual((sut as! HttpDataRequest).taskType, .download)
         
-        let content = MultipartContent(name: "", fileName: "", contentType: .png, data: Data())
-        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .upload([content]))
-        XCTAssertEqual((sut as! HttpDataRequest).taskType, .upload([content]))
+        let content = MultiPartContent(name: "", fileName: "", type: .png, data: Data())
+        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .standard, taskType: .upload(content))
+        XCTAssertEqual((sut as! HttpDataRequest).taskType, .upload(content))
     }
     
     func testGoForDataRequest() {
@@ -88,9 +88,14 @@ class HttpRequestTests: XCTestCase {
         XCTAssertNotNil((sut as! HttpFileRequest).completed)
         XCTAssertEqual((sut as! HttpFileRequest).sessionManager, SessionManager.shared)
         
-        let content = MultipartContent(name: "", fileName: "", contentType: .png, data: Data())
-        sut = HttpFileRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, taskType: .upload([content]), progress: progress, completed: completed)
-        XCTAssertEqual((sut as! HttpFileRequest).taskType, .upload([content]))
+        let content = MultiPartContent(name: "", fileName: "", type: .png, data: Data())
+        sut = HttpFileRequest(base: fakeBase, path: fakePath, method: .post, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .background("bg"), taskType: .upload(content), progress: progress, completed: completed)
+        XCTAssertEqual(sut.method, .post)
+        XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .background("bg")))
+        XCTAssertEqual((sut as! HttpFileRequest).taskType, .upload(content))
+        XCTAssertNotNil((sut as! HttpFileRequest).progress)
+        XCTAssertNotNil((sut as! HttpFileRequest).completed)
+        XCTAssertEqual((sut as! HttpFileRequest).sessionManager, SessionManager.shared)
     }
     
     func testGoForFileRequest() {

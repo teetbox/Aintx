@@ -32,7 +32,7 @@ public class HttpRequest {
         self.params = params
         self.headers = headers
         self.session = SessionManager.shared.getSession(with: sessionConfig)
-
+        
         if case .get = method {
             urlString = try? URLEncording.composeURLString(base: base, path: path, params: params)
         } else {
@@ -66,7 +66,7 @@ extension HttpRequest {
         let loginString = "\(username):\(password)"
         let loginData = loginString.data(using: .utf8)!
         let base64LoginString = loginData.base64EncodedString()
-
+        
         urlRequest?.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
         return self
     }
@@ -86,8 +86,8 @@ extension HttpRequest {
 
 extension HttpRequest {
     
-    // For upload request, the media type is Multipart/form-data.
-    func createHttpBody(with contents: [MultipartContent], params: [String: Any]?, boundary: String) -> Data? {
+    // Create HTTP body for upload request
+    func createHttpBody(with content: MultiPartContent, params: [String: Any]?, boundary: String) -> Data? {
         var body = Data()
         
         if let params = params {
@@ -98,14 +98,13 @@ extension HttpRequest {
             }
         }
         
-        for content in contents {
-            body.append("--\(boundary)\r\n")
-            body.append("Content-Disposition: form-data; name=\"\(content.name)\"; filename=\"\(content.fileName)\"\r\n")
-            body.append("Content-Type: \(content.type)\r\n\r\n")
-            body.append(content.data)
-            body.append("\r\n")
+        body.append("--\(boundary)\r\n")
+        body.append("Content-Disposition: form-data; name=\"\(content.name)\"; filename=\"\(content.fileName)\"\r\n")
+        body.append("Content-Type: \(content.type)\r\n\r\n")
+        if let data = content.data {
+            body.append(data)
         }
-        
+        body.append("\r\n")
         body.append("--\(boundary)--\r\n")
         
         return body
@@ -113,6 +112,15 @@ extension HttpRequest {
     
     func generateBoundary() -> String {
         return "Boundary-\(UUID().uuidString)"
+    }
+    
+}
+
+extension Data {
+    mutating func append(_ string: String, using encoding: String.Encoding = .utf8) {
+        if let data = string.data(using: encoding) {
+            append(data)
+        }
     }
 }
 
@@ -137,16 +145,20 @@ public class HttpDataRequest: HttpRequest {
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
         
+        if case .upload(let content) = taskType {
+            let boundary = generateBoundary()
+            if content.url != nil {
+                urlRequest?.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            } else {
+                urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            }
+            urlRequest?.httpBody = createHttpBody(with: content, params: params, boundary: boundary)
+        }
+        
         if let headers = headers {
             for (key, value) in headers {
                 urlRequest?.setValue(value, forHTTPHeaderField: key)
             }
-        }
-        
-        if case .upload(let contents) = taskType {
-            let boundary = generateBoundary()
-            urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            urlRequest?.httpBody = createHttpBody(with: contents, params: params, boundary: boundary)
         }
     }
     
@@ -167,14 +179,6 @@ public class HttpDataRequest: HttpRequest {
         return dataTask
     }
     
-}
-
-extension Data {
-    mutating func append(_ string: String, using encoding: String.Encoding = .utf8) {
-        if let data = string.data(using: encoding) {
-            append(data)
-        }
-    }
 }
 
 // MARK: - HttpFileRequest
@@ -203,19 +207,20 @@ public class HttpFileRequest: HttpRequest {
         self.completed = completed
         super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
         
-        urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")
+        if case .upload(let content) = taskType {
+            let boundary = generateBoundary()
+            if content.url != nil {
+                urlRequest?.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            } else {
+                urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            }
+            urlRequest?.httpBody = createHttpBody(with: content, params: params, boundary: boundary)
+        }
         
         if let headers = headers {
             for (key, value) in headers {
                 urlRequest?.setValue(value, forHTTPHeaderField: key)
             }
-        }
-        
-        if case .upload(let contents) = taskType {
-            let boundary = generateBoundary()
-            urlRequest?.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-            urlRequest?.httpBody = createHttpBody(with: contents, params: params, boundary: boundary)
         }
     }
     
@@ -338,7 +343,7 @@ infix operator |||: AdditionPrecedence
 
 /* ✅ */
 extension HttpFileRequest {
-
+    
     public static func -->(_ left: HttpFileRequest, _ right: HttpFileRequest) -> HttpRequestGroup {
         return HttpRequestGroup(lhs: left, rhs: right, type: .sequential)
     }
@@ -379,7 +384,7 @@ extension HttpRequestGroup {
 }
 
 class FakeDataRequest: HttpDataRequest {
-
+    
     public override func go(completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         completion(HttpResponse(fakeRequest: self))
         return BlankHttpTask()

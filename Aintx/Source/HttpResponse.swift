@@ -17,10 +17,11 @@ protocol Response {
 public struct HttpResponse: Response {
     
     public var data: Data?
+    public var url: URL?    // Download task completion callback parameter
     public var urlResponse: URLResponse?
     public var error: HttpError?
     
-    var fakeRequest: FakeDataRequest?
+    var fakeRequest: HttpDataRequest?
     
     public var json: [String: Any]? {
         return parseJSON()
@@ -31,8 +32,9 @@ public struct HttpResponse: Response {
     }
     
     /* ✅ */
-    public init(data: Data? = nil, response: URLResponse? = nil, error: Error? = nil) {
+    public init(data: Data? = nil, url: URL? = nil, response: URLResponse? = nil, error: Error? = nil) {
         self.data = data
+        self.url = url
         self.urlResponse = response
         self.error = (error == nil) ? nil : error as? HttpError ?? HttpError.responseFailed(error!)
     }
@@ -62,7 +64,7 @@ public struct HttpResponse: Response {
 extension HttpResponse {
 
     init(fakeRequest: HttpRequest) {
-        self.fakeRequest = fakeRequest as? FakeDataRequest
+        self.fakeRequest = fakeRequest as? HttpDataRequest
     }
 
 }

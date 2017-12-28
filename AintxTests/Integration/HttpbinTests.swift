@@ -11,18 +11,18 @@ import Aintx
 
 class HttpbinTests: XCTestCase {
     
-    var aintx: Aintx!
+    var sut: Aintx!
     var async: XCTestExpectation!
     
     override func setUp() {
         super.setUp()
         
-        aintx = Aintx(base: "https://httpbin.org")
+        sut = Aintx(base: "https://httpbin.org")
         async = expectation(description: "async")
     }
     
     func testGet() {
-        aintx.get("/get") { response in
+        sut.get("/get") { response in
             XCTAssertNil(response.error)
             XCTAssertNotNil(response.data)
             
@@ -33,7 +33,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testGetWithHeaders() {
-        aintx.get("/headers", headers: ["Content-Type": "text/html; charset=utf-8"]) { response in
+        sut.get("/headers", headers: ["Content-Type": "text/html; charset=utf-8"]) { response in
             XCTAssertNil(response.error)
             XCTAssertNotNil(response.data)
             
@@ -48,7 +48,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testDataRequestWithHeaders() {
-        aintx.dataRequest(path: "/headers", headers: ["Content-Type": "text/html; charset=utf-8"]).go { response in
+        sut.dataRequest(path: "/headers", headers: ["Content-Type": "text/html; charset=utf-8"]).go { response in
             XCTAssertNil(response.error)
             XCTAssertNotNil(response.data)
             
@@ -63,7 +63,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testPostWithParams() {
-        aintx.post("/post", params: ["foo": "bar"]) { response in
+        sut.post("/post", params: ["foo": "bar"]) { response in
             let httpURLResponse = response.urlResponse as! HTTPURLResponse
             XCTAssertEqual(httpURLResponse.statusCode, 200)
             let json = response.json
@@ -76,7 +76,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testGetWithQueryString() {
-        aintx.get("/get", params: ["env": "123"]) { response in
+        sut.get("/get", params: ["env": "123"]) { response in
             XCTAssertNil(response.error)
             XCTAssertNotNil(response.data)
             
@@ -91,7 +91,7 @@ class HttpbinTests: XCTestCase {
     }
     
     func testGetWithQueryStringInURL() {
-        aintx.get("/get?env=123") { response in
+        sut.get("/get?env=123") { response in
             XCTAssertNil(response.error)
             XCTAssertNotNil(response.data)
             
@@ -108,7 +108,7 @@ class HttpbinTests: XCTestCase {
     func testPost() {
         let params: [String : Any] = ["userId": 88, "id": 108, "title": "TTSY", "body": "Forever"]
         
-        aintx.post("/post", params: params) { response in
+        sut.post("/post", params: params) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
@@ -134,7 +134,7 @@ class HttpbinTests: XCTestCase {
         let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
         let jsonData = try! JSONEncoder().encode(article)
         
-        aintx.post("/post", bodyData: jsonData) { response in
+        sut.post("/post", bodyData: jsonData) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
@@ -163,7 +163,7 @@ class HttpbinTests: XCTestCase {
         let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
         let jsonData = try! JSONEncoder().encode(article)
         
-        aintx
+        sut
             .dataRequest(path: "/post", method: .post, bodyData: jsonData)
             .go { response in
                 XCTAssertNotNil(response.data)

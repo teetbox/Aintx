@@ -11,7 +11,7 @@ import Aintx
 
 class JSONPlaceHolderTests: XCTestCase {
     
-    var aintx: Aintx!
+    var sut: Aintx!
     var async: XCTestExpectation!
     
     struct Article: Codable {
@@ -31,12 +31,12 @@ class JSONPlaceHolderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        aintx = Aintx(base: "https://jsonplaceholder.typicode.com")
+        sut = Aintx(base: "https://jsonplaceholder.typicode.com")
         async = expectation(description: "async")
     }
     
     func testSimpleGet() {
-        aintx.get("/posts/1") { response in
+        sut.get("/posts/1") { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
@@ -52,7 +52,7 @@ class JSONPlaceHolderTests: XCTestCase {
     }
     
     func testGet() {
-        aintx.get("/comments?postId=1") { response in
+        sut.get("/comments?postId=1") { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
@@ -63,7 +63,7 @@ class JSONPlaceHolderTests: XCTestCase {
     }
     
     func testGetWithParams() {
-        aintx.get("/comments", params: ["postId": 1]) { response in
+        sut.get("/comments", params: ["postId": 1]) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
@@ -76,7 +76,7 @@ class JSONPlaceHolderTests: XCTestCase {
     func testPost() {
         let params: [String : Any] = ["userId": 88, "id": 108, "title": "TTSY", "body": "Forever"]
         
-        aintx.post("/posts", params: params) { response in
+        sut.post("/posts", params: params) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
             
@@ -95,7 +95,7 @@ class JSONPlaceHolderTests: XCTestCase {
         let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
         let jsonData = try! JSONEncoder().encode(article)
 
-        aintx.post("/posts", bodyData: jsonData) { response in
+        sut.post("/posts", bodyData: jsonData) { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
 
@@ -112,7 +112,7 @@ class JSONPlaceHolderTests: XCTestCase {
         let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
         let jsonData = try! JSONEncoder().encode(article)
         
-        aintx.dataRequest(path: "/posts", method: .post, bodyData: jsonData).go { response in
+        sut.dataRequest(path: "/posts", method: .post, bodyData: jsonData).go { response in
             XCTAssertNotNil(response.data)
             XCTAssertNil(response.error)
 

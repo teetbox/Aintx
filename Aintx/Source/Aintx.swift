@@ -141,8 +141,9 @@ public struct Aintx {
         return request.go(completion: completion)
     }
     
+    /* ✅ */
     @discardableResult
-    public func upload(_ path: String, contents: MultipartContent..., params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
+    public func upload(_ path: String, content: MultiPartContent, params: [String: Any]? = nil, headers: [String: String]? = nil, completion: @escaping (HttpResponse) -> Void) -> HttpTask {
         guard fakeResponse == nil else {
             completion(fakeResponse!)
             return BlankHttpTask()
@@ -150,11 +151,11 @@ public struct Aintx {
         
         let request: HttpDataRequest
         if (isFake) {
-            request = FakeDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .upload(contents))
+            request = FakeDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .upload(content))
             return request.go(completion: completion)
         }
         
-        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .upload(contents))
+        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .upload(content))
         return request.go(completion: completion)
     }
     
@@ -164,8 +165,8 @@ public struct Aintx {
     }
     
     /* ✅ */
-    public func fileRequest(uploadPath: String, method: HttpMethod = .post, contents: MultipartContent..., params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
-        return HttpFileRequest(base: base, path: uploadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .upload(contents), progress: progress, completed: completed)
+    public func fileRequest(uploadPath: String, method: HttpMethod = .post, content: MultiPartContent, params: [String: Any]? = nil, headers: [String: String]? = nil, progress: ProgressClosure? = nil, completed: @escaping CompletedClosure) -> HttpFileRequest {
+        return HttpFileRequest(base: base, path: uploadPath, method: method, params: params, headers: headers, sessionConfig: config, taskType: .upload(content), progress: progress, completed: completed)
     }
     
 }
