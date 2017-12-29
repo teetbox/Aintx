@@ -1,5 +1,5 @@
 //
-//  URLEncording.swift
+//  URLEncoding.swift
 //  Aintx
 //
 //  Created by Tong Tian on 21/10/2017.
@@ -8,7 +8,23 @@
 
 import Foundation
 
-struct URLEncording {
+struct URLEncoding {
+    
+    static func encord(base: String, path: String, params: [String: Any]?) throws -> URL {
+        guard let encodedBase = base.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {
+            throw URLEncodingError.invalidBase(base)
+        }
+        
+        guard let encodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+            throw URLEncodingError.invalidPath(path)
+        }
+        
+        guard let encodedURL = URL(string: encodedBase + encodedPath) else {
+            throw URLEncodingError.invalidURL(base + path)
+        }
+        
+        return encodedURL
+    }
     
     static func composeURLString(base: String, path: String, params: [String: Any]? = nil) throws -> String {
         var urlString = base + path

@@ -144,7 +144,7 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
         print(#function)
         guard error != nil else { return }
         if let fileTask = sessionTasks[task] {
-            fileTask.completed?(nil, HttpError.responseFailed(error!))
+            fileTask.completed?(nil, HttpError.responseError(error!))
             if let group = requestGroup[fileTask] {
                 group.nextTask()
             }

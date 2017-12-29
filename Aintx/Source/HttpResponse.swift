@@ -36,7 +36,7 @@ public struct HttpResponse: Response {
         self.data = data
         self.url = url
         self.urlResponse = response
-        self.error = (error == nil) ? nil : error as? HttpError ?? HttpError.responseFailed(error!)
+        self.error = (error == nil) ? nil : error as? HttpError ?? HttpError.responseError(error!)
     }
     
     // MARK: - Methods
@@ -80,7 +80,7 @@ struct DecodableResponse<T: Decodable>: Response {
     init(data: Data?, response: URLResponse?, error: Error?) {
         self.data = data
         self.urlResponse = response
-        self.error = (error == nil) ? nil : error as? HttpError ?? HttpError.responseFailed(error!)
+        self.error = (error == nil) ? nil : error as? HttpError ?? HttpError.responseError(error!)
     }
     
 }

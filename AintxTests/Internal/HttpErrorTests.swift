@@ -18,8 +18,8 @@ class HttpErrorTests: XCTestCase {
     }
     
     func testInvalidURL() {
-        sut = HttpError.requestFailed(.invalidURL("~!@#$"))
-        XCTAssertEqual(sut.localizedDescription, "Invalid URL: ~!@#$")
+        sut = HttpError.invalidURL("~!@#$")
+        XCTAssertEqual(sut.localizedDescription, "Invalid URL string: ~!@#$")
     }
     
     func testUnsupportedSession() {

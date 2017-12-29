@@ -10,9 +10,10 @@ import Foundation
 
 public enum HttpError: Error {
     
+    case invalidURL(String)
     case requestFailed(RequestFailedReason)
-    case encordingFailed(EncordingFailedReason)
-    case responseFailed(Error)
+    case encodingFailed(URLEncodingError)
+    case responseError(Error)
     case statusCodeError(HttpStatus)
     
     public enum RequestFailedReason {
@@ -21,22 +22,26 @@ public enum HttpError: Error {
         case dataRequestInBackgroundSession
     }
     
-    public enum EncordingFailedReason {
-        case missingParameters(String)
-        case invalidParameters(String)
-    }
-    
+}
+
+public enum URLEncodingError: Error {
+    case invalidURL(String)
+    case invalidBase(String)
+    case invalidPath(String)
+    case invalidParams([String: Any])
 }
 
 extension HttpError: LocalizedError {
     
     public var localizedDescription: String {
         switch self {
+        case .invalidURL(let urlString):
+            return "Invalid URL string: \(urlString)"
         case .requestFailed(let reason):
             return reason.localizedDescription
-        case .encordingFailed(let reason):
-            return reason.localizedDescription
-        case .responseFailed(let error):
+        case .encodingFailed(let error):
+            return error.localizedDescription
+        case .responseError(let error):
             return error.localizedDescription
         case .statusCodeError(let statusCode):
             return "HTTP Status Code: \(statusCode.rawValue) - " + statusCode.description
@@ -60,14 +65,18 @@ extension HttpError.RequestFailedReason: LocalizedError {
     
 }
 
-extension HttpError.EncordingFailedReason: LocalizedError {
+extension URLEncodingError: LocalizedError {
     
     public var localizedDescription: String {
         switch self {
-        case .missingParameters(let field):
-            return "Missing \(field)"
-        case .invalidParameters(let field):
-            return "Missing \(field)"
+        case .invalidBase(let base):
+            return "Invalid base: \(base)"
+        case .invalidPath(let path):
+            return "Invalid path: \(path)"
+        case .invalidURL(let urlString):
+            return "Invalid url: \(urlString)"
+        case .invalidParams(let params):
+            return "Invalid params: \(params)"
         }
     }
     

@@ -32,11 +32,24 @@ public class HttpRequest {
         self.params = params
         self.headers = headers
         self.session = SessionManager.shared.getSession(with: sessionConfig)
+       
+        /*********************/
+        
+        do {
+            let encodedURL = try URLEncoding.encord(base: base, path: path, params: params)
+            urlRequest = URLRequest(url: encodedURL)
+        } catch (let error as URLEncodingError) {
+            httpError = HttpError.encodingFailed(error)
+        } catch {
+            fatalError()
+        }
+        
+        //************
         
         if case .get = method {
-            urlString = try? URLEncording.composeURLString(base: base, path: path, params: params)
+            urlString = try? URLEncoding.composeURLString(base: base, path: path, params: params)
         } else {
-            urlString = try? URLEncording.composeURLString(base: base, path: path)
+            urlString = try? URLEncoding.composeURLString(base: base, path: path)
         }
         
         guard let urlString = urlString else {
