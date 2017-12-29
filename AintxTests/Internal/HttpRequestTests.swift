@@ -26,6 +26,10 @@ class HttpRequestTests: XCTestCase {
         sut = HttpRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard)
     }
     
+    override func tearDown() {
+        sut = nil
+    }
+    
     func testInit() {
         XCTAssertEqual(sut.base, fakeBase)
         XCTAssertEqual(sut.path, fakePath)
@@ -33,7 +37,6 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(sut.params!["key"] as! String, "value")
         XCTAssertEqual(sut.headers!["key"], "value")
         XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
-        XCTAssertNotNil(sut.urlString)
         XCTAssertNotNil(sut.urlRequest)
     }
     
@@ -81,7 +84,6 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(sut.params!["key"] as! String, "value")
         XCTAssertEqual(sut.headers!["key"], "value")
         XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
-        XCTAssertNotNil(sut.urlString)
         XCTAssertNotNil(sut.urlRequest)
         XCTAssertEqual((sut as! HttpFileRequest).taskType, .download)
         XCTAssertNotNil((sut as! HttpFileRequest).progress)

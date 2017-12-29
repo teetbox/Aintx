@@ -16,7 +16,7 @@ class URLEncodingTests: XCTestCase {
         let path = "/fake/path"
         let params: [String: Any] = ["data": "2017-12-29", "length": 12345678910]
         
-        let encordedURL = try? URLEncoding.encord(base: base, path: path, params: params)
+        let encordedURL = try? URLEncoding.encord(base: base, path: path, method: .get, params: params)
         XCTAssertNotNil(encordedURL)
     }
     
@@ -27,7 +27,7 @@ class URLEncodingTests: XCTestCase {
         
         var encordedURL: URL? = nil
         do {
-            encordedURL = try URLEncoding.encord(base: fakeBase, path: fakePath, params: params)
+            encordedURL = try URLEncoding.encord(base: fakeBase, path: fakePath, method: .get, params: params)
         } catch URLEncodingError.invalidBase(let base) {
             XCTAssertEqual(fakeBase, base)
         } catch URLEncodingError.invalidPath(let base) {

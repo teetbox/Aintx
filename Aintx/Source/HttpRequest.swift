@@ -12,8 +12,7 @@ import Foundation
  * Common used properties such as urlString, urlRequest and session are generated in this class.
  */
 public class HttpRequest {
-    
-    var urlString: String?
+
     var urlRequest: URLRequest?
     var httpError: HttpError?
     
@@ -32,37 +31,16 @@ public class HttpRequest {
         self.params = params
         self.headers = headers
         self.session = SessionManager.shared.getSession(with: sessionConfig)
-       
-        /*********************/
         
         do {
-            let encodedURL = try URLEncoding.encord(base: base, path: path, params: params)
+            let encodedURL = try URLEncoding.encord(base: base, path: path, method: method, params: params)
             urlRequest = URLRequest(url: encodedURL)
         } catch (let error as URLEncodingError) {
             httpError = HttpError.encodingFailed(error)
         } catch {
             fatalError()
         }
-        
-        //************
-        
-        if case .get = method {
-            urlString = try? URLEncoding.composeURLString(base: base, path: path, params: params)
-        } else {
-            urlString = try? URLEncoding.composeURLString(base: base, path: path)
-        }
-        
-        guard let urlString = urlString else {
-            httpError = HttpError.requestFailed(.invalidURL(""))
-            return
-        }
-        
-        guard let url = URL(string: urlString) else {
-            httpError = HttpError.requestFailed(.invalidURL(""))
-            return
-        }
-        
-        urlRequest = URLRequest(url: url)
+
         urlRequest?.httpMethod = method.rawValue
         
         if let params = params, method != HttpMethod.get {
