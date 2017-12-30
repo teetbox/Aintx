@@ -36,11 +36,9 @@ struct URLEncoding {
     
     private static func composeQuery(with params: [String: Any]) -> String {
         var queryString = "?"
-        
         for (key, value) in params {
             queryString += "\(key)=\(value)&"
         }
-        
         return queryString
     }
     

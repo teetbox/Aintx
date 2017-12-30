@@ -27,9 +27,9 @@ public struct Aintx {
     let base: String
     let config: SessionConfig
     
-    public var fakeResponse: HttpResponse?
-
     var isFake = false
+    
+    public var fakeResponse: HttpResponse?
     
     /* ✅ */
     public init(base: String, config: SessionConfig = .standard) {
@@ -113,12 +113,12 @@ public struct Aintx {
         
         // URLSession dataTasks can not run on background session
         if case .background(_) = config {
-            request.httpError = HttpError.requestFailed(.dataRequestInBackgroundSession)
+            request.httpError = HttpError.requestError(.dataRequestInBackgroundSession)
         }
         
         // URLRequest httpBody information retrieves from either params or bodyData, but not both.
-        if params != nil && bodyData != nil {
-            request.httpError = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
+        if params != nil && bodyData != nil && method != .get {
+            request.httpError = HttpError.requestError(.paramsAndBodyDataUsedTogether(method.rawValue))
         }
         return request
     }

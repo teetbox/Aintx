@@ -36,9 +36,9 @@ public class HttpRequest {
             let encodedURL = try URLEncoding.encord(base: base, path: path, method: method, params: params)
             urlRequest = URLRequest(url: encodedURL)
         } catch (let error as URLEncodingError) {
-            httpError = HttpError.encodingFailed(error)
+            httpError = HttpError.encodingError(error)
         } catch {
-            fatalError()
+            // Empty catch
         }
 
         urlRequest?.httpMethod = method.rawValue
@@ -162,7 +162,9 @@ public class HttpDataRequest: HttpRequest {
         }
         
         guard let request = urlRequest else {
-            fatalError()
+            httpError = HttpError.requestError(.emptyURLRequest)
+            completion(HttpResponse(error: httpError))
+            return BlankHttpTask()
         }
         
         let dataTask = HttpDataTask(request: request, session: session, taskType: taskType, completion: completion)
@@ -224,7 +226,9 @@ public class HttpFileRequest: HttpRequest {
         }
         
         guard let request = urlRequest else {
-            fatalError()
+            httpError = HttpError.requestError(.emptyURLRequest)
+            completed?(nil, httpError)
+            return BlankHttpTask()
         }
         
         let fileTask = HttpFileTask(request: request, session: session, taskType: taskType, progress: progress, completed: completed)

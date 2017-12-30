@@ -9,17 +9,16 @@
 import Foundation
 
 public enum HttpError: Error {
-
-    case requestFailed(RequestFailedReason)
-    case encodingFailed(URLEncodingError)
+    case requestError(HttpRequestError)
+    case encodingError(URLEncodingError)
+    case statusError(HttpStatus)
     case responseError(Error)
-    case statusCodeError(HttpStatus)
-    
-    public enum RequestFailedReason {
-        case paramsAndBodyDataUsedTogether
-        case dataRequestInBackgroundSession
-    }
-    
+}
+
+public enum HttpRequestError {
+    case paramsAndBodyDataUsedTogether(String)
+    case dataRequestInBackgroundSession
+    case emptyURLRequest
 }
 
 public enum URLEncodingError: Error {
@@ -28,24 +27,47 @@ public enum URLEncodingError: Error {
     case invalidParams([String: Any])
 }
 
-extension HttpError: LocalizedError {
+extension HttpError: LocalizedError, CustomStringConvertible {
     
     public var localizedDescription: String {
         switch self {
-        case .requestFailed(let reason):
-            return reason.localizedDescription
-        case .encodingFailed(let error):
+        case .requestError(let error):
+            return error.localizedDescription
+        case .encodingError(let error):
             return error.localizedDescription
         case .responseError(let error):
             return error.localizedDescription
-        case .statusCodeError(let statusCode):
-            return "HTTP status code: \(statusCode.rawValue) - " + statusCode.description
+        case .statusError(let statusCode):
+            return "HTTP status code: \(statusCode)"
         }
+    }
+    
+    public var description: String {
+        return localizedDescription
     }
     
 }
 
-extension URLEncodingError: LocalizedError {
+extension HttpRequestError: LocalizedError, CustomStringConvertible {
+    
+    public var localizedDescription: String {
+        switch self {
+        case .paramsAndBodyDataUsedTogether(let method):
+            return "Params and bodyData should not be used together in \(method) request"
+        case .dataRequestInBackgroundSession:
+            return "Data request can't run in background session"
+        case .emptyURLRequest:
+            return "URLRequest is nil"
+        }
+    }
+    
+    public var description: String {
+        return localizedDescription
+    }
+    
+}
+
+extension URLEncodingError: LocalizedError, CustomStringConvertible {
     
     public var localizedDescription: String {
         switch self {
@@ -58,17 +80,8 @@ extension URLEncodingError: LocalizedError {
         }
     }
     
-}
-
-extension HttpError.RequestFailedReason: LocalizedError {
-    
-    public var localizedDescription: String {
-        switch self {
-        case .paramsAndBodyDataUsedTogether:
-            return "Params and bodyData should not be used together in dataRequest"
-        case .dataRequestInBackgroundSession:
-            return "Data request can't run in background session"
-        }
+    public var description: String {
+        return localizedDescription
     }
     
 }

@@ -15,20 +15,50 @@ enum TaskType {
 }
 
 public protocol HttpTask {
+    var state: TaskState { get }
+    
     func suspend()
     func resume()
     func cancel()
 }
 
 class BlankHttpTask: HttpTask {
+    var state: TaskState {
+        return .suspended
+    }
+    
     func suspend() {}
     func resume() {}
     func cancel() {}
 }
 
+public enum TaskState {
+    case running
+    case suspended
+    case canceling
+    case completed
+    
+    init(_ sessionTask: URLSessionTask) {
+        switch sessionTask.state {
+        case .running:
+            self = .running
+        case .suspended:
+            self = .suspended
+        case .canceling:
+            self = .canceling
+        case .completed:
+            self = .completed
+        }
+    }
+}
+
 class HttpDataTask: HttpTask {
     
     let sessionTask: URLSessionTask
+    
+    var state: TaskState {
+        return TaskState(sessionTask)
+    }
     
     /* ✅ */
     init(request: URLRequest, session: URLSession, taskType: TaskType = .data, completion: @escaping (HttpResponse) -> Void) {
@@ -91,8 +121,8 @@ class HttpFileTask: HttpTask {
     let progress: ProgressClosure?
     let completed: CompletedClosure?
     
-    var state: URLSessionTask.State {
-        return sessionTask.state
+    var state: TaskState {
+        return TaskState(sessionTask)
     }
     
     /* ✅ */
@@ -104,7 +134,7 @@ class HttpFileTask: HttpTask {
         switch taskType {
         case .data:
             // No need for data taskType
-            fatalError("HttpFileTask can only be initialized by download or upload tsakType")
+            fatalError("HttpFileTask only could be initialized by download or upload tsakType")
         case .download:
             sessionTask = session.downloadTask(with: request)
         case .upload(let content):
@@ -112,7 +142,7 @@ class HttpFileTask: HttpTask {
                 sessionTask = session.uploadTask(with: request, fromFile: url)
             } else {
                 guard let bodyData = request.httpBody else {
-                    fatalError()
+                    fatalError("Upload task from bodyData needs request's httpBody")
                 }
                 sessionTask = session.uploadTask(with: request, from: bodyData)
             }

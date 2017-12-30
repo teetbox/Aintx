@@ -19,6 +19,10 @@ class HttpResponsePublicTests: XCTestCase {
         XCTAssertNil(sut.data)
         XCTAssertNil(sut.urlResponse)
         XCTAssertNil(sut.error)
+        XCTAssertNil(sut.url)
+        XCTAssertNil(sut.json)
+        XCTAssertNil(sut.jsonArray)
+        XCTAssertEqual(sut.status.description, "0 - Unknown")
     }
     
     func testInitWithData() {
