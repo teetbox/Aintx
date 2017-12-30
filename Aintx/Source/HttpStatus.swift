@@ -58,7 +58,7 @@ public enum HttpStatus: Int {
          gatewayTimeout = 504,
          httpVersionNotSupported = 505
     
-    // Unknown Error
+    // Unknown
     case unknown = 0
     
     init(code: Int) {
@@ -152,7 +152,7 @@ public enum HttpStatus: Int {
         case .httpVersionNotSupported:
             return "HTTP Version Not Supported"
         case .unknown:
-            return "Unknown HTTP Status Code"
+            return "Unknown"
         }
     }
     

@@ -38,14 +38,4 @@ class HttpResponsePublicTests: XCTestCase {
         XCTAssertNil(sut.error)
     }
     
-    func testInitWithError() {
-        let httpError = HttpError.requestFailed(.invalidURL("/faka/path"))
-        sut = HttpResponse(data: nil, response: nil, error: httpError)
-        
-        XCTAssertNil(sut.data)
-        XCTAssertNil(sut.urlResponse)
-        XCTAssertNotNil(sut.error)
-        XCTAssertEqual(sut.error!.localizedDescription, httpError.localizedDescription)
-    }
-    
 }

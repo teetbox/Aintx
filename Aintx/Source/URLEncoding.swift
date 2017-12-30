@@ -11,15 +11,11 @@ import Foundation
 struct URLEncoding {
     
     static func encord(base: String, path: String, method: HttpMethod, params: [String: Any]?) throws -> URL {
-        guard let encodedBase = base.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {
-            throw URLEncodingError.invalidBase(base)
-        }
-        
         guard let encodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
             throw URLEncodingError.invalidPath(path)
         }
         
-        guard let encodedURL = URL(string: encodedBase + encodedPath) else {
+        guard let encodedURL = URL(string: base + encodedPath) else {
             throw URLEncodingError.invalidURL(base + path)
         }
 
@@ -29,7 +25,7 @@ struct URLEncoding {
                 throw URLEncodingError.invalidParams(parameters)
             }
             
-            guard let encodedURL = URL(string: encodedBase + encodedPath + encodedQueryString) else {
+            guard let encodedURL = URL(string: base + encodedPath + encodedQueryString) else {
                 throw URLEncodingError.invalidURL(base + path + queryString)
             }
             return encodedURL

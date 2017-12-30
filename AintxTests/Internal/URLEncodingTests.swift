@@ -28,8 +28,6 @@ class URLEncodingTests: XCTestCase {
         var encordedURL: URL? = nil
         do {
             encordedURL = try URLEncoding.encord(base: fakeBase, path: fakePath, method: .get, params: params)
-        } catch URLEncodingError.invalidBase(let base) {
-            XCTAssertEqual(fakeBase, base)
         } catch URLEncodingError.invalidPath(let base) {
             XCTAssertEqual(fakePath, base)
         } catch URLEncodingError.invalidURL(let urlString) {

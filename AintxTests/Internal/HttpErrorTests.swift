@@ -18,8 +18,8 @@ class HttpErrorTests: XCTestCase {
     }
     
     func testInvalidURL() {
-        sut = HttpError.invalidURL("~!@#$")
-        XCTAssertEqual(sut.localizedDescription, "Invalid URL string: ~!@#$")
+        sut = HttpError.encodingFailed(.invalidURL("~!@#$"))
+        XCTAssertEqual(sut.localizedDescription, "Invalid url: ~!@#$")
     }
     
     func testUnsupportedSession() {
@@ -30,6 +30,20 @@ class HttpErrorTests: XCTestCase {
     func testParamsAndBodyDataUsedTogether() {
         sut = HttpError.requestFailed(.paramsAndBodyDataUsedTogether)
         XCTAssertEqual(sut.localizedDescription, "Params and bodyData should not be used together in dataRequest")
+    }
+    
+    func testStatusCodeError() {
+        sut = HttpError.statusCodeError(HttpStatus(code: 400))
+        XCTAssertEqual(sut.localizedDescription, "HTTP status code: \(400) - Bad Request")
+        
+        sut = HttpError.statusCodeError(HttpStatus(code: 500))
+        XCTAssertEqual(sut.localizedDescription, "HTTP status code: \(500) - Internal Server Error")
+        
+        sut = HttpError.statusCodeError(HttpStatus(code: 999))
+        XCTAssertEqual(sut.localizedDescription, "HTTP status code: 0 - Unknown")
+        
+        sut = HttpError.statusCodeError(HttpStatus(code: 0))
+        XCTAssertEqual(sut.localizedDescription, "HTTP status code: 0 - Unknown")
     }
     
 }

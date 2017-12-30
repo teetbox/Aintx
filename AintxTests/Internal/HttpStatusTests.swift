@@ -176,7 +176,7 @@ class HttpStatusTests: XCTestCase {
         
         sut = HttpStatus(code: 999)
         XCTAssertEqual(sut, .unknown)
-        XCTAssertEqual(sut.description, "Unknown HTTP Status Code")
+        XCTAssertEqual(sut.description, "Unknown")
     }
     
     func testIsSuccessful() {
