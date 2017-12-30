@@ -151,6 +151,10 @@ public class HttpDataRequest: HttpRequest {
                 urlRequest?.setValue(value, forHTTPHeaderField: key)
             }
         }
+        
+        if let bodyData = bodyData {
+            urlRequest?.httpBody = bodyData
+        }
     }
     
     /* ✅ */

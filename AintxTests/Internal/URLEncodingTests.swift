@@ -28,10 +28,10 @@ class URLEncodingTests: XCTestCase {
         var encordedURL: URL? = nil
         do {
             encordedURL = try URLEncoding.encord(base: fakeBase, path: fakePath, method: .get, params: params)
-        } catch URLEncodingError.invalidPath(let base) {
-            XCTAssertEqual(fakePath, base)
         } catch URLEncodingError.invalidURL(let urlString) {
             XCTAssertEqual(fakePath + fakeBase, urlString)
+        } catch URLEncodingError.invalidPath(let path) {
+            XCTAssertEqual(fakePath, path)
         } catch URLEncodingError.invalidParams(let parameters) {
             XCTAssertEqual(params.count, parameters.count)
         } catch {
@@ -39,6 +39,13 @@ class URLEncodingTests: XCTestCase {
         }
         
         XCTAssertNil(encordedURL)
+    }
+    
+    func testEncodPathWithQueryString() {
+        let path = "/get?env=123"
+        let encordURL = try! URLEncoding.encord(base: "", path: path, method: .get, params: nil)
+        
+        XCTAssertEqual(encordURL.absoluteString, "/get?env=123")
     }
     
 }

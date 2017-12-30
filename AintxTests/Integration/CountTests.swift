@@ -32,8 +32,26 @@ class CountTests: XCTestCase {
         async = expectation(description: "async")
     }
     
+    func testLogin() {
+        let params = ["userName": "tiantong", "password": "happytt"]
+        sut.post("/api/v1/login", params: params) { response in
+            let json = response.json
+            let token = json?["token"] as? String
+            XCTAssertNotNil(token)
+            print(token!)
+            
+            
+            let httpResponse = response.urlResponse as? HTTPURLResponse
+            print(httpResponse!.allHeaderFields)
+            
+            self.async.fulfill()
+        }
+        
+        wait(for: [async], timeout: 30)
+    }
+    
     func testGetUser() {
-        let params = ["token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJ1c2VySWQiOjIsImlhdCI6MTUxMzY4NjkyMCwiZXhwIjoxNTEzNjkwNTIwfQ.85Fbd3EOLLEElcy8ujuZPJwXcdh9FOCq0y4l4sL0gjM"]
+        let params = ["token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6ImhhcHB5dHQiLCJ1c2VySWQiOjIsImlhdCI6MTUxNDY0NDE1NCwiZXhwIjoxNTE0NjQ3NzU0fQ.ui07f-gFn2ksKeCXQcu0oOg-f7mw3zT2z0g0jagm188"]
         sut.get("/api/v1/user", params: params) { response in
             XCTAssertNotNil(response.data)
 
@@ -73,24 +91,6 @@ class CountTests: XCTestCase {
         }
         
         wait(for: [async], timeout: 5)
-    }
-    
-    func testLogin() {
-        let params = ["userName": "tiantong", "password": "happytt"]
-        sut.post("/api/v1/login", params: params) { response in
-            let json = response.json
-            let token = json?["token"] as? String
-            XCTAssertNotNil(token)
-            print(token!)
-            
-            
-            let httpResponse = response.urlResponse as? HTTPURLResponse
-            print(httpResponse!.allHeaderFields)
-
-            self.async.fulfill()
-        }
-        
-        wait(for: [async], timeout: 30)
     }
     
 }
