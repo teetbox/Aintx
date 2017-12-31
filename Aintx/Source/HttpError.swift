@@ -23,7 +23,6 @@ public enum HttpRequestError {
 
 public enum URLEncodingError: Error {
     case invalidURL(String)
-    case invalidPath(String)
     case invalidParams([String: Any])
 }
 
@@ -73,8 +72,6 @@ extension URLEncodingError: LocalizedError, CustomStringConvertible {
         switch self {
         case .invalidURL(let urlString):
             return "Invalid url: \(urlString)"
-        case .invalidPath(let path):
-            return "Invalid path: \(path)"
         case .invalidParams(let params):
             return "Invalid params: \(params)"
         }

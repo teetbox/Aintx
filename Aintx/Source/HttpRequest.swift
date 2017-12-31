@@ -33,7 +33,7 @@ public class HttpRequest {
         self.session = SessionManager.shared.getSession(with: sessionConfig)
         
         do {
-            let encodedURL = try URLEncoding.encord(base: base, path: path, method: method, params: params)
+            let encodedURL = try URLEncoding.encode(base: base, path: path, method: method, params: params)
             urlRequest = URLRequest(url: encodedURL)
         } catch (let error as URLEncodingError) {
             httpError = HttpError.encodingError(error)

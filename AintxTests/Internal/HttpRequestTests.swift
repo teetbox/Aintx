@@ -26,10 +26,6 @@ class HttpRequestTests: XCTestCase {
         sut = HttpRequest(base: fakeBase, path: fakePath, method: .put, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard)
     }
     
-    override func tearDown() {
-        sut = nil
-    }
-    
     func testInit() {
         XCTAssertEqual(sut.base, fakeBase)
         XCTAssertEqual(sut.path, fakePath)

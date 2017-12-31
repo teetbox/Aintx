@@ -11,41 +11,56 @@ import XCTest
 
 class URLEncodingTests: XCTestCase {
     
-    func testEncord() {
+    func testEncode() {
         let base = "http://www.fake.com"
         let path = "/fake/path"
-        let params: [String: Any] = ["data": "2017-12-29", "length": 12345678910]
+        let params: [String: Any] = ["data": "2017-12-29"]
         
-        let encordedURL = try? URLEncoding.encord(base: base, path: path, method: .get, params: params)
-        XCTAssertNotNil(encordedURL)
+        let encodedURL = try? URLEncoding.encode(base: base, path: path, method: .get, params: params)
+        XCTAssertEqual(encodedURL?.absoluteString, "http://www.fake.com/fake/path?data=2017-12-29&")
     }
     
-    func testEncordWithInvalidURL() {
+    func testEncodeWithInvalidURL() {
         let fakeBase = ""
         let fakePath = ""
         let params: [String: Any] = ["data": "2017-12-29", "length": 12345678910]
         
-        var encordedURL: URL? = nil
+        var encodedURL: URL? = nil
         do {
-            encordedURL = try URLEncoding.encord(base: fakeBase, path: fakePath, method: .get, params: params)
+            encodedURL = try URLEncoding.encode(base: fakeBase, path: fakePath, method: .get, params: params)
         } catch URLEncodingError.invalidURL(let urlString) {
             XCTAssertEqual(fakePath + fakeBase, urlString)
-        } catch URLEncodingError.invalidPath(let path) {
-            XCTAssertEqual(fakePath, path)
         } catch URLEncodingError.invalidParams(let parameters) {
             XCTAssertEqual(params.count, parameters.count)
         } catch {
             fatalError()
         }
         
-        XCTAssertNil(encordedURL)
+        XCTAssertNil(encodedURL)
     }
     
-    func testEncodPathWithQueryString() {
+    func testEncodePathWithQueryString() {
+        let base = "http://www.fake.com"
         let path = "/get?env=123"
-        let encordURL = try! URLEncoding.encord(base: "", path: path, method: .get, params: nil)
+        let encodedURL = try! URLEncoding.encode(base: base, path: path, method: .get, params: nil)
         
-        XCTAssertEqual(encordURL.absoluteString, "/get?env=123")
+        XCTAssertEqual(encodedURL.absoluteString, "http://www.fake.com/get?env=123")
+    }
+    
+    func testEncodePathWithQueryStringAndParams() {
+        let base = "http://www.fake.com"
+        let path = "/get?env=123"
+        let params = ["email": "123@email.com"]
+        let encodedURL = try! URLEncoding.encode(base: base, path: path, method: .get, params: params)
+        
+        XCTAssertEqual(encodedURL.absoluteString, "http://www.fake.com/get?env=123&email=123@email.com&")
+    }
+    
+    func testEncodeBaseAndPathForDownloadLink() {
+        let filePath = "http://www.tutorialspoint.com/swift/swift_tutorial.pdf"
+        let encodedURL = try! URLEncoding.encode(base: "", path: filePath, method: .get, params: nil)
+        
+        XCTAssertEqual(encodedURL.absoluteString, filePath)
     }
     
 }

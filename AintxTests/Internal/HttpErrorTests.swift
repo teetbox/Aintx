@@ -25,9 +25,6 @@ class HttpErrorTests: XCTestCase {
     }
     
     func testEncodingError() {
-        sut = HttpError.encodingError(.invalidPath("/fake/path"))
-        XCTAssertEqual(sut.localizedDescription, "Invalid path: /fake/path")
-        
         sut = HttpError.encodingError(.invalidURL("~!@#$"))
         XCTAssertEqual(sut.localizedDescription, "Invalid url: ~!@#$")
         

@@ -22,6 +22,13 @@ class HttpErrorPublicTests: XCTestCase {
         sut = Aintx(base: fakeBase)
     }
     
+    func testInvalidURL() {
+        sut = Aintx(base: "")
+        sut.get("") { response in
+            XCTAssertEqual(response.error?.localizedDescription, "Invalid url: ")
+        }
+    }
+    
     func testDataRequestInBackgroundSession() {
         sut = Aintx(base: fakeBase, config: .background("bg"))
         sut.get(fakePath) { response in
@@ -40,13 +47,6 @@ class HttpErrorPublicTests: XCTestCase {
         let request = sut.dataRequest(path: fakePath, method: .get, params: ["paramKey": "paramValue"], bodyData: Data())
         request.go { response in
             XCTFail()
-        }
-    }
-    
-    func testInvalidURL() {
-        sut = Aintx(base: "")
-        sut.get("") { response in
-            XCTAssertEqual(response.error?.localizedDescription, "Invalid url: ")
         }
     }
     
