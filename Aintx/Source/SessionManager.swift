@@ -42,24 +42,43 @@ class SessionManager: NSObject {
     }
     
     /* ✅ */
-    func getSession(with config: SessionConfig) -> URLSession {
+    func getSession(with config: SessionConfig, timeoutForRequest: TimeInterval = 60.0, timeoutForResource: TimeInterval = 7 * 24 * 60.0) -> URLSession {
+        let configuration = getURLSessionConfig(with: config, timeoutForRequest: timeoutForRequest, timeoutForResource: timeoutForResource)
+        
         switch config {
         case .standard:
             if standard == nil {
-                standard = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+                standard = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
             }
             return standard!
         case .ephemeral:
             if ephemeral == nil {
-                ephemeral = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: nil)
+                ephemeral = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
             }
             return ephemeral!
         case .background(let identifier):
             if (background == nil || background!.configuration.identifier != identifier) {
-                background = URLSession(configuration: .background(withIdentifier: identifier), delegate: self, delegateQueue: nil)
+                background = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
             }
             return background!
         }
+    }
+    
+    private func getURLSessionConfig(with config: SessionConfig, timeoutForRequest: TimeInterval, timeoutForResource: TimeInterval) -> URLSessionConfiguration {
+        let sessionConfig: URLSessionConfiguration
+        
+        switch config {
+        case .standard:
+            sessionConfig = URLSessionConfiguration.default
+        case .ephemeral:
+            sessionConfig = URLSessionConfiguration.ephemeral
+        case .background(let identifier):
+            sessionConfig = URLSessionConfiguration.background(withIdentifier: identifier)
+        }
+        
+        sessionConfig.timeoutIntervalForRequest = timeoutForRequest
+        sessionConfig.timeoutIntervalForResource = timeoutForResource
+        return sessionConfig
     }
     
     /* ✅ */

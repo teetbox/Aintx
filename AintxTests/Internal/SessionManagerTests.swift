@@ -78,5 +78,23 @@ class SessionManagerTests: XCTestCase {
         
         XCTAssertNotEqual(session, newSession)
     }
+    
+    func testSessionTimeout() {
+        sut.reset()
+        var session = sut.getSession(with: .standard, timeoutForRequest: 15.0, timeoutForResource: 15.0)
+        XCTAssertEqual(session.configuration.timeoutIntervalForRequest, 15.0)
+        XCTAssertEqual(session.configuration.timeoutIntervalForResource, 15.0)
+        
+        session = sut.getSession(with: .ephemeral, timeoutForRequest: 15.0, timeoutForResource: 15.0)
+        XCTAssertEqual(session.configuration.timeoutIntervalForRequest, 15.0)
+        XCTAssertEqual(session.configuration.timeoutIntervalForResource, 15.0)
+    }
+    
+    func testBackgroundSessionTimeout() {
+        sut.reset()
+        let session = sut.getSession(with: .background("background"), timeoutForRequest: 15.0, timeoutForResource: 15.0)
+        XCTAssertEqual(session.configuration.timeoutIntervalForRequest, 15.0)
+        XCTAssertEqual(session.configuration.timeoutIntervalForResource, 15.0)
+    }
 
 }

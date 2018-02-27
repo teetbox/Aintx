@@ -24,13 +24,13 @@ public class HttpRequest {
     let session: URLSession
     
     /* ✅ */
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig) {
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, timeoutForRequest: TimeInterval = 60.0, timeoutForResource: TimeInterval = 7 * 24 * 60.0) {
         self.base = base
         self.path = path
         self.method = method
         self.params = params
         self.headers = headers
-        self.session = SessionManager.shared.getSession(with: sessionConfig)
+        self.session = SessionManager.shared.getSession(with: sessionConfig, timeoutForRequest: timeoutForRequest, timeoutForResource: timeoutForResource)
         
         do {
             let encodedURL = try URLEncoding.encode(base: base, path: path, method: method, params: params)
@@ -128,10 +128,10 @@ public class HttpDataRequest: HttpRequest {
     let taskType: TaskType
     
     /* ✅ */
-    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, bodyData: Data? = nil, taskType: TaskType = .data) {
+    init(base: String, path: String, method: HttpMethod, params: [String: Any]?, headers: [String: String]?, sessionConfig: SessionConfig, timeoutForRequest: TimeInterval = 15.0, timeoutForResource: TimeInterval = 7 * 24 * 60.0, bodyData: Data? = nil, taskType: TaskType = .data) {
         self.bodyData = bodyData
         self.taskType = taskType
-        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig)
+        super.init(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: sessionConfig, timeoutForRequest: timeoutForRequest, timeoutForResource: timeoutForResource)
         
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest?.setValue("application/json", forHTTPHeaderField: "Accept")

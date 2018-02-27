@@ -31,6 +31,9 @@ public struct Aintx {
     
     public var fakeResponse: HttpResponse?
     
+    public var timeoutForRequest: TimeInterval = 60.0
+    public var timeoutForResource: TimeInterval = 7 * 24 * 60.0
+    
     /* ✅ */
     public init(base: String, config: SessionConfig = .standard) {
         self.base = base
@@ -109,7 +112,7 @@ public struct Aintx {
             return request
         }
         
-        request = HttpDataRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, bodyData: bodyData)
+        request = HttpDataRequest(base: base, path: path, method: method, params: params, headers: headers, sessionConfig: config, timeoutForRequest: timeoutForRequest, timeoutForResource: timeoutForResource, bodyData: bodyData)
         
         // URLSession dataTasks can not run on background session
         if case .background(_) = config {
@@ -137,7 +140,7 @@ public struct Aintx {
             return request.go(completion: completion)
         }
         
-        request = HttpDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config, taskType: .download)
+        request = HttpDataRequest(base: base, path: path, method: .get, params: params, headers: headers, sessionConfig: config, timeoutForRequest: timeoutForRequest, timeoutForResource: timeoutForResource, taskType: .download)
         return request.go(completion: completion)
     }
     
@@ -155,7 +158,7 @@ public struct Aintx {
             return request.go(completion: completion)
         }
         
-        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, taskType: .upload(content))
+        request = HttpDataRequest(base: base, path: path, method: .post, params: params, headers: headers, sessionConfig: config, timeoutForRequest: timeoutForRequest, timeoutForResource: timeoutForResource, taskType: .upload(content))
         return request.go(completion: completion)
     }
     
