@@ -33,7 +33,6 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(sut.params!["key"] as! String, "value")
         XCTAssertEqual(sut.headers!["key"], "value")
         XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
-        XCTAssertNotNil(sut.urlString)
         XCTAssertNotNil(sut.urlRequest)
     }
     
@@ -81,7 +80,6 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual(sut.params!["key"] as! String, "value")
         XCTAssertEqual(sut.headers!["key"], "value")
         XCTAssertEqual(sut.session, SessionManager.shared.getSession(with: .standard))
-        XCTAssertNotNil(sut.urlString)
         XCTAssertNotNil(sut.urlRequest)
         XCTAssertEqual((sut as! HttpFileRequest).taskType, .download)
         XCTAssertNotNil((sut as! HttpFileRequest).progress)

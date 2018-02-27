@@ -29,7 +29,6 @@ class HttpResponseTests: XCTestCase {
         XCTAssertNil(sut.fakeRequest!.params)
         XCTAssertNil(sut.fakeRequest!.headers)
         XCTAssertNil(sut.fakeRequest!.bodyData)
-        XCTAssertNotNil(sut.fakeRequest!.urlString)
         XCTAssertNotNil(sut.fakeRequest!.urlRequest)
         
         let content = MultiPartContent(name: "", fileName: "", type: .jpg, data: Data())
@@ -45,7 +44,6 @@ class HttpResponseTests: XCTestCase {
         XCTAssertEqual(sut.fakeRequest!.params!["key"] as! String, "value")
         XCTAssertEqual(sut.fakeRequest!.headers!["key"], "value")
         XCTAssertNil(sut.fakeRequest!.bodyData)
-        XCTAssertNotNil(sut.fakeRequest!.urlString)
         XCTAssertNotNil(sut.fakeRequest!.urlRequest)
     }
     

@@ -22,6 +22,13 @@ class HttpErrorPublicTests: XCTestCase {
         sut = Aintx(base: fakeBase)
     }
     
+    func testInvalidURL() {
+        sut = Aintx(base: "")
+        sut.get("") { response in
+            XCTAssertEqual(response.error?.localizedDescription, "Invalid url: ")
+        }
+    }
+    
     func testDataRequestInBackgroundSession() {
         sut = Aintx(base: fakeBase, config: .background("bg"))
         sut.get(fakePath) { response in
@@ -29,15 +36,18 @@ class HttpErrorPublicTests: XCTestCase {
         }
     }
     
-    func testDataRequestHaveParamsAndBodyData() {
+    func testDataRequestWithParamsAndBodyDataUsingPostMethod() {
         let request = sut.dataRequest(path: fakePath, method: .post, params: ["paramKey": "paramValue"], bodyData: Data())
         request.go { response in
-            XCTAssertEqual(response.error?.localizedDescription, "Params and bodyData should not be used together in dataRequest")
+            XCTAssertEqual(response.error?.localizedDescription, "Params and bodyData should not be used together in POST request")
         }
     }
     
-    func testInvalidURL() {
-
+    func testDateRequestWithParamsAndBodyDataUsingGetMethod() {
+        let request = sut.dataRequest(path: fakePath, method: .get, params: ["paramKey": "paramValue"], bodyData: Data())
+        request.go { response in
+            XCTFail()
+        }
     }
     
 }

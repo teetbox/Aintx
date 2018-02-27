@@ -163,31 +163,29 @@ class HttpbinTests: XCTestCase {
         let article = Article(userId: 88, id: 108, title: "TTSY", body: "Forever")
         let jsonData = try! JSONEncoder().encode(article)
         
-        sut
-            .dataRequest(path: "/post", method: .post, bodyData: jsonData)
-            .go { response in
-                XCTAssertNotNil(response.data)
-                XCTAssertNil(response.error)
-                
-                guard let json = response.json else {
-                    XCTFail()
-                    return
-                }
-                
-                guard let jsonDic = json["json"] as? [String: Any] else {
-                    XCTFail()
-                    return
-                }
-                
-                XCTAssertEqual(jsonDic["userId"] as! Int, 88)
-                XCTAssertEqual(jsonDic["id"] as! Int, 108)
-                XCTAssertEqual(jsonDic["title"] as! String, "TTSY")
-                XCTAssertEqual(jsonDic["body"] as! String, "Forever")
-                
-                self.async.fulfill()
+        sut.dataRequest(path: "/post", method: .post, bodyData: jsonData).go { response in
+            XCTAssertNotNil(response.data)
+            XCTAssertNil(response.error)
+            
+            guard let json = response.json else {
+                XCTFail()
+                return
+            }
+            
+            guard let jsonDic = json["json"] as? [String: Any] else {
+                XCTFail()
+                return
+            }
+            
+            XCTAssertEqual(jsonDic["userId"] as! Int, 88)
+            XCTAssertEqual(jsonDic["id"] as! Int, 108)
+            XCTAssertEqual(jsonDic["title"] as! String, "TTSY")
+            XCTAssertEqual(jsonDic["body"] as! String, "Forever")
+            
+            self.async.fulfill()
         }
         
         wait(for: [async], timeout: 10)
     }
-
+    
 }

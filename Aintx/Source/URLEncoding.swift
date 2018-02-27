@@ -10,62 +10,41 @@ import Foundation
 
 struct URLEncoding {
     
-    static func encord(base: String, path: String, params: [String: Any]?) throws -> URL {
-        guard let encodedBase = base.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {
-            throw URLEncodingError.invalidBase(base)
-        }
+    static func encode(base: String, path: String, method: HttpMethod, params: [String: Any]?) throws -> URL {
         
-        guard let encodedPath = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
-            throw URLEncodingError.invalidPath(path)
-        }
-        
-        guard let encodedURL = URL(string: encodedBase + encodedPath) else {
+        guard let url = URL(string: base + path) else {
             throw URLEncodingError.invalidURL(base + path)
         }
-        
-        return encodedURL
-    }
-    
-    static func composeURLString(base: String, path: String, params: [String: Any]? = nil) throws -> String {
-        var urlString = base + path
-        if let params = params {
-            urlString += queryString(with: params)
+
+        guard let urlComponents = URLComponents(string: base + path) else {
+            throw URLEncodingError.invalidURL(base + path)
         }
-        return urlString
-    }
-    
-    static func encord(base: String, path: String) throws -> URL {
-        guard let url = URL(string: base + path) else {
-            throw HttpError.requestFailed(.invalidURL(base + path))
+
+        if case .get = method, let parameters = params {
+            let queryString = composeQuery(urlComponents, with: parameters)
+            guard let encodedQueryString = queryString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+                throw URLEncodingError.invalidParams(parameters)
+            }
+            
+            guard let encodedURL = URL(string: url.absoluteString + encodedQueryString) else {
+                throw URLEncodingError.invalidURL(url.absoluteString + queryString)
+            }
+            return encodedURL
         }
-        
+
         return url
     }
     
-    static func encord(urlString: String, method: HttpMethod, params: [String: Any]?) throws -> URL {
-        if let url = composeURL(urlString: urlString, method: method, params: params) {
-            return url
-        } else {
-            throw HttpError.requestFailed(.invalidURL(urlString))
-        }
-    }
-    
-    private static func composeURL(urlString: String, method: HttpMethod, params: [String: Any]?) -> URL? {
-        guard method == .get, let params = params else {
-            return nil
-        }
-        var url = urlString
-        url += queryString(with: params)
-        return URL(string: url)
-    }
-    
-    private static func queryString(with params: [String: Any]) -> String {
+    private static func composeQuery(_ urlComponents: URLComponents, with params: [String: Any]) -> String {
         var queryString = "?"
+        
+        if let query = urlComponents.query {
+            queryString = query.hasSuffix("&") ? "" : "&"
+        }
         
         for (key, value) in params {
             queryString += "\(key)=\(value)&"
         }
-        
         return queryString
     }
     

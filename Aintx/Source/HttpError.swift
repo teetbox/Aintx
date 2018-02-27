@@ -9,75 +9,76 @@
 import Foundation
 
 public enum HttpError: Error {
-    
-    case invalidURL(String)
-    case requestFailed(RequestFailedReason)
-    case encodingFailed(URLEncodingError)
+    case requestError(HttpRequestError)
+    case encodingError(URLEncodingError)
+    case statusError(HttpStatus)
     case responseError(Error)
-    case statusCodeError(HttpStatus)
-    
-    public enum RequestFailedReason {
-        case invalidURL(String)
-        case paramsAndBodyDataUsedTogether
-        case dataRequestInBackgroundSession
-    }
-    
+}
+
+public enum HttpRequestError {
+    case paramsAndBodyDataUsedTogether(String)
+    case dataRequestInBackgroundSession
+    case emptyURLRequest
 }
 
 public enum URLEncodingError: Error {
     case invalidURL(String)
-    case invalidBase(String)
-    case invalidPath(String)
     case invalidParams([String: Any])
 }
 
-extension HttpError: LocalizedError {
+extension HttpError: LocalizedError, CustomStringConvertible {
     
     public var localizedDescription: String {
         switch self {
-        case .invalidURL(let urlString):
-            return "Invalid URL string: \(urlString)"
-        case .requestFailed(let reason):
-            return reason.localizedDescription
-        case .encodingFailed(let error):
+        case .requestError(let error):
+            return error.localizedDescription
+        case .encodingError(let error):
             return error.localizedDescription
         case .responseError(let error):
             return error.localizedDescription
-        case .statusCodeError(let statusCode):
-            return "HTTP Status Code: \(statusCode.rawValue) - " + statusCode.description
+        case .statusError(let statusCode):
+            return "HTTP status code: \(statusCode)"
         }
+    }
+    
+    public var description: String {
+        return localizedDescription
     }
     
 }
 
-extension HttpError.RequestFailedReason: LocalizedError {
+extension HttpRequestError: LocalizedError, CustomStringConvertible {
     
     public var localizedDescription: String {
         switch self {
-        case .invalidURL(let url):
-            return "Invalid URL: \(url)"
-        case .paramsAndBodyDataUsedTogether:
-            return "Params and bodyData should not be used together in dataRequest"
+        case .paramsAndBodyDataUsedTogether(let method):
+            return "Params and bodyData should not be used together in \(method) request"
         case .dataRequestInBackgroundSession:
             return "Data request can't run in background session"
+        case .emptyURLRequest:
+            return "URLRequest is nil"
         }
+    }
+    
+    public var description: String {
+        return localizedDescription
     }
     
 }
 
-extension URLEncodingError: LocalizedError {
+extension URLEncodingError: LocalizedError, CustomStringConvertible {
     
     public var localizedDescription: String {
         switch self {
-        case .invalidBase(let base):
-            return "Invalid base: \(base)"
-        case .invalidPath(let path):
-            return "Invalid path: \(path)"
         case .invalidURL(let urlString):
             return "Invalid url: \(urlString)"
         case .invalidParams(let params):
             return "Invalid params: \(params)"
         }
+    }
+    
+    public var description: String {
+        return localizedDescription
     }
     
 }

@@ -19,6 +19,10 @@ class HttpResponsePublicTests: XCTestCase {
         XCTAssertNil(sut.data)
         XCTAssertNil(sut.urlResponse)
         XCTAssertNil(sut.error)
+        XCTAssertNil(sut.url)
+        XCTAssertNil(sut.json)
+        XCTAssertNil(sut.jsonArray)
+        XCTAssertEqual(sut.status.description, "0 - Unknown")
     }
     
     func testInitWithData() {
@@ -36,16 +40,6 @@ class HttpResponsePublicTests: XCTestCase {
         XCTAssertEqual(sut.url, url)
         XCTAssertNotNil(sut.urlResponse)
         XCTAssertNil(sut.error)
-    }
-    
-    func testInitWithError() {
-        let httpError = HttpError.requestFailed(.invalidURL("/faka/path"))
-        sut = HttpResponse(data: nil, response: nil, error: httpError)
-        
-        XCTAssertNil(sut.data)
-        XCTAssertNil(sut.urlResponse)
-        XCTAssertNotNil(sut.error)
-        XCTAssertEqual(sut.error!.localizedDescription, httpError.localizedDescription)
     }
     
 }

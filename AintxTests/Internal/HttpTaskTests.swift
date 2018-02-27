@@ -77,4 +77,22 @@ class HttpTaskTests: XCTestCase {
         XCTAssertEqual(upload, TaskType.upload(content))
     }
     
+    func testTaskState() {
+        let sessionTask = (sut as! HttpDataTask).sessionTask
+        let taskState = TaskState(sessionTask)
+        XCTAssertEqual(taskState, .suspended)
+        
+        let running = TaskState.running
+        XCTAssertEqual(running, TaskState.running)
+        
+        let suspended = TaskState.suspended
+        XCTAssertEqual(suspended, TaskState.suspended)
+        
+        let canceling = TaskState.canceling
+        XCTAssertEqual(canceling, TaskState.canceling)
+        
+        let completed = TaskState.completed
+        XCTAssertEqual(completed, TaskState.completed)
+    }
+    
 }

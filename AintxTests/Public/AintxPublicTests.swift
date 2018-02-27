@@ -174,7 +174,7 @@ class AintxPublicTests: XCTestCase {
             XCTAssertEqual(response.url, url)
         }
         
-        let error = HttpError.statusCodeError(.badRequest)
+        let error = HttpError.statusError(.badRequest)
         let content = MultiPartContent(name: "", fileName: "", type: .png, data: Data())
         sut.fakeResponse = HttpResponse(error: error)
         

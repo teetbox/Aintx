@@ -17,9 +17,10 @@ protocol Response {
 public struct HttpResponse: Response {
     
     public var data: Data?
-    public var url: URL?    // Download task completion callback parameter
     public var urlResponse: URLResponse?
     public var error: HttpError?
+
+    public var url: URL?    // Download task completion callback parameter
     
     var fakeRequest: HttpDataRequest?
     
@@ -30,6 +31,11 @@ public struct HttpResponse: Response {
     public var jsonArray: [Any]? {
         return parseJSONArray()
     }
+    
+    public lazy var status: HttpStatus = {
+        let code = (urlResponse as? HTTPURLResponse)?.statusCode ?? 0
+        return HttpStatus(code: code)
+    }()
     
     /* ✅ */
     public init(data: Data? = nil, url: URL? = nil, response: URLResponse? = nil, error: Error? = nil) {

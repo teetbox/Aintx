@@ -158,14 +158,9 @@ extension SessionManager: URLSessionDelegate, URLSessionTaskDelegate, URLSession
         print("###### URLSessionDataDelegate - didReceive, completionHandler ######")
         print(#function)
         if let httpURLResponse = response as? HTTPURLResponse {
-            let statusCode = httpURLResponse.statusCode
-            let httpStatus = HttpStatus(code: statusCode)
-            
-            var httpError: HttpError?
-            if !httpStatus.isSuccessful {
-                httpError = HttpError.statusCodeError(httpStatus)
-            }
-            
+            let status = HttpStatus(code: httpURLResponse.statusCode)
+            let httpError = status.isSuccessful ? nil : HttpError.statusError(status)
+
             if let fileTask = sessionTasks[dataTask] {
                 fileTask.completed?(httpURLResponse.url, httpError)
                 if let group = requestGroup[fileTask] {

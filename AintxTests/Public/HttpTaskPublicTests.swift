@@ -24,14 +24,17 @@ class HttpTaskPublicTests: XCTestCase {
 
     func testSuspend() {
         sut.suspend()
+        XCTAssertEqual(sut.state, .suspended)
     }
     
     func testResume() {
         sut.resume()
+        XCTAssertEqual(sut.state, .running)
     }
     
     func testCancel() {
         sut.cancel()
+        XCTAssertEqual(sut.state, .canceling)
     }
     
 }

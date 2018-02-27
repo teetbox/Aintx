@@ -58,7 +58,7 @@ public enum HttpStatus: Int {
          gatewayTimeout = 504,
          httpVersionNotSupported = 505
     
-    // Unknown Error
+    // Unknown
     case unknown = 0
     
     init(code: Int) {
@@ -69,91 +69,97 @@ public enum HttpStatus: Int {
         return rawValue >= 200 && rawValue < 300
     }
     
-    var description: String {
+}
+
+extension HttpStatus: CustomStringConvertible {
+    
+    public var description: String {
+        let meaning: String
         switch self {
         case .continue:
-            return "Continue"
+            meaning = "Continue"
         case .switchingProtocols:
-            return "Switching Protocols"
+            meaning = "Switching Protocols"
         case .ok:
-            return "OK"
+            meaning = "OK"
         case .created:
-            return "Created"
+            meaning = "Created"
         case .accepted:
-            return "Accepted"
+            meaning = "Accepted"
         case .nonAuthoritativeInformation:
-            return "Non-Authoritative Information"
+            meaning = "Non-Authoritative Information"
         case .noContent:
-            return "No Content"
+            meaning = "No Content"
         case .resetContent:
-            return "Reset Content"
+            meaning = "Reset Content"
         case .partialContent:
-            return "Partial Content"
+            meaning = "Partial Content"
         case .multipleChoices:
-            return "Multiple Choices"
+            meaning = "Multiple Choices"
         case .movedPermanently:
-            return "Moved Permanently"
+            meaning = "Moved Permanently"
         case .found:
-            return "Found"
+            meaning = "Found"
         case .seeOther:
-            return "See Other"
+            meaning = "See Other"
         case .notModified:
-            return "Not Modified"
+            meaning = "Not Modified"
         case .useProxy:
-            return "Use Proxy"
+            meaning = "Use Proxy"
         case .temporaryRedirect:
-            return "Temporary Redirect"
+            meaning = "Temporary Redirect"
         case .badRequest:
-            return "Bad Request"
+            meaning = "Bad Request"
         case .unauthorized:
-            return "Unauthorized"
+            meaning = "Unauthorized"
         case .paymentRequired:
-            return "Payment Required"
+            meaning = "Payment Required"
         case .forbidden:
-            return "Forbidden"
+            meaning = "Forbidden"
         case .notFound:
-            return "Not Found"
+            meaning = "Not Found"
         case .methodNotAllowed:
-            return "Method Not Allowed"
+            meaning = "Method Not Allowed"
         case .notAcceptable:
-            return "Not Acceptable"
+            meaning = "Not Acceptable"
         case .proxyAuthenticationRequired:
-            return "Proxy Authentication Required"
+            meaning = "Proxy Authentication Required"
         case .requestTimeout:
-            return "Request Timeout"
+            meaning = "Request Timeout"
         case .conflict:
-            return "Conflict"
+            meaning = "Conflict"
         case .gone:
-            return "Gone"
+            meaning = "Gone"
         case .lengthRequired:
-            return "Length Required"
+            meaning = "Length Required"
         case .preconditionFailed:
-            return "Precondition Failed"
+            meaning = "Precondition Failed"
         case .requestEntityTooLarge:
-            return "Request Entity Too Large"
+            meaning = "Request Entity Too Large"
         case .requestUrlTooLong:
-            return "Request-URL Too Long"
+            meaning = "Request-URL Too Long"
         case .unsupportedMediaType:
-            return "Unsupported Media Type"
+            meaning = "Unsupported Media Type"
         case .requestedRangeNotSatisfiable:
-            return "Requested Range Not Satisfiable"
+            meaning = "Requested Range Not Satisfiable"
         case .expectationFailed:
-            return "Expectation Failed"
+            meaning = "Expectation Failed"
         case .internalServerError:
-            return "Internal Server Error"
+            meaning = "Internal Server Error"
         case .notImplemented:
-            return "Not Implemented"
+            meaning = "Not Implemented"
         case .badGateway:
-            return "Bad Gateway"
+            meaning = "Bad Gateway"
         case .serviceUnavailable:
-            return "Service Unavailable"
+            meaning = "Service Unavailable"
         case .gatewayTimeout:
-            return "Gateway Timeout"
+            meaning = "Gateway Timeout"
         case .httpVersionNotSupported:
-            return "HTTP Version Not Supported"
+            meaning = "HTTP Version Not Supported"
         case .unknown:
-            return "Unknown HTTP Status Code"
+            meaning = "Unknown"
         }
+        return "\(self.rawValue) - " + meaning
     }
     
 }

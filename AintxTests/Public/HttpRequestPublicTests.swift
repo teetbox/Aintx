@@ -35,7 +35,7 @@ class HttpRequestPublicTests: XCTestCase {
         
         let task = (sut as! HttpDataRequest).go { response in
             XCTAssertNotNil(response.error)
-            XCTAssertEqual(response.error?.localizedDescription, "Params and bodyData should not be used together in dataRequest")
+            XCTAssertEqual(response.error?.localizedDescription, "Params and bodyData should not be used together in POST request")
         }
         XCTAssertNotNil(task)
     }
