@@ -6,6 +6,20 @@
 	objectVersion = 48;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		354F11D92031C39900136A8A /* UniversalAintx */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 354F11DC2031C39900136A8A /* Build configuration list for PBXAggregateTarget "UniversalAintx" */;
+			buildPhases = (
+				354F11DD2031C3C900136A8A /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = UniversalAintx;
+			productName = UniversalAintx;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		350D55361FDCBB2F005C84EC /* SessionManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350D55351FDCBB2F005C84EC /* SessionManagerTests.swift */; };
 		350D55381FDCBBE6005C84EC /* HttpResponsePublicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350D55371FDCBBE6005C84EC /* HttpResponsePublicTests.swift */; };
@@ -274,6 +288,10 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Bizersoft;
 				TargetAttributes = {
+					354F11D92031C39900136A8A = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
 					AC3BCE401F9AD47300644761 = {
 						CreatedOnToolsVersion = 9.0.1;
 						LastSwiftMigration = 0900;
@@ -300,6 +318,7 @@
 			targets = (
 				AC3BCE401F9AD47300644761 /* Aintx */,
 				AC3BCE491F9AD47300644761 /* AintxTests */,
+				354F11D92031C39900136A8A /* UniversalAintx */,
 			);
 		};
 /* End PBXProject section */
@@ -321,6 +340,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		354F11DD2031C3C900136A8A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/sh\nUNIVERSAL_OUTPUTFOLDER=${BUILD_DIR}/${CONFIGURATION}-universal\n# make sure the output directory exists\nmkdir -p \"${UNIVERSAL_OUTPUTFOLDER}\"\n# Step 1. Build Device and Simulator versions\nxcodebuild -target \"${PROJECT_NAME}\" ONLY_ACTIVE_ARCH=NO -configuration ${CONFIGURATION} -sdk iphoneos  BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\nxcodebuild -target \"${PROJECT_NAME}\" -configuration ${CONFIGURATION} -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO BUILD_DIR=\"${BUILD_DIR}\" BUILD_ROOT=\"${BUILD_ROOT}\" clean build\n# Step 2. Copy the framework structure (from iphoneos build) to the universal folder\ncp -R \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework\" \"${UNIVERSAL_OUTPUTFOLDER}/\"\n# Step 3. Copy Swift modules from iphonesimulator build (if it exists) to the copied framework directory\nSIMULATOR_SWIFT_MODULES_DIR=\"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/Modules/${PROJECT_NAME}.swiftmodule/.\"\nif [ -d \"${SIMULATOR_SWIFT_MODULES_DIR}\" ]; then\ncp -R \"${SIMULATOR_SWIFT_MODULES_DIR}\" \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/Modules/${PROJECT_NAME}.swiftmodule\"\nfi\n# Step 4. Create universal binary file using lipo and place the combined executable in the copied framework directory\nlipo -create -output \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${PROJECT_NAME}.framework/${PROJECT_NAME}\" \"${BUILD_DIR}/${CONFIGURATION}-iphoneos/${PROJECT_NAME}.framework/${PROJECT_NAME}\"\n# Step 5. Convenience step to copy the framework to the project's directory\ncp -R \"${UNIVERSAL_OUTPUTFOLDER}/${PROJECT_NAME}.framework\" \"${PROJECT_DIR}\"\n# Step 6. Convenience step to open the project's directory in Finder\nopen \"${PROJECT_DIR}\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		AC3BCE3C1F9AD47300644761 /* Sources */ = {
@@ -380,6 +415,22 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		354F11DA2031C39900136A8A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		354F11DB2031C39900136A8A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		AC3BCE531F9AD47300644761 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -570,6 +621,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		354F11DC2031C39900136A8A /* Build configuration list for PBXAggregateTarget "UniversalAintx" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				354F11DA2031C39900136A8A /* Debug */,
+				354F11DB2031C39900136A8A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AC3BCE3B1F9AD47300644761 /* Build configuration list for PBXProject "Aintx" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

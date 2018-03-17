@@ -1,0 +1,11 @@
+framework module Aintx {
+  umbrella header "Aintx.h"
+
+  export *
+  module * { export * }
+}
+
+module Aintx.Swift {
+    header "Aintx-Swift.h"
+    requires objc
+}
