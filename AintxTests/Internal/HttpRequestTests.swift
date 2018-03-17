@@ -49,6 +49,14 @@ class HttpRequestTests: XCTestCase {
         XCTAssertEqual((sut as! HttpDataRequest).taskType, .upload(content))
     }
     
+    func testDataRequestWithTimeout() {
+        SessionManager.shared.reset()
+        sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: ["key": "value"], headers: ["key": "value"], sessionConfig: .standard, timeoutForRequest: 15.0, timeoutForResource: 15.0, bodyData: Data(), taskType: .data)
+        
+        XCTAssertEqual(sut.session.configuration.timeoutIntervalForRequest, 15.0)
+        XCTAssertEqual(sut.session.configuration.timeoutIntervalForResource, 15.0)
+    }
+    
     func testGoForDataRequest() {
         sut = HttpDataRequest(base: fakeBase, path: fakePath, method: .get, params: nil, headers: nil, sessionConfig: .ephemeral, bodyData: nil)
         
