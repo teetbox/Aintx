@@ -101,6 +101,9 @@ class JSONPlaceHolderTests: XCTestCase {
 
             let json = response.json
             XCTAssertEqual(json!["id"] as! Int, 108)
+            XCTAssertEqual(json!["userId"] as! Int, 88)
+            XCTAssertEqual(json!["title"] as! String, "TTSY")
+            XCTAssertEqual(json!["body"] as! String, "Forever")
 
             self.async.fulfill()
         }
