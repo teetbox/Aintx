@@ -39,6 +39,17 @@ class URLEncodingTests: XCTestCase {
         XCTAssertNil(encodedURL)
     }
     
+    func testEncodeWithSpaceCharacter() {
+        let fakeBase = "https://www.fake.com"
+        let fakePath = "/download/image name with space.jpg"
+        
+        let encodedURL = try? URLEncoding.encode(base: fakeBase, path: fakePath, method: .get, params: nil)
+        
+        let expectedURL = "https://www.fake.com/download/image%20name%20with%20space.jpg"
+        
+        XCTAssertEqual(encodedURL?.absoluteString, expectedURL)
+    }
+    
     func testEncodePathWithQueryString() {
         let base = "http://www.fake.com"
         let path = "/get?env=123"
